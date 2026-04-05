@@ -393,6 +393,42 @@ table.admin-table td{padding:12px 14px;font-size:13px}
         <button class="save-btn" onclick="showToast('계정 정보가 저장되었습니다!')">계정 저장</button>
       </div>
       <div class="box">
+        <div class="box-title">약관 관리</div>
+        <div class="fg" style="margin-bottom:14px">
+          <label>개인정보 수집·이용 동의 약관</label>
+          <textarea rows="6">개인정보 수집·이용 동의
+
+1. 수집 항목
+이름, 휴대폰 번호, 희망 통신사, 상담 희망 시간
+
+2. 수집 목적
+인터넷 가입 상담 서비스 제공 및 전담 매니저 연결
+
+3. 보유 기간
+상담 완료 후 1년간 보관 후 파기</textarea>
+        </div>
+        <div class="fg" style="margin-bottom:14px">
+          <label>광고성 정보 수신 동의 약관</label>
+          <textarea rows="5">광고성 정보 수신 동의
+
+전송자: 통신클럽
+전송 항목: 인터넷 요금제 혜택, 이벤트, 프로모션 정보
+전송 방법: 문자(SMS/MMS), 전화
+수신 동의 철회: 고객센터를 통해 언제든지 철회 가능</textarea>
+        </div>
+        <div class="fg" style="margin-bottom:14px">
+          <label>개인정보 제3자제공 동의 약관</label>
+          <textarea rows="5">개인정보 제3자 제공 동의
+
+제공받는 자: SK브로드밴드, KT, LG U+ 등 통신사 및 협력사
+제공 목적: 인터넷 가입 신청 및 서비스 처리
+제공 항목: 이름, 연락처, 희망 통신사
+보유 기간: 제공 목적 달성 후 즉시 파기</textarea>
+        </div>
+        <button class="save-btn" onclick="showToast('약관이 저장되었습니다!')">약관 저장</button>
+      </div>
+
+      <div class="box">
         <div class="box-title">기능 설정</div>
         <div class="toggle-row"><div><div class="toggle-label">실시간 접수 현황 표시</div><div class="toggle-sub">랜딩 페이지에 접수 테이블 노출</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
         <div class="toggle-row"><div><div class="toggle-label">플로팅 카카오 버튼</div><div class="toggle-sub">우측 하단 카카오 상담 버튼</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
