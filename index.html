@@ -8,7 +8,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--pr:#2563EB;--pd:#1D4ED8;--pl:#EFF6FF;--rd:#DC2626;--gn:#16A34A;--g1:#F8FAFC;--g2:#F1F5F9;--g3:#E2E8F0;--g4:#94A3B8;--g6:#475569;--g8:#1E293B}
-body{font-family:'Noto Sans KR',sans-serif;background:#fff;color:var(--g8);font-size:15px}
+body{font-family:'Noto Sans KR',sans-serif;background:#f0f4ff;color:var(--g8);font-size:15px}
 
 /* ── 고정 카운트다운 ── */
 .top-bar{background:#1a3fa8;height:42px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:500;color:#fff}
@@ -30,16 +30,16 @@ body{font-family:'Noto Sans KR',sans-serif;background:#fff;color:var(--g8);font-
 
 /* ── HEADER ── */
 header{background:#fff;border-bottom:2px solid var(--pr);padding:0 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.hi{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+.hi{max-width:480px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
 .logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900;color:var(--pr);letter-spacing:-.5px}
 .logo-ic{width:36px;height:36px;background:var(--pr);border-radius:8px;display:flex;align-items:center;justify-content:center}
 .logo-b{background:var(--pr);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
-.htel{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:900;color:var(--pr)}
+.htel{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:900;color:var(--pr)}
 .htel small{font-size:11px;color:var(--g4);font-weight:400;display:block;text-align:right;margin-top:1px}
 
 /* ── HERO ── */
 .hero{background:linear-gradient(135deg,#EFF6FF,#DBEAFE 50%,#E0F2FE);padding:50px 20px 40px;overflow:hidden}
-.hero-in{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+.hero-in{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
 .h-tag{display:inline-flex;align-items:center;gap:6px;background:var(--pr);color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;margin-bottom:16px}
 .dot-live{width:7px;height:7px;background:#86EFAC;border-radius:50%;animation:pl 1.5s infinite;flex-shrink:0}
 @keyframes pl{0%,100%{opacity:1}50%{opacity:.3}}
@@ -108,8 +108,8 @@ input[type="checkbox"]{width:15px;height:15px;accent-color:var(--pr);flex-shrink
 .done-sub{font-size:13px;color:var(--g4);line-height:1.6}
 
 /* ── SECTIONS ── */
-section{padding:60px 20px}
-.si2{max-width:960px;margin:0 auto}
+section{padding:40px 20px}
+.si2{max-width:480px;margin:0 auto}
 .stag{display:inline-flex;align-items:center;gap:6px;background:var(--pl);color:var(--pr);font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:10px}
 .stit{font-size:28px;font-weight:900;line-height:1.3;margin-bottom:8px}
 .stit em{color:var(--pr);font-style:normal}
@@ -126,7 +126,7 @@ section{padding:60px 20px}
 .cl-sq{width:26px;height:26px;background:#16A34A;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
 /* ── WHY ── */
-.wgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.wgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
 .wcard{border:1.5px solid var(--g2);border-radius:16px;padding:28px 20px;text-align:center;transition:all .2s}
 .wcard:hover{border-color:var(--pr);box-shadow:0 4px 20px rgba(37,99,235,.1);transform:translateY(-2px)}
 .wic{width:60px;height:60px;border-radius:14px;background:var(--pl);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
@@ -165,8 +165,8 @@ table.rt td{padding:12px 16px;font-size:13px;text-align:center;color:var(--g8)}
 
 /* ── PROCESS ── */
 .pbg{background:var(--g1)}
-.psteps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
-.psteps::before{content:'';position:absolute;top:36px;left:12.5%;right:12.5%;height:2px;background:linear-gradient(90deg,var(--pr),#93C5FD);z-index:0}
+.psteps{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;position:relative}
+.psteps::before{display:none}
 .pbox{text-align:center;position:relative;z-index:1;padding:0 10px}
 .pc{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--pr),#60A5FA);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 4px 16px rgba(37,99,235,.25);color:#fff}
 .pn{font-size:10px;font-weight:700;opacity:.8;letter-spacing:.5px}
@@ -174,7 +174,7 @@ table.rt td{padding:12px 16px;font-size:13px;text-align:center;color:var(--g8)}
 .pd{font-size:12px;color:var(--g4);line-height:1.6}
 
 /* ── REVIEWS ── */
-.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.rgrid{display:grid;grid-template-columns:1fr;gap:16px}
 .rcard{background:#fff;border:1.5px solid var(--g2);border-radius:16px;padding:22px 20px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:all .2s}
 .rcard:hover{border-color:var(--pr);box-shadow:0 4px 20px rgba(37,99,235,.1)}
 .rcard.qs{background:#FEFCE8;border-color:#FDE68A}
@@ -191,7 +191,7 @@ table.rt td{padding:12px 16px;font-size:13px;text-align:center;color:var(--g8)}
 
 /* ── NOTICE ── */
 .nc-sec{background:#fff;padding:60px 20px;border-top:1px solid var(--g2)}
-.nc-grid{max-width:960px;margin:0 auto;text-align:center}
+.nc-grid{max-width:480px;margin:0 auto;text-align:center}
 .nc-tit{font-size:26px;font-weight:900;line-height:1.4;margin-bottom:14px}
 .nc-tit span{color:var(--pr)}
 .nc-list{list-style:none;display:inline-block;text-align:left;margin:0 auto 28px}
@@ -203,7 +203,7 @@ table.rt td{padding:12px 16px;font-size:13px;text-align:center;color:var(--g8)}
 
 /* ── FOOTER ── */
 footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
-.fin{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.fin{max-width:480px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
 .flogo{font-size:18px;font-weight:900;color:var(--pr);display:flex;align-items:center;gap:8px}
 .finfo{font-size:12px;color:var(--g4);line-height:1.8;margin-top:6px}
 .ftel{font-size:16px;font-weight:700;color:var(--pr);display:flex;align-items:center;gap:6px}
@@ -246,6 +246,7 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
 <body>
 
 <!-- 고정 카운트다운 -->
+<div style="max-width:480px;margin:0 auto;background:#fff;min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.12);position:relative">
 <div class="top-bar">
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
   <span>이벤트 마감까지</span>
@@ -556,5 +557,6 @@ function doSubmit(){
 }
 function closeM(){document.getElementById('modal').classList.remove('show');}
 </script>
+</div>
 </body>
 </html>
