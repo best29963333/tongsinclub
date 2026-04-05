@@ -3,249 +3,622 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>통신클럽 어드민 로그인</title>
+<title>통신클럽 어드민</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--pr:#2563EB;--pd:#1D4ED8;--rd:#DC2626;--g3:#E2E8F0;--g4:#94A3B8;--g6:#475569;--g8:#1E293B}
-body{font-family:'Noto Sans KR',sans-serif;background:linear-gradient(135deg,#EFF6FF,#DBEAFE 50%,#E0F2FE);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+:root{--pr:#2563EB;--pd:#1D4ED8;--g1:#F8FAFC;--g2:#F1F5F9;--g3:#E2E8F0;--g4:#94A3B8;--g6:#475569;--g8:#1E293B;--rd:#DC2626;--gn:#16A34A}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--g1);color:var(--g8);font-size:14px}
 
-.login-wrap{width:100%;max-width:420px}
+/* ════════════════════════════
+   로그인 화면
+════════════════════════════ */
+#loginScreen{
+  display:flex;position:fixed;inset:0;
+  background:linear-gradient(135deg,#EFF6FF,#DBEAFE 50%,#E0F2FE);
+  z-index:9999;align-items:center;justify-content:center;padding:20px;
+}
+#loginScreen.hidden{display:none}
 
-/* 로고 */
-.login-logo{text-align:center;margin-bottom:28px}
-.logo-icon{width:52px;height:52px;background:var(--pr);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
-.logo-title{font-size:22px;font-weight:900;color:var(--g8)}
-.logo-sub{font-size:13px;color:var(--g4);margin-top:4px}
+.lg-logo{text-align:center;margin-bottom:28px}
+.lg-logo-icon{width:52px;height:52px;background:var(--pr);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.lg-logo-title{font-size:22px;font-weight:900;color:var(--g8)}
+.lg-logo-sub{font-size:13px;color:var(--g4);margin-top:4px}
 
-/* 카드 */
-.login-card{background:#fff;border-radius:20px;padding:36px 32px;box-shadow:0 8px 40px rgba(37,99,235,.12)}
-.card-title{font-size:17px;font-weight:700;color:var(--g8);margin-bottom:24px;text-align:center}
+.lg-card{background:#fff;border-radius:20px;padding:36px 32px;box-shadow:0 8px 40px rgba(37,99,235,.12);width:100%;max-width:420px}
+.lg-card-title{font-size:17px;font-weight:700;color:var(--g8);margin-bottom:24px;text-align:center}
 
-/* 폼 */
-.fg{margin-bottom:16px}
-.fl{font-size:12px;font-weight:700;color:var(--g6);margin-bottom:6px;display:block}
-.fi-wrap{position:relative}
-.fi{width:100%;border:1.5px solid var(--g3);border-radius:10px;padding:13px 44px 13px 14px;font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;transition:border .2s;color:var(--g8);background:#F8FAFC}
-.fi:focus{border-color:var(--pr);background:#fff}
-.fi::placeholder{color:var(--g4)}
-.fi-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--g4)}
-.pw-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--g4);padding:0;display:flex;align-items:center}
-.pw-toggle:hover{color:var(--g6)}
+.lg-error{background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--rd);margin-bottom:16px;display:none;align-items:center;gap:8px}
+.lg-error.show{display:flex}
 
-/* 에러 */
-.error-msg{background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--rd);margin-bottom:16px;display:none;align-items:center;gap:8px}
-.error-msg.show{display:flex}
+.lg-fg{margin-bottom:16px}
+.lg-label{font-size:12px;font-weight:700;color:var(--g6);margin-bottom:6px;display:block}
+.lg-wrap{position:relative}
+.lg-input{width:100%;border:1.5px solid var(--g3);border-radius:10px;padding:13px 44px 13px 14px;font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;transition:border .2s;color:var(--g8);background:#F8FAFC}
+.lg-input:focus{border-color:var(--pr);background:#fff}
+.lg-input::placeholder{color:var(--g4)}
+.lg-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--g4);background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center}
 
-/* 로그인 버튼 */
-.login-btn{width:100%;background:linear-gradient(135deg,var(--pr),var(--pd));color:#fff;border:none;border-radius:10px;padding:15px;font-size:16px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all .2s;margin-top:4px}
-.login-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.35)}
-.login-btn:active{transform:translateY(0)}
-.login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
-
-/* 로딩 스피너 */
-.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
-.login-btn-inner{display:flex;align-items:center;justify-content:center;gap:8px}
+.lg-btn{width:100%;background:linear-gradient(135deg,var(--pr),var(--pd));color:#fff;border:none;border-radius:10px;padding:15px;font-size:16px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all .2s}
+.lg-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.35)}
+.lg-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
+.lg-btn-inner{display:flex;align-items:center;justify-content:center;gap:8px}
+.lg-spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
+.lg-hint{text-align:center;font-size:12px;color:var(--g4);margin-top:14px;line-height:1.6}
 
-/* 안내 */
-.login-hint{text-align:center;font-size:12px;color:var(--g4);margin-top:16px;line-height:1.6}
-
-/* 잠금 오버레이 */
-.lock-overlay{display:none;text-align:center;padding:20px 0}
-.lock-icon{width:56px;height:56px;background:#FEF2F2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.lock-box{display:none;text-align:center;padding:10px 0}
+.lock-box.show{display:block}
+.lock-icon{width:56px;height:56px;background:#FEF2F2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
 .lock-title{font-size:16px;font-weight:700;color:var(--rd);margin-bottom:6px}
 .lock-sub{font-size:13px;color:var(--g4);line-height:1.6}
-.lock-timer{font-size:20px;font-weight:900;color:var(--rd);margin:10px 0}
+.lock-timer{font-size:28px;font-weight:900;color:var(--rd);margin:10px 0}
+
+/* ════════════════════════════
+   어드민 화면
+════════════════════════════ */
+#adminScreen{display:none}
+#adminScreen.show{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--g8);color:#fff;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;height:100vh;z-index:100}
+.sb-logo{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.1);font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.sb-logo span{font-size:10px;background:var(--pr);padding:2px 7px;border-radius:10px;font-weight:700}
+.sb-nav{padding:12px 0;flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.sb-section{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:1px;padding:16px 20px 6px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;color:rgba(255,255,255,.7);cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.sb-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.sb-item.active{background:rgba(37,99,235,.25);color:#fff;border-left-color:var(--pr)}
+.sb-item svg{flex-shrink:0;opacity:.7}
+.sb-item.active svg{opacity:1}
+.sb-logout{margin-top:auto;border-top:1px solid rgba(255,255,255,.1);padding:8px 0}
+.sb-logout .sb-item{color:rgba(255,120,120,.85)}
+
+/* MAIN */
+.main{margin-left:220px;flex:1;padding:28px;min-height:100vh}
+.page{display:none}
+.page.active{display:block}
+.top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.page-title{font-size:20px;font-weight:700}
+.save-btn{background:var(--pr);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s}
+.save-btn:hover{background:#1D4ED8}
+
+/* CARDS */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.card{background:#fff;border:1px solid var(--g3);border-radius:12px;padding:20px}
+.card-label{font-size:12px;color:var(--g4);margin-bottom:6px}
+.card-val{font-size:24px;font-weight:700}
+.card-val.blue{color:var(--pr)}
+.card-val.green{color:var(--gn)}
+.card-val.red{color:var(--rd)}
+
+/* BOX */
+.box{background:#fff;border:1px solid var(--g3);border-radius:12px;padding:24px;margin-bottom:20px}
+.box-title{font-size:14px;font-weight:700;margin-bottom:16px}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px}
+.form-row.single{grid-template-columns:1fr}
+.form-row.triple{grid-template-columns:1fr 1fr 1fr}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:12px;font-weight:600;color:var(--g6)}
+.fg input,.fg select,.fg textarea{border:1.5px solid var(--g3);border-radius:8px;padding:9px 12px;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;transition:border .2s;color:var(--g8);background:#fff}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--pr)}
+.fg textarea{resize:vertical;min-height:80px}
+.color-row{display:flex;align-items:center;gap:10px}
+.color-row input[type="color"]{width:40px;height:36px;border:1.5px solid var(--g3);border-radius:6px;cursor:pointer;padding:2px}
+.color-row input[type="text"]{flex:1;border:1.5px solid var(--g3);border-radius:8px;padding:8px 12px;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none}
+
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--g2)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-label{font-size:13px;font-weight:500}
+.toggle-sub{font-size:11px;color:var(--g4);margin-top:2px}
+.toggle{width:44px;height:24px;background:var(--g3);border-radius:12px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:none}
+.toggle.on{background:var(--pr)}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on::after{left:23px}
+
+/* TABLE */
+table.admin-table{width:100%;border-collapse:collapse}
+table.admin-table thead tr{background:var(--g1)}
+table.admin-table th{padding:10px 14px;font-size:12px;font-weight:700;color:var(--g4);text-align:left;border-bottom:1px solid var(--g3)}
+table.admin-table tbody tr{border-bottom:1px solid var(--g2);transition:background .1s}
+table.admin-table tbody tr:hover{background:var(--g1)}
+table.admin-table td{padding:12px 14px;font-size:13px}
+.status-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px}
+.status-badge.new{background:#EFF6FF;color:var(--pr)}
+.status-badge.done{background:#F0FDF4;color:var(--gn)}
+.status-badge.pending{background:#FEF9C3;color:#854D0E}
+.action-btn{border:1px solid var(--g3);background:#fff;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .15s}
+.action-btn:hover{border-color:var(--pr);color:var(--pr)}
+.action-btn.red:hover{border-color:var(--rd);color:var(--rd)}
+
+/* BANNER LIST */
+.banner-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--g2)}
+.banner-item:last-child{border-bottom:none}
+.banner-drag{color:var(--g4);cursor:grab;font-size:16px}
+.banner-text{flex:1;font-size:13px}
+.banner-edit{border:1px solid var(--g3);background:#fff;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
+.banner-del{border:1px solid #FEE2E2;background:#fff;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;color:var(--rd);font-family:'Noto Sans KR',sans-serif}
+.add-banner-btn{margin-top:12px;border:1.5px dashed var(--g3);background:#fff;border-radius:8px;width:100%;padding:10px;font-size:13px;font-weight:600;color:var(--g4);cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s}
+.add-banner-btn:hover{border-color:var(--pr);color:var(--pr)}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;right:30px;background:var(--g8);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
 
-<div class="login-wrap">
-  <div class="login-logo">
-    <div class="logo-icon">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M1 6l11 7L23 6"/><path d="M1 6a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2z"/></svg>
-    </div>
-    <div class="logo-title">통신클럽</div>
-    <div class="logo-sub">관리자 전용 페이지</div>
-  </div>
-
-  <div class="login-card">
-    <!-- 로그인 폼 -->
-    <div id="loginForm">
-      <div class="card-title">어드민 로그인</div>
-
-      <div class="error-msg" id="errorMsg">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span id="errorText">아이디 또는 비밀번호가 올바르지 않습니다.</span>
+<!-- ════ 로그인 화면 ════ -->
+<div id="loginScreen">
+  <div style="width:100%;max-width:420px">
+    <div class="lg-logo">
+      <div class="lg-logo-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M1 6l11 7L23 6"/><path d="M1 6a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2z"/></svg>
       </div>
-
-      <div class="fg">
-        <label class="fl">아이디</label>
-        <div class="fi-wrap">
-          <input class="fi" id="userId" type="text" placeholder="아이디 입력" autocomplete="username">
-          <span class="fi-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </span>
-        </div>
-      </div>
-
-      <div class="fg">
-        <label class="fl">비밀번호</label>
-        <div class="fi-wrap">
-          <input class="fi" id="userPw" type="password" placeholder="비밀번호 입력" autocomplete="current-password">
-          <button class="pw-toggle" onclick="togglePw()" type="button" id="pwToggle">
-            <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <button class="login-btn" id="loginBtn" onclick="doLogin()">
-        <div class="login-btn-inner">
-          <div class="spinner" id="spinner"></div>
-          <span id="loginBtnText">로그인</span>
-        </div>
-      </button>
-
-      <div class="login-hint">
-        로그인 5회 실패 시 30분 잠금됩니다.<br>
-        계정 문의: 관리자에게 연락하세요.
-      </div>
+      <div class="lg-logo-title">통신클럽</div>
+      <div class="lg-logo-sub">관리자 전용 페이지</div>
     </div>
 
-    <!-- 잠금 화면 -->
-    <div class="lock-overlay" id="lockScreen">
-      <div class="lock-icon">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    <div class="lg-card">
+      <!-- 로그인 폼 -->
+      <div id="lgForm">
+        <div class="lg-card-title">어드민 로그인</div>
+        <div class="lg-error" id="lgError">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="lgErrorText">아이디 또는 비밀번호가 올바르지 않습니다.</span>
+        </div>
+        <div class="lg-fg">
+          <label class="lg-label">아이디</label>
+          <div class="lg-wrap">
+            <input class="lg-input" id="lgId" type="text" placeholder="아이디 입력" autocomplete="username">
+            <span class="lg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          </div>
+        </div>
+        <div class="lg-fg">
+          <label class="lg-label">비밀번호</label>
+          <div class="lg-wrap">
+            <input class="lg-input" id="lgPw" type="password" placeholder="비밀번호 입력" autocomplete="current-password">
+            <button class="lg-icon" onclick="togglePw()" type="button">
+              <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <button class="lg-btn" id="lgBtn" onclick="doLogin()">
+          <div class="lg-btn-inner">
+            <div class="lg-spinner" id="lgSpinner"></div>
+            <span id="lgBtnText">로그인</span>
+          </div>
+        </button>
+        <div class="lg-hint">로그인 5회 실패 시 30분 잠금됩니다.</div>
       </div>
-      <div class="lock-title">로그인 잠금</div>
-      <div class="lock-sub">비밀번호 5회 오류로 잠금되었습니다.<br>아래 시간 후 다시 시도해주세요.</div>
-      <div class="lock-timer" id="lockTimer">30:00</div>
-      <div class="lock-sub">잠금 해제까지 남은 시간</div>
+
+      <!-- 잠금 화면 -->
+      <div class="lock-box" id="lockBox">
+        <div class="lock-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="lock-title">로그인 잠금</div>
+        <div class="lock-sub">비밀번호 5회 오류로 잠금되었습니다.</div>
+        <div class="lock-timer" id="lockTimer">30:00</div>
+        <div class="lock-sub">잠금 해제까지 남은 시간</div>
+      </div>
     </div>
   </div>
 </div>
 
-<script>
-// ── 계정 설정 (여기서 아이디/비밀번호 변경 가능) ──
-const ACCOUNTS = [
-  { id: 'admin', pw: 'tongsin1234!' },
-];
+<!-- ════ 어드민 화면 ════ -->
+<div id="adminScreen">
 
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M1 6l11 7L23 6"/><path d="M1 6a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2z"/></svg>
+      통신클럽 <span>ADMIN</span>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">메인</div>
+      <div class="sb-item active" onclick="goPage('dashboard',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>대시보드
+      </div>
+      <div class="sb-item" onclick="goPage('leads',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>접수 현황
+      </div>
+      <div class="sb-section">랜딩 설정</div>
+      <div class="sb-item" onclick="goPage('banner',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>배너 관리
+      </div>
+      <div class="sb-item" onclick="goPage('hero',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>히어로 섹션
+      </div>
+      <div class="sb-item" onclick="goPage('plans',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>요금제 관리
+      </div>
+      <div class="sb-item" onclick="goPage('reviews',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>후기 관리
+      </div>
+      <div class="sb-item" onclick="goPage('settings',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>기본 설정
+      </div>
+      <div class="sb-logout">
+        <div class="sb-item" onclick="doLogout()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>로그아웃
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- 대시보드 -->
+    <div class="page active" id="page-dashboard">
+      <div class="top-row"><div class="page-title">대시보드</div></div>
+      <div class="cards">
+        <div class="card"><div class="card-label">오늘 접수</div><div class="card-val blue">5</div></div>
+        <div class="card"><div class="card-label">총 누적 접수</div><div class="card-val">2,481</div></div>
+        <div class="card"><div class="card-label">처리 완료</div><div class="card-val green">2,314</div></div>
+        <div class="card"><div class="card-label">처리 대기</div><div class="card-val red">167</div></div>
+      </div>
+      <div class="box">
+        <div class="box-title">최근 접수 현황</div>
+        <table class="admin-table">
+          <thead><tr><th>이름</th><th>연락처</th><th>통신사</th><th>접수 시간</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="dashLeads"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 접수 현황 -->
+    <div class="page" id="page-leads">
+      <div class="top-row"><div class="page-title">접수 현황</div><button class="save-btn" onclick="exportCSV()">CSV 내보내기</button></div>
+      <div class="box">
+        <table class="admin-table">
+          <thead><tr><th>이름</th><th>연락처</th><th>통신사</th><th>희망 시간</th><th>접수 시간</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="allLeads"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 배너 관리 -->
+    <div class="page" id="page-banner">
+      <div class="top-row"><div class="page-title">배너 관리</div><button class="save-btn" onclick="showToast()">저장하기</button></div>
+      <div class="box">
+        <div class="box-title">고정 상단 배너 (카운트다운)</div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">카운트다운 배너 표시</div><div class="toggle-sub">매일 자정 기준 남은 시간 표시</div></div>
+          <button class="toggle on" onclick="this.classList.toggle('on')"></button>
+        </div>
+      </div>
+      <div class="box">
+        <div class="box-title">슬라이딩 배너 문구</div>
+        <div id="bannerList"></div>
+        <button class="add-banner-btn" onclick="addBanner()">+ 배너 추가</button>
+      </div>
+    </div>
+
+    <!-- 히어로 섹션 -->
+    <div class="page" id="page-hero">
+      <div class="top-row"><div class="page-title">히어로 섹션</div><button class="save-btn" onclick="showToast()">저장하기</button></div>
+      <div class="box">
+        <div class="box-title">메인 헤드라인</div>
+        <div class="form-row single"><div class="fg"><label>헤드라인 1줄</label><input type="text" value="최저 요금으로 인터넷 가입,"></div></div>
+        <div class="form-row single"><div class="fg"><label>헤드라인 2줄 (강조)</label><input type="text" value="현금 최대 30만원 받으세요"></div></div>
+        <div class="form-row single"><div class="fg"><label>서브 텍스트</label><textarea>통신클럽은 SK·KT·LG 공식 대리점입니다.
+전담 매니저가 딱 맞는 요금제를 찾아드립니다.</textarea></div></div>
+      </div>
+      <div class="box">
+        <div class="box-title">폼 헤더 (CTA 헤더)</div>
+        <div class="form-row">
+          <div class="fg"><label>타이틀</label><input type="text" value="내 최대지원금 확인하기"></div>
+          <div class="fg"><label>서브타이틀</label><input type="text" value="전담 매니저가 24시간 이내 연락드립니다"></div>
+        </div>
+        <div class="form-row triple">
+          <div class="fg"><label>배지 1</label><input type="text" value="무료상담"></div>
+          <div class="fg"><label>배지 2</label><input type="text" value="설치비 0원"></div>
+          <div class="fg"><label>배지 3</label><input type="text" value="현금 즉시지급"></div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="box-title">통계 수치</div>
+        <div class="form-row" style="grid-template-columns:1fr 1fr 1fr 1fr">
+          <div class="fg"><label>가입자 수</label><input type="text" value="98,000+"></div>
+          <div class="fg"><label>만족도</label><input type="text" value="4.9점"></div>
+          <div class="fg"><label>최대 현금</label><input type="text" value="30만원"></div>
+          <div class="fg"><label>지급 속도</label><input type="text" value="당일"></div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="box-title">체크리스트 섹션</div>
+        <div class="form-row">
+          <div class="fg"><label>강조 텍스트 (빨간색)</label><input type="text" value="하나라도 해당"></div>
+          <div class="fg"><label>일반 텍스트</label><input type="text" value="한다면 인터넷을 갈아타야합니다."></div>
+        </div>
+        <div class="form-row single"><div class="fg"><label>서브 텍스트</label><input type="text" value="통신클럽이 최적의 요금제와 최대 혜택을 찾아드립니다"></div></div>
+      </div>
+    </div>
+
+    <!-- 요금제 관리 -->
+    <div class="page" id="page-plans">
+      <div class="top-row"><div class="page-title">요금제 관리</div><button class="save-btn" onclick="showToast()">저장하기</button></div>
+      <div class="box">
+        <div class="box-title">통신사별 현금 지원금 비교표</div>
+        <table class="admin-table">
+          <thead><tr><th>통신사</th><th>속도</th><th>월정액</th><th>현금 지원금</th><th>특이사항</th><th>뱃지</th></tr></thead>
+          <tbody>
+            <tr><td><input type="text" value="SK브로드밴드" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:110px"></td><td><input type="text" value="1Gbps" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:70px"></td><td><input type="text" value="27,500원~" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:90px"></td><td><input type="text" value="300,000원" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:90px"></td><td><input type="text" value="TV결합 시 추가 혜택" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:140px"></td><td><select style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 6px;font-size:12px"><option>BEST</option><option>NEW</option><option>없음</option></select></td></tr>
+            <tr><td><input type="text" value="KT" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:110px"></td><td><input type="text" value="1Gbps" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:70px"></td><td><input type="text" value="27,500원~" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:90px"></td><td><input type="text" value="280,000원" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:90px"></td><td><input type="text" value="기가인터넷 기본 제공" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:140px"></td><td><select style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 6px;font-size:12px"><option>없음</option><option>BEST</option><option selected>NEW</option></select></td></tr>
+            <tr><td><input type="text" value="LG U+" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:110px"></td><td><input type="text" value="1Gbps" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:70px"></td><td><input type="text" value="27,500원~" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:90px"></td><td><input type="text" value="260,000원" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:90px"></td><td><input type="text" value="U+TV 동시 가입 가능" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:140px"></td><td><select style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 6px;font-size:12px"><option selected>없음</option><option>BEST</option><option>NEW</option></select></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 후기 관리 -->
+    <div class="page" id="page-reviews">
+      <div class="top-row"><div class="page-title">후기 관리</div><button class="save-btn" onclick="showToast()">저장하기</button></div>
+      <div class="box">
+        <div id="reviewList"></div>
+        <button class="add-banner-btn" onclick="addReview()" style="margin-top:12px">+ 후기 추가</button>
+      </div>
+    </div>
+
+    <!-- 기본 설정 -->
+    <div class="page" id="page-settings">
+      <div class="top-row"><div class="page-title">기본 설정</div><button class="save-btn" onclick="showToast()">저장하기</button></div>
+      <div class="box">
+        <div class="box-title">브랜드 정보</div>
+        <div class="form-row">
+          <div class="fg"><label>브랜드명</label><input type="text" value="통신클럽"></div>
+          <div class="fg"><label>대표 전화번호</label><input type="text" value="0000-0000"></div>
+        </div>
+        <div class="form-row single"><div class="fg"><label>헤더 전화 서브텍스트</label><input type="text" value="365일 24시간 무료상담"></div></div>
+      </div>
+      <div class="box">
+        <div class="box-title">컬러 설정</div>
+        <div class="form-row triple">
+          <div class="fg"><label>메인 컬러</label><div class="color-row"><input type="color" value="#2563EB"><input type="text" value="#2563EB"></div></div>
+          <div class="fg"><label>강조 컬러 (빨강)</label><div class="color-row"><input type="color" value="#DC2626"><input type="text" value="#DC2626"></div></div>
+          <div class="fg"><label>버튼 컬러 (노랑)</label><div class="color-row"><input type="color" value="#FBBF24"><input type="text" value="#FBBF24"></div></div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="box-title">계정 설정</div>
+        <div class="form-row">
+          <div class="fg"><label>어드민 아이디</label><input type="text" value="admin"></div>
+          <div class="fg"><label>어드민 비밀번호</label><input type="password" value="tongsin1234!" placeholder="새 비밀번호 입력"></div>
+        </div>
+        <button class="save-btn" onclick="showToast('계정 정보가 저장되었습니다!')">계정 저장</button>
+      </div>
+      <div class="box">
+        <div class="box-title">기능 설정</div>
+        <div class="toggle-row"><div><div class="toggle-label">실시간 접수 현황 표시</div><div class="toggle-sub">랜딩 페이지에 접수 테이블 노출</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="toggle-row"><div><div class="toggle-label">플로팅 카카오 버튼</div><div class="toggle-sub">우측 하단 카카오 상담 버튼</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="toggle-row"><div><div class="toggle-label">플로팅 전화 버튼</div><div class="toggle-sub">우측 하단 전화 버튼</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="toggle-row"><div><div class="toggle-label">폼 기본 상태 (접힘)</div><div class="toggle-sub">페이지 로드 시 폼 헤더 접힌 상태로 시작</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">저장되었습니다!</div>
+
+<script>
+/* ── 계정 설정 ── */
+const ACCOUNTS = [{id:'admin', pw:'tongsin1234!'}];
 const MAX_FAIL = 5;
 const LOCK_MIN = 30;
-
-let failCount = parseInt(sessionStorage.getItem('failCount') || '0');
-let lockUntil = parseInt(sessionStorage.getItem('lockUntil') || '0');
+let failCount = parseInt(sessionStorage.getItem('failCount')||'0');
+let lockUntil = parseInt(sessionStorage.getItem('lockUntil')||'0');
 let lockTimer = null;
 
-// 잠금 상태 체크
-function checkLock() {
-  const now = Date.now();
-  if (lockUntil > now) {
-    showLock(lockUntil - now);
-    return true;
+/* ── 초기화: 로그인 상태 확인 ── */
+window.onload = function(){
+  if(sessionStorage.getItem('adminAuth')==='true'){
+    showAdmin();
+  } else {
+    checkLock();
   }
-  return false;
+};
+
+function showAdmin(){
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('adminScreen').classList.add('show');
+  renderLeads(document.getElementById('dashLeads'),'dash');
+  renderLeads(document.getElementById('allLeads'),'all');
+  renderBanners();
+  renderReviews();
 }
 
-function showLock(ms) {
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('lockScreen').style.display = 'block';
-  startLockCountdown(ms);
+function showLogin(){
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('adminScreen').classList.remove('show');
 }
 
-function startLockCountdown(ms) {
+/* ── 로그인 ── */
+function checkLock(){
+  const now=Date.now();
+  if(lockUntil>now){
+    document.getElementById('lgForm').style.display='none';
+    document.getElementById('lockBox').classList.add('show');
+    startLockCountdown(lockUntil-now);
+  }
+}
+
+function startLockCountdown(ms){
   clearInterval(lockTimer);
-  let remaining = Math.ceil(ms / 1000);
-  updateLockTimer(remaining);
-  lockTimer = setInterval(() => {
-    remaining--;
-    if (remaining <= 0) {
+  let rem=Math.ceil(ms/1000);
+  updateLockTimer(rem);
+  lockTimer=setInterval(()=>{
+    rem--;
+    if(rem<=0){
       clearInterval(lockTimer);
       sessionStorage.removeItem('lockUntil');
       sessionStorage.removeItem('failCount');
-      failCount = 0;
-      lockUntil = 0;
-      document.getElementById('lockScreen').style.display = 'none';
-      document.getElementById('loginForm').style.display = 'block';
-    } else {
-      updateLockTimer(remaining);
-    }
-  }, 1000);
+      failCount=0; lockUntil=0;
+      document.getElementById('lockBox').classList.remove('show');
+      document.getElementById('lgForm').style.display='block';
+    } else { updateLockTimer(rem); }
+  },1000);
 }
 
-function updateLockTimer(s) {
-  const m = Math.floor(s / 60);
-  const sec = s % 60;
-  document.getElementById('lockTimer').textContent =
-    String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+function updateLockTimer(s){
+  const m=Math.floor(s/60),sec=s%60;
+  document.getElementById('lockTimer').textContent=String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
 }
 
-function togglePw() {
-  const input = document.getElementById('userPw');
-  const icon = document.getElementById('eyeIcon');
-  if (input.type === 'password') {
-    input.type = 'text';
-    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+function togglePw(){
+  const inp=document.getElementById('lgPw');
+  const icon=document.getElementById('eyeIcon');
+  if(inp.type==='password'){
+    inp.type='text';
+    icon.innerHTML='<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
   } else {
-    input.type = 'password';
-    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    inp.type='password';
+    icon.innerHTML='<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
 
-function showError(msg) {
-  const el = document.getElementById('errorMsg');
-  document.getElementById('errorText').textContent = msg;
-  el.classList.add('show');
-}
+function doLogin(){
+  if(lockUntil>Date.now()) return;
+  const id=document.getElementById('lgId').value.trim();
+  const pw=document.getElementById('lgPw').value;
+  if(!id||!pw){showLgError('아이디와 비밀번호를 모두 입력해주세요.');return;}
 
-function doLogin() {
-  if (checkLock()) return;
+  const btn=document.getElementById('lgBtn');
+  btn.disabled=true;
+  document.getElementById('lgSpinner').style.display='block';
+  document.getElementById('lgBtnText').textContent='확인 중...';
+  document.getElementById('lgError').classList.remove('show');
 
-  const id = document.getElementById('userId').value.trim();
-  const pw = document.getElementById('userPw').value;
-
-  if (!id || !pw) { showError('아이디와 비밀번호를 모두 입력해주세요.'); return; }
-
-  // 로딩
-  const btn = document.getElementById('loginBtn');
-  btn.disabled = true;
-  document.getElementById('spinner').style.display = 'block';
-  document.getElementById('loginBtnText').textContent = '확인 중...';
-  document.getElementById('errorMsg').classList.remove('show');
-
-  setTimeout(() => {
-    const match = ACCOUNTS.find(a => a.id === id && a.pw === pw);
-    if (match) {
+  setTimeout(()=>{
+    const match=ACCOUNTS.find(a=>a.id===id&&a.pw===pw);
+    if(match){
       sessionStorage.removeItem('failCount');
       sessionStorage.removeItem('lockUntil');
-      sessionStorage.setItem('adminAuth', 'true');
-      document.getElementById('loginBtnText').textContent = '로그인 성공!';
-      setTimeout(() => { window.location.href = 'admin_index.html'; }, 600);
+      sessionStorage.setItem('adminAuth','true');
+      document.getElementById('lgBtnText').textContent='로그인 성공!';
+      setTimeout(()=>showAdmin(),500);
     } else {
       failCount++;
-      sessionStorage.setItem('failCount', failCount);
-      btn.disabled = false;
-      document.getElementById('spinner').style.display = 'none';
-      document.getElementById('loginBtnText').textContent = '로그인';
-
-      if (failCount >= MAX_FAIL) {
-        lockUntil = Date.now() + LOCK_MIN * 60 * 1000;
-        sessionStorage.setItem('lockUntil', lockUntil);
-        showLock(LOCK_MIN * 60 * 1000);
+      sessionStorage.setItem('failCount',failCount);
+      btn.disabled=false;
+      document.getElementById('lgSpinner').style.display='none';
+      document.getElementById('lgBtnText').textContent='로그인';
+      if(failCount>=MAX_FAIL){
+        lockUntil=Date.now()+LOCK_MIN*60*1000;
+        sessionStorage.setItem('lockUntil',lockUntil);
+        document.getElementById('lgForm').style.display='none';
+        document.getElementById('lockBox').classList.add('show');
+        startLockCountdown(LOCK_MIN*60*1000);
       } else {
-        showError(`아이디 또는 비밀번호가 올바르지 않습니다. (${failCount}/${MAX_FAIL}회 실패)`);
+        showLgError(`아이디 또는 비밀번호가 올바르지 않습니다. (${failCount}/${MAX_FAIL}회 실패)`);
       }
     }
-  }, 700);
+  },700);
 }
 
-// 엔터키
-document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+function showLgError(msg){
+  document.getElementById('lgErrorText').textContent=msg;
+  document.getElementById('lgError').classList.add('show');
+}
 
-// 초기 잠금 체크
-checkLock();
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!sessionStorage.getItem('adminAuth'))doLogin();});
+
+/* ── 로그아웃 ── */
+function doLogout(){
+  if(confirm('로그아웃 하시겠습니까?')){
+    sessionStorage.removeItem('adminAuth');
+    showLogin();
+  }
+}
+
+/* ── 샘플 데이터 ── */
+const leads=[
+  {name:'박*백',phone:'010-2***-****',carrier:'LG',time:'2025-04-05 14:23',status:'new',contact:'오전 9시~11시'},
+  {name:'이*준',phone:'010-8***-****',carrier:'LG',time:'2025-04-05 13:11',status:'done',contact:'언제든지 가능'},
+  {name:'박*우',phone:'010-6***-****',carrier:'KT',time:'2025-04-05 11:52',status:'pending',contact:'오후 1시~3시'},
+  {name:'김*정',phone:'010-9***-****',carrier:'SK',time:'2025-04-05 10:30',status:'done',contact:'오전 11시~오후 1시'},
+  {name:'심*',phone:'010-3***-****',carrier:'SK',time:'2025-04-05 09:15',status:'new',contact:'오후 3시~6시'},
+];
+const banners=[
+  'SK · KT · LG 당일 개통 가능! 전담 매니저가 직접 처리해 드립니다 [당일개통]',
+  '정찰제 투명 공개 — 숨겨진 수수료 0원, 법정 한도 내 최대 지급 [투명정찰제]',
+  '가족 결합 할인 최적화 설계 무료 · 매달 통신비 절감 도와드립니다 [결합할인]',
+  '전담 매니저 1:1 배정 · 사후 AS까지 끝까지 책임집니다 [1:1관리]',
+  '365일 24시간 무료 상담 운영 중 · 지금 바로 전화하세요 [24H운영]',
+];
+const reviews=[
+  {quote:'"정확한 날짜에 입금 해주셨어요"',loc:'서울시 강*구',text:'약정 끝나서 인터넷 알아보는데 통신클럽에서 한 번에 비교해서 딱 맞는 거 찾아주셨어요.'},
+  {quote:'"설치 다음날 바로 입금됐어요"',loc:'경기도 성*시',text:'상담사분이 정말 친절하셨어요. 다른 곳보다 혜택도 훨씬 좋고 설치도 바로 다음날 와주셨네요!'},
+  {quote:'"3년 약정 끝나면 또 여기서 할게요"',loc:'부산시 해*구',text:'매번 최고의 조건으로 챙겨주셔서 감사해요. AS도 빠르게 해결해주셨습니다.'},
+];
+
+function statusLabel(s){
+  const m={new:'<span class="status-badge new">신규</span>',done:'<span class="status-badge done">완료</span>',pending:'<span class="status-badge pending">대기</span>'};
+  return m[s]||s;
+}
+function renderLeads(tbody,cols){
+  tbody.innerHTML=leads.map(l=>`<tr>
+    <td>${l.name}</td><td>${l.phone}</td><td>${l.carrier}</td>
+    ${cols==='all'?`<td>${l.contact}</td>`:''}
+    <td>${l.time}</td><td>${statusLabel(l.status)}</td>
+    <td style="display:flex;gap:4px"><button class="action-btn">완료</button><button class="action-btn red">삭제</button></td>
+  </tr>`).join('');
+}
+function renderBanners(){
+  document.getElementById('bannerList').innerHTML=banners.map((b,i)=>`
+    <div class="banner-item">
+      <span class="banner-drag">⠿</span>
+      <span class="banner-text">${b}</span>
+      <button class="banner-edit" onclick="editBanner(${i})">수정</button>
+      <button class="banner-del" onclick="delBanner(${i})">삭제</button>
+    </div>`).join('');
+}
+function addBanner(){const t=prompt('배너 문구를 입력하세요:');if(t){banners.push(t);renderBanners();}}
+function editBanner(i){const t=prompt('배너 문구 수정:',banners[i]);if(t){banners[i]=t;renderBanners();}}
+function delBanner(i){if(confirm('삭제하시겠습니까?')){banners.splice(i,1);renderBanners();}}
+
+function renderReviews(){
+  document.getElementById('reviewList').innerHTML=reviews.map((r,i)=>`
+    <div class="banner-item" style="flex-direction:column;align-items:flex-start;gap:6px;padding:14px 0">
+      <div style="display:flex;align-items:center;gap:8px;width:100%">
+        <span style="font-size:13px;font-weight:700;flex:1">${r.quote} · ${r.loc}</span>
+        <button class="banner-edit" onclick="editReview(${i})">수정</button>
+        <button class="banner-del" onclick="delReview(${i})">삭제</button>
+      </div>
+      <div style="font-size:12px;color:#94A3B8">${r.text}</div>
+    </div>`).join('');
+}
+function addReview(){const q=prompt('인용문:');const l=prompt('지역:');const t=prompt('후기 내용:');if(q&&l&&t){reviews.push({quote:q,loc:l,text:t});renderReviews();}}
+function editReview(i){const q=prompt('인용문:',reviews[i].quote);if(q){reviews[i].quote=q;renderReviews();}}
+function delReview(i){if(confirm('삭제?')){reviews.splice(i,1);renderReviews();}}
+
+function goPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+function showToast(msg='저장되었습니다!'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function exportCSV(){
+  const rows=[['이름','연락처','통신사','접수시간','상태'],...leads.map(l=>[l.name,l.phone,l.carrier,l.time,l.status])];
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='통신클럽_접수현황.csv';
+  a.click();
+}
 </script>
 </body>
 </html>
