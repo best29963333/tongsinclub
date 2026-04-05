@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>통신클럽 - 인터넷 가입 현금 최대 30만원</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--pr:#2563EB;--pd:#1D4ED8;--pl:#EFF6FF;--rd:#DC2626;--gn:#16A34A;--g1:#F8FAFC;--g2:#F1F5F9;--g3:#E2E8F0;--g4:#94A3B8;--g6:#475569;--g8:#1E293B}
+body{font-family:'Noto Sans KR',sans-serif;background:#fff;color:var(--g8);font-size:15px}
+
+/* ── 고정 카운트다운 ── */
+.top-bar{background:#1a3fa8;height:42px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:500;color:#fff}
+.top-bar .cd{background:rgba(0,0,0,.3);border-radius:6px;padding:3px 12px;font-size:14px;font-weight:900;color:#FDE68A;letter-spacing:1px;font-variant-numeric:tabular-nums}
+
+/* ── 슬라이딩 배너 ── */
+.sl-bar{background:var(--pr);height:44px;overflow:hidden;position:relative;display:flex;align-items:center}
+.sl-slides{display:flex;width:100%;height:100%;position:relative}
+.sl-slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:12px;font-size:13px;font-weight:500;color:#fff;opacity:0;transition:opacity .5s;pointer-events:none}
+.sl-slide.on{opacity:1;pointer-events:auto}
+.sl-slide strong{color:#FDE68A;font-weight:700}
+.sl-badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.sl-dots{position:absolute;right:14px;top:50%;transform:translateY(-50%);display:flex;gap:5px;z-index:10}
+.sl-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.35);border:none;cursor:pointer;transition:all .3s;padding:0}
+.sl-dot.on{background:#fff;width:16px;border-radius:3px}
+.sl-arr{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:10}
+.sl-arr:hover{background:rgba(255,255,255,.28)}
+.sl-arr.l{left:10px}.sl-arr.r{right:48px}
+
+/* ── HEADER ── */
+header{background:#fff;border-bottom:2px solid var(--pr);padding:0 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.hi{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900;color:var(--pr);letter-spacing:-.5px}
+.logo-ic{width:36px;height:36px;background:var(--pr);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-b{background:var(--pr);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.htel{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:900;color:var(--pr)}
+.htel small{font-size:11px;color:var(--g4);font-weight:400;display:block;text-align:right;margin-top:1px}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#EFF6FF,#DBEAFE 50%,#E0F2FE);padding:50px 20px 0;overflow:hidden}
+.hero-in{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 400px;gap:40px;align-items:start}
+.h-tag{display:inline-flex;align-items:center;gap:6px;background:var(--pr);color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;margin-bottom:16px}
+.dot-live{width:7px;height:7px;background:#86EFAC;border-radius:50%;animation:pl 1.5s infinite;flex-shrink:0}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:40px;font-weight:900;line-height:1.3;margin-bottom:16px}
+.hero h1 em{color:var(--pr);font-style:normal}
+.hero h1 strong{color:var(--rd)}
+.hero-sub{font-size:16px;color:var(--g6);line-height:1.6;margin-bottom:28px}
+.hbadges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px}
+.hbadge{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #DBEAFE;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--g8);box-shadow:0 1px 4px rgba(37,99,235,.08)}
+.hbadge.r{border-color:#FEE2E2;color:var(--rd);background:#FFF5F5}
+.bi{width:18px;height:18px;flex-shrink:0}
+.stats{display:flex;gap:20px;margin-bottom:30px}
+.si{text-align:center}
+.sn{font-size:24px;font-weight:900;color:var(--pr);letter-spacing:-1px}
+.sl2{font-size:12px;color:var(--g4);margin-top:2px}
+.sdiv{width:1px;background:var(--g3)}
+
+/* ── FORM ── */
+.hform{background:#fff;border-radius:16px;box-shadow:0 4px 40px rgba(37,99,235,.15);overflow:hidden}
+
+/* 폼 헤더 — 클릭 가능 */
+.fhead{background:linear-gradient(135deg,var(--pr),var(--pd));color:#fff;padding:20px 24px;text-align:center;cursor:pointer;user-select:none;position:relative}
+.fhead .ft{font-size:17px;font-weight:800}
+.fhead .fs{font-size:12px;opacity:.85;margin-top:4px}
+.fhead .fbs{display:flex;gap:8px;justify-content:center;margin-top:10px}
+.fb{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);font-size:11px;font-weight:700;color:#fff;padding:3px 10px;border-radius:20px}
+.fhead.collapsed .fbs{display:none}
+.fhead-arrow{position:absolute;right:16px;top:50%;transform:translateY(-50%);width:28px;height:28px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.fhead-arrow svg{transition:transform .3s}
+.fhead-arrow.open svg{transform:rotate(180deg)}
+
+/* 폼 바디 슬라이드 */
+.fbody-wrap{overflow:hidden;transition:max-height .4s ease, opacity .3s ease;max-height:0;opacity:0}
+.fbody-wrap.open{max-height:900px;opacity:1}
+
+.fbody{padding:24px}
+.fg{margin-bottom:14px}
+.fl{font-size:13px;font-weight:700;color:var(--g8);margin-bottom:7px;display:block}
+.fi{width:100%;border:1.5px solid var(--g3);border-radius:8px;padding:12px 14px;font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;transition:border .2s;color:var(--g8);background:#F8FAFC}
+.fi:focus{border-color:var(--pr);background:#fff}
+.fi::placeholder{color:var(--g4)}
+
+/* 연락처 — 삐져나오지 않게 */
+.trow{display:flex;align-items:center;gap:4px;width:100%}
+.tsel{border:1.5px solid var(--g3);border-radius:8px;padding:11px 6px;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;color:var(--g8);background:#F8FAFC;flex-shrink:0;width:68px}
+.tdiv{color:var(--g4);font-weight:700;font-size:14px;flex-shrink:0}
+.ti{flex:1;min-width:0;border:1.5px solid var(--g3);border-radius:8px;padding:11px 6px;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;color:var(--g8);background:#F8FAFC;text-align:center}
+.ti:focus{border-color:var(--pr);background:#fff}
+.ti::placeholder{color:var(--g4);font-size:11px}
+
+.cbts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.cbt{border:1.5px solid var(--g3);border-radius:8px;padding:12px;text-align:center;font-size:15px;font-weight:700;color:var(--g6);background:#F8FAFC;cursor:pointer;transition:all .15s;font-family:'Noto Sans KR',sans-serif}
+.cbt:hover{border-color:var(--pr);color:var(--pr)}
+.cbt.on{border-color:var(--pr);background:var(--pr);color:#fff}
+.tsel2{width:100%;border:1.5px solid var(--g3);border-radius:8px;padding:12px 14px;font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;color:var(--g8);background:#F8FAFC}
+.agbox{background:#F8FAFC;border:1px solid var(--g3);border-radius:8px;padding:14px 16px;margin-bottom:14px}
+.ag-all{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--g8);padding-bottom:10px;border-bottom:1px solid var(--g3);margin-bottom:10px;cursor:pointer}
+.ag-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--g6);padding:3px 0;cursor:pointer}
+.ag-row a{color:var(--pr);text-decoration:underline;font-size:11px}
+input[type="checkbox"]{width:15px;height:15px;accent-color:var(--pr);flex-shrink:0;cursor:pointer}
+.sbtn{width:100%;background:#FBBF24;color:#1A1208;border:none;border-radius:10px;padding:16px;font-size:17px;font-weight:900;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all .2s;letter-spacing:-.3px}
+.sbtn:hover{background:#F59E0B;transform:translateY(-1px)}
+.done-msg{display:none;text-align:center;padding:28px 20px}
+.done-icon{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#16A34A,#4ADE80);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.done-tit{font-size:18px;font-weight:900;margin-bottom:6px}
+.done-sub{font-size:13px;color:var(--g4);line-height:1.6}
+
+/* ── SECTIONS ── */
+section{padding:60px 20px}
+.si2{max-width:1100px;margin:0 auto}
+.stag{display:inline-flex;align-items:center;gap:6px;background:var(--pl);color:var(--pr);font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:10px}
+.stit{font-size:28px;font-weight:900;line-height:1.3;margin-bottom:8px}
+.stit em{color:var(--pr);font-style:normal}
+.ssub{color:var(--g4);font-size:14px;margin-bottom:36px}
+
+/* ── 체크리스트 ── */
+.cl-sec{background:#fff;padding:60px 20px}
+.cl-in{max-width:600px;margin:0 auto;text-align:center}
+.cl-cta{font-size:28px;font-weight:900;line-height:1.4;color:var(--g8);margin-bottom:8px}
+.cl-cta em{color:var(--rd);font-style:normal}
+.cl-csub{font-size:15px;color:var(--g4);margin-bottom:36px}
+.cl-items{display:inline-flex;flex-direction:column;gap:14px;text-align:left}
+.cl-item{display:flex;align-items:center;gap:12px;font-size:17px;font-weight:700;color:var(--g8);line-height:1.4}
+.cl-sq{width:26px;height:26px;background:#16A34A;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── WHY ── */
+.wgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.wcard{border:1.5px solid var(--g2);border-radius:16px;padding:28px 20px;text-align:center;transition:all .2s}
+.wcard:hover{border-color:var(--pr);box-shadow:0 4px 20px rgba(37,99,235,.1);transform:translateY(-2px)}
+.wic{width:60px;height:60px;border-radius:14px;background:var(--pl);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.wnum{font-size:22px;font-weight:900;color:var(--pr);margin-bottom:4px}
+.wlb{font-size:13px;color:var(--g6);line-height:1.5}
+
+/* ── TABLE ── */
+.cwrap{overflow-x:auto}
+table.ct{width:100%;border-collapse:collapse;min-width:600px}
+table.ct thead tr{background:var(--pr)}
+table.ct th{padding:14px 16px;color:#fff;font-size:14px;font-weight:700;text-align:center}
+table.ct th:first-child{text-align:left;border-radius:12px 0 0 0}
+table.ct th:last-child{border-radius:0 12px 0 0}
+table.ct tbody tr{border-bottom:1px solid var(--g2)}
+table.ct tbody tr:hover{background:var(--pl)}
+table.ct td{padding:14px 16px;font-size:14px;text-align:center;vertical-align:middle}
+table.ct td:first-child{text-align:left;font-weight:600}
+.ca{font-size:16px;font-weight:900;color:var(--rd)}
+.tbst{display:inline-block;background:var(--rd);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:6px}
+.tbnw{display:inline-block;background:var(--gn);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:6px}
+.tnote{font-size:12px;color:var(--g4);margin-top:10px}
+.pdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+
+/* ── 실시간 ── */
+.rt-sec{background:var(--g1);padding:40px 20px}
+.rt-in{max-width:760px;margin:0 auto}
+.rt-tit{text-align:center;font-size:20px;font-weight:900;margin-bottom:20px}
+table.rt{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
+table.rt thead tr{background:#4FC3F7}
+table.rt th{padding:13px 16px;color:#fff;font-size:14px;font-weight:700;text-align:center}
+table.rt tbody tr{border-bottom:1px solid var(--g3);background:#fff}
+table.rt tbody tr:first-child{background:#EFF6FF;font-weight:700}
+table.rt tbody tr:hover{background:var(--pl)}
+table.rt td{padding:12px 16px;font-size:13px;text-align:center;color:var(--g8)}
+.rtb{display:inline-block;background:var(--pl);color:var(--pr);font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+
+/* ── PROCESS ── */
+.pbg{background:var(--g1)}
+.psteps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.psteps::before{content:'';position:absolute;top:36px;left:12.5%;right:12.5%;height:2px;background:linear-gradient(90deg,var(--pr),#93C5FD);z-index:0}
+.pbox{text-align:center;position:relative;z-index:1;padding:0 10px}
+.pc{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--pr),#60A5FA);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 4px 16px rgba(37,99,235,.25);color:#fff}
+.pn{font-size:10px;font-weight:700;opacity:.8;letter-spacing:.5px}
+.pt{font-size:14px;font-weight:700;margin-bottom:6px}
+.pd{font-size:12px;color:var(--g4);line-height:1.6}
+
+/* ── REVIEWS ── */
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.rcard{background:#fff;border:1.5px solid var(--g2);border-radius:16px;padding:22px 20px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:all .2s}
+.rcard:hover{border-color:var(--pr);box-shadow:0 4px 20px rgba(37,99,235,.1)}
+.rcard.qs{background:#FEFCE8;border-color:#FDE68A}
+.rstars{display:flex;gap:3px;margin-bottom:8px}
+.star{width:14px;height:14px;fill:#CA8A04}
+.rq{font-size:17px;font-weight:900;color:var(--g8);line-height:1.5;margin-bottom:10px}
+.rtxt{font-size:14px;line-height:1.7;color:var(--g6);margin-bottom:14px}
+.rmeta{display:flex;align-items:center;gap:8px}
+.rav{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pr),#60A5FA);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700}
+.rname{font-size:13px;font-weight:600}
+.rdate{font-size:11px;color:var(--g4)}
+.rtag{margin-left:auto;background:var(--pl);color:var(--pr);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
+.rloc{font-size:13px;font-weight:700;color:var(--g8);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+
+/* ── NOTICE ── */
+.nc-sec{background:#fff;padding:60px 20px;border-top:1px solid var(--g2)}
+.nc-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;max-width:1100px;margin:0 auto}
+.nc-tit{font-size:26px;font-weight:900;line-height:1.4;margin-bottom:14px}
+.nc-tit span{color:var(--pr)}
+.nc-list{list-style:none}
+.nc-list li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--g6);padding:6px 0;line-height:1.5}
+.nc-cta{text-align:center}
+.ctabtn{display:inline-flex;align-items:center;gap:10px;background:#FBBF24;color:#92400E;font-size:18px;font-weight:900;padding:18px 40px;border-radius:12px;border:none;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:background .25s,transform .2s;letter-spacing:-.3px}
+.ctabtn:hover{background:#F59E0B;transform:translateY(-2px)}
+.ctasub{font-size:13px;color:var(--g6);margin-top:12px;font-weight:700}
+
+/* ── FOOTER ── */
+footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
+.fin{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.flogo{font-size:18px;font-weight:900;color:var(--pr);display:flex;align-items:center;gap:8px}
+.finfo{font-size:12px;color:var(--g4);line-height:1.8;margin-top:6px}
+.ftel{font-size:16px;font-weight:700;color:var(--pr);display:flex;align-items:center;gap:6px}
+
+/* ── FLOAT ── */
+.flbtns{position:fixed;right:20px;bottom:30px;display:flex;flex-direction:column;gap:10px;z-index:999}
+.flbtn{width:56px;height:56px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.18);border:none;transition:all .2s}
+.flbtn:hover{transform:scale(1.08)}
+.flbtn.ka{background:#FEE500}
+.flbtn.ca{background:var(--pr)}
+.fllb{font-size:9px;font-weight:700;line-height:1;color:#1A1A1A}
+.flbtn.ca .fllb{color:#fff}
+
+/* ── MODAL ── */
+.mbk{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center}
+.mbk.show{display:flex}
+.mbox{background:#fff;border-radius:20px;padding:40px 32px;text-align:center;max-width:360px;width:90%;animation:pi .3s ease}
+@keyframes pi{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.mic{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#16A34A,#4ADE80);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.mtit{font-size:22px;font-weight:900;margin-bottom:8px}
+.mdesc{font-size:14px;color:var(--g4);line-height:1.6;margin-bottom:20px}
+.minf{background:var(--pl);border-radius:10px;padding:16px;margin-bottom:20px;text-align:left}
+.mr{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
+.mr span:first-child{color:var(--g4)}
+.mcl{width:100%;background:var(--pr);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer}
+
+@media(max-width:768px){
+  .hero-in{grid-template-columns:1fr;gap:24px}
+  .hero h1{font-size:28px}
+  .wgrid{grid-template-columns:1fr 1fr}
+  .psteps{grid-template-columns:1fr 1fr;gap:20px}
+  .psteps::before{display:none}
+  .rgrid{grid-template-columns:1fr}
+  .nc-grid{grid-template-columns:1fr;gap:20px}
+  .fin{flex-direction:column}
+  .sl-arr{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- 고정 카운트다운 -->
+<div class="top-bar">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+  <span>이벤트 마감까지</span>
+  <span class="cd" id="cd">00:00:00</span>
+  <span>남았습니다.</span>
+</div>
+
+<!-- 슬라이딩 배너 -->
+<div class="sl-bar">
+  <div class="sl-slides" id="slSlides">
+    <div class="sl-slide on"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>SK · KT · LG 당일 개통 가능! 전담 매니저가 <strong>직접 처리</strong>해 드립니다</span><span class="sl-badge">당일개통</span></div>
+    <div class="sl-slide"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>정찰제 투명 공개 — 숨겨진 수수료 <strong>0원</strong>, 법정 한도 내 최대 지급</span><span class="sl-badge">투명정찰제</span></div>
+    <div class="sl-slide"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>가족 결합 할인 최적화 설계 <strong>무료</strong> · 매달 통신비 절감 도와드립니다</span><span class="sl-badge">결합할인</span></div>
+    <div class="sl-slide"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>전담 매니저 1:1 배정 · 사후 AS까지 <strong>끝까지 책임</strong>집니다</span><span class="sl-badge">1:1관리</span></div>
+    <div class="sl-slide"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span><strong>365일 24시간</strong> 무료 상담 운영 중 · 지금 바로 전화하세요</span><span class="sl-badge">24H운영</span></div>
+  </div>
+  <button class="sl-arr l" id="slPrev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+  <button class="sl-arr r" id="slNext"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+  <div class="sl-dots" id="slDots"></div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="hi">
+    <div class="logo"><div class="logo-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M1 6l11 7L23 6"/><path d="M1 6a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2z"/></svg></div>통신클럽<span class="logo-b">공식</span></div>
+    <div class="htel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><div>0000-0000<small>365일 24시간 무료상담</small></div></div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="h-tag"><span class="dot-live"></span> 지금 실시간 상담 가능</div>
+      <h1><em>최저 요금</em>으로 인터넷 가입,<br><strong>현금 최대 30만원</strong> 받으세요</h1>
+      <p class="hero-sub">통신클럽은 SK·KT·LG 공식 대리점입니다.<br>전담 매니저가 딱 맞는 요금제를 찾아드립니다.</p>
+      <div class="hbadges">
+        <div class="hbadge"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>설치비 0원</div>
+        <div class="hbadge"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>현금 당일 지급</div>
+        <div class="hbadge r"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="var(--rd)" stroke-width="2.2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>가입비 무료</div>
+        <div class="hbadge"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>당일 개통</div>
+        <div class="hbadge"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>정찰제</div>
+      </div>
+      <div class="stats">
+        <div class="si"><div class="sn">98,000+</div><div class="sl2">누적 가입자</div></div>
+        <div class="sdiv"></div>
+        <div class="si"><div class="sn">4.9점</div><div class="sl2">평균 만족도</div></div>
+        <div class="sdiv"></div>
+        <div class="si"><div class="sn">30만원</div><div class="sl2">최대 현금</div></div>
+        <div class="sdiv"></div>
+        <div class="si"><div class="sn">당일</div><div class="sl2">현금 지급</div></div>
+      </div>
+    </div>
+
+    <!-- FORM — 기본 접힌 상태 -->
+    <div class="hform">
+      <div class="fhead collapsed" id="fhead" onclick="toggleForm()">
+        <div class="ft">내 최대지원금 확인하기</div>
+        <div class="fs">전담 매니저가 24시간 이내 연락드립니다</div>
+        <div class="fbs"><span class="fb">무료상담</span><span class="fb">설치비 0원</span><span class="fb">현금 즉시지급</span></div>
+        <div class="fhead-arrow" id="arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="fbody-wrap" id="fbodyWrap">
+        <div class="fbody" id="formBody">
+          <div class="fg"><label class="fl">이름</label><input class="fi" id="nm" type="text" placeholder="이름"></div>
+          <div class="fg">
+            <label class="fl">연락처</label>
+            <div class="trow">
+              <select class="tsel" id="t1"><option>010</option><option>011</option><option>016</option><option>017</option><option>019</option></select>
+              <span class="tdiv">-</span>
+              <input class="ti" id="t2" type="tel" placeholder="0000" maxlength="4">
+              <span class="tdiv">-</span>
+              <input class="ti" id="t3" type="tel" placeholder="0000" maxlength="4">
+            </div>
+          </div>
+          <div class="fg">
+            <label class="fl">희망 통신사</label>
+            <div class="cbts">
+              <button class="cbt" onclick="selC(this,'SK')">SK</button>
+              <button class="cbt" onclick="selC(this,'KT')">KT</button>
+              <button class="cbt" onclick="selC(this,'LG')">LG</button>
+            </div>
+          </div>
+          <div class="fg">
+            <label class="fl">연락받고 싶은 시간</label>
+            <select class="tsel2"><option value="">-연락받고 싶은 시간 선택-</option><option>오전 9시~11시</option><option>오전 11시~오후 1시</option><option>오후 1시~3시</option><option>오후 3시~6시</option><option>오후 6시~9시</option><option>언제든지 가능</option></select>
+          </div>
+          <div class="agbox">
+            <label class="ag-all"><input type="checkbox" id="agAll" onchange="togAg(this)">전체동의 <span style="font-size:12px;color:var(--g4);font-weight:500">(수집/이용/3자제공)</span></label>
+            <label class="ag-row"><input type="checkbox" class="agc"> 개인정보 수집·이용 동의 <a href="#">[보기]</a></label>
+            <label class="ag-row"><input type="checkbox" class="agc"> 광고성 정보 수신 동의 <a href="#">[보기]</a></label>
+            <label class="ag-row"><input type="checkbox" class="agc"> 개인정보 제3자제공 동의 <a href="#">[보기]</a></label>
+          </div>
+          <button class="sbtn" onclick="doSubmit()">내 최대지원금 확인하기</button>
+        </div>
+        <div class="done-msg" id="doneMsg">
+          <div class="done-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="done-tit">접수 완료!</div>
+          <div class="done-sub">전담 매니저가 24시간 이내 연락드립니다.<br>설치비 무료 + 현금 혜택 자동 적용!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 체크리스트 -->
+<section class="cl-sec">
+  <div class="cl-in">
+    <div class="cl-cta"><em>하나라도 해당</em> 한다면<br>인터넷을 갈아타야합니다.</div>
+    <div class="cl-csub">통신클럽이 최적의 요금제와 최대 혜택을 찾아드립니다</div>
+    <div class="cl-items">
+      <div class="cl-item"><div class="cl-sq"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>혜택 하나 못받고 3년 넘게 인터넷 쓰고 있어요</div>
+      <div class="cl-item"><div class="cl-sq"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>휴대폰 결합해서 요금할인 서비스 받고 싶어요</div>
+      <div class="cl-item"><div class="cl-sq"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>인터넷이 느리고 끊겨서 진짜 빠른 속도를 원해요</div>
+      <div class="cl-item"><div class="cl-sq"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>셋톱박스든 모뎀이든 전부 구형 제품 쓰고 있어요</div>
+      <div class="cl-item"><div class="cl-sq"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>이사 또는 분가를 준비중이에요</div>
+      <div class="cl-item"><div class="cl-sq"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>사업장을 신규 개업할 예정입니다</div>
+      <div class="cl-item"><div class="cl-sq"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>남들처럼 제휴카드로 요금할인 빵빵하게 받을래요</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section>
+  <div class="si2">
+    <div class="stag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>통신클럽만의 차별점</div>
+    <h2 class="stit"><em>왜 통신클럽</em>인가요?</h2>
+    <p class="ssub">전국 최다 가입자가 증명하는 4가지 이유</p>
+    <div class="wgrid">
+      <div class="wcard"><div class="wic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><div class="wnum">30만원</div><div class="wlb">최대 현금 지원<br>설치 당일 즉시 지급</div></div>
+      <div class="wcard"><div class="wic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="wnum">정찰제</div><div class="wlb">투명한 사은품 공개<br>숨겨진 수수료 없음</div></div>
+      <div class="wcard"><div class="wic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="wnum">1:1</div><div class="wlb">전담 매니저 배정<br>전화·카카오 모두 가능</div></div>
+      <div class="wcard"><div class="wic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="wnum">당일</div><div class="wlb">당일 개통 가능<br>365일 24시간 운영</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TABLE -->
+<section style="background:var(--g1);padding:60px 20px">
+  <div class="si2">
+    <div class="stag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>요금 비교</div>
+    <h2 class="stit">통신사별 <em>현금 지원금</em> 비교</h2>
+    <p class="ssub">통신클럽은 법정 한도 내 최대 금액을 투명하게 공개합니다</p>
+    <div class="cwrap">
+      <table class="ct">
+        <thead><tr><th>통신사 / 상품</th><th>속도</th><th>월정액</th><th>현금 지원금</th><th>특이사항</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pdot" style="background:#EF4444"></span>SK브로드밴드<span class="tbst">BEST</span></td><td>1Gbps</td><td>27,500원~</td><td><span class="ca">300,000원</span></td><td>TV결합 시 추가 혜택</td></tr>
+          <tr><td><span class="pdot" style="background:#3B82F6"></span>KT<span class="tbnw">NEW</span></td><td>1Gbps</td><td>27,500원~</td><td><span class="ca">280,000원</span></td><td>기가인터넷 기본 제공</td></tr>
+          <tr><td><span class="pdot" style="background:#8B5CF6"></span>LG U+</td><td>1Gbps</td><td>27,500원~</td><td><span class="ca">260,000원</span></td><td>U+TV 동시 가입 가능</td></tr>
+          <tr><td><span class="pdot" style="background:#EF4444"></span>SK 500M</td><td>500Mbps</td><td>22,000원~</td><td><span class="ca">220,000원</span></td><td>1인 가구 추천</td></tr>
+          <tr><td><span class="pdot" style="background:#3B82F6"></span>KT 2.5G</td><td>2.5Gbps</td><td>33,000원~</td><td><span class="ca">200,000원</span></td><td>초고속 프리미엄</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tnote">※ 위 금액은 경품고시제 내 최대 지원 기준이며, 거주지역·약정기간에 따라 상이할 수 있습니다.</p>
+  </div>
+</section>
+
+<!-- 실시간 접수 -->
+<div class="rt-sec">
+  <div class="rt-in">
+    <div class="rt-tit">실시간 접수 현황</div>
+    <table class="rt">
+      <thead><tr><th>이름</th><th>연락처</th><th>희망 통신사</th></tr></thead>
+      <tbody id="rtBody">
+        <tr><td>박*백</td><td>010-2***-****</td><td><span class="rtb">L*</span></td></tr>
+        <tr><td>이*준</td><td>010-8***-****</td><td><span class="rtb">L*</span></td></tr>
+        <tr><td>박*우</td><td>010-6***-****</td><td><span class="rtb">K*</span></td></tr>
+        <tr><td>김*정</td><td>010-9***-****</td><td><span class="rtb">S*</span></td></tr>
+        <tr><td>심*</td><td>010-3***-****</td><td><span class="rtb">S*</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PROCESS -->
+<section class="pbg">
+  <div class="si2">
+    <div class="stag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>가입 절차</div>
+    <h2 class="stit"><em>딱 4단계</em>로 끝납니다</h2>
+    <p class="ssub">복잡한 절차 없이 전담 매니저가 모두 처리해 드립니다</p>
+    <div class="psteps">
+      <div class="pbox"><div class="pc"><span class="pn">STEP 1</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="pt">상담 신청</div><div class="pd">이름·번호 입력<br>30초 완료</div></div>
+      <div class="pbox"><div class="pc"><span class="pn">STEP 2</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div class="pt">매니저 연락</div><div class="pd">전담 매니저가<br>맞춤 설계</div></div>
+      <div class="pbox"><div class="pc"><span class="pn">STEP 3</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div class="pt">설치 예약</div><div class="pd">원하는 날짜에<br>기사 방문</div></div>
+      <div class="pbox"><div class="pc"><span class="pn">STEP 4</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="pt">현금 지급</div><div class="pd">설치 당일<br>즉시 입금</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section>
+  <div class="si2">
+    <div class="stag"><svg width="12" height="12" viewBox="0 0 24 24" fill="#CA8A04" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>실제 후기</div>
+    <h2 class="stit"><em>98,000명</em>이 선택한 이유</h2>
+    <p class="ssub">꾸미지 않은 실제 가입 고객 후기입니다</p>
+    <div class="rgrid">
+      <div class="rcard qs"><div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="rq">"정확한 날짜에<br>입금 해주셨어요"</div><div class="rloc"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>서울시 강*구</div><p class="rtxt">약정 끝나서 인터넷 알아보는데 통신클럽에서 한 번에 비교해서 딱 맞는 거 찾아주셨어요.</p></div>
+      <div class="rcard"><div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><p class="rtxt">통신클럽 아니었으면 혜택금이 있는지도 몰랐을 거예요. 매니저분이 알아서 맞춤 요금 찾아주니 너무 간편했습니다!</p><div class="rmeta"><div class="rav">K</div><div><div class="rname">@kim*****님</div><div class="rdate">2025.12.03 · SK 1G 가입</div></div><span class="rtag">현금 30만</span></div></div>
+      <div class="rcard qs"><div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="rq">"설치 다음날<br>바로 입금됐어요"</div><div class="rloc"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>경기도 성*시</div><p class="rtxt">상담사분이 정말 친절하셨어요. 다른 곳보다 혜택도 훨씬 좋고 설치도 바로 다음날 와주셨네요!</p></div>
+      <div class="rcard"><div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><p class="rtxt">여기저기 비교해봤는데 여기가 제일 많이 챙겨주는 것 같아요. 설치 당일 입금 바로 확인했어요!</p><div class="rmeta"><div class="rav">L</div><div><div class="rname">@lee*****님</div><div class="rdate">2025.10.29 · LG 1G 가입</div></div><span class="rtag">즉시입금</span></div></div>
+      <div class="rcard"><div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><p class="rtxt">이사하면서 새로 가입했는데 현금도 받고 TV도 같이 묶어서 더 저렴해졌어요. 결합 할인 감사해요.</p><div class="rmeta"><div class="rav">S</div><div><div class="rname">@shin*****님</div><div class="rdate">2025.09.08 · KT 인터넷+TV</div></div><span class="rtag">인터넷+TV</span></div></div>
+      <div class="rcard qs"><div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="rq">"3년 약정 끝나면<br>또 여기서 할게요"</div><div class="rloc"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>부산시 해*구</div><p class="rtxt">매번 최고의 조건으로 챙겨주셔서 감사해요. AS도 빠르게 해결해주셨습니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- NOTICE -->
+<section class="nc-sec">
+  <div class="nc-grid">
+    <div>
+      <h2 class="nc-tit"><span>통신클럽</span>에서 가입하면<br>이런 혜택이 가능한 이유</h2>
+      <ul class="nc-list">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.5" style="flex-shrink:0;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg>SK·KT·LG 공식 대리점으로 최대 지원금 직접 지급</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.5" style="flex-shrink:0;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg>경품고시제 준수, 법정 한도 내 최대 금액 투명 공개</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.5" style="flex-shrink:0;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg>설치 당일 현금 입금 — 기다림 없이 즉시 지급</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.5" style="flex-shrink:0;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg>전담 매니저 1:1 배정, 사후 AS까지 책임</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.5" style="flex-shrink:0;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg>가족 결합 할인 최적화 설계 무료 제공</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.5" style="flex-shrink:0;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg>전화·카카오·채팅 등 원하는 채널로 상담 가능</li>
+      </ul>
+    </div>
+    <div class="nc-cta">
+      <button class="ctabtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>내 지원금 조회하기</button>
+      <p class="ctasub">365일 24시간 운영 · 상담 완전 무료</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fin">
+    <div>
+      <div class="flogo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M1 6l11 7L23 6"/><path d="M1 6a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2z"/></svg>통신클럽</div>
+      <div class="finfo">사업자등록번호: 000-00-00000 · 통신판매업신고: 제0000-서울-00000호<br>주소: 서울특별시 OO구 OO로 00 OO빌딩 0층<br>© 2025 통신클럽. All rights reserved.</div>
+    </div>
+    <div style="text-align:right">
+      <div class="ftel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>0000-0000</div>
+      <div style="font-size:12px;color:var(--g4);margin-top:4px">365일 24시간 무료상담</div>
+    </div>
+  </div>
+</footer>
+
+<!-- FLOAT -->
+<div class="flbtns">
+  <button class="flbtn ka"><svg width="22" height="22" viewBox="0 0 24 24" fill="#1A1A1A"><path d="M12 3C6.477 3 2 6.582 2 11c0 2.709 1.57 5.104 3.969 6.629L4.9 21l4.23-2.115C10.012 19.28 11 19.4 12 19.4c5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg><span class="fllb">카카오</span></button>
+  <button class="flbtn ca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span class="fllb">전화</span></button>
+</div>
+
+<!-- MODAL -->
+<div class="mbk" id="modal" onclick="if(event.target===this)closeM()">
+  <div class="mbox">
+    <div class="mic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="mtit">접수 완료!</div>
+    <div class="mdesc">전담 매니저가 24시간 이내 연락드립니다.<br>설치비 무료 + 현금 혜택이 자동 적용됩니다!</div>
+    <div class="minf">
+      <div class="mr"><span>신청자</span><span id="cn" style="font-weight:700">-</span></div>
+      <div class="mr"><span>연락처</span><span id="cp" style="font-weight:700">-</span></div>
+      <div class="mr"><span>희망 통신사</span><span id="cc" style="font-weight:700;color:var(--pr)">-</span></div>
+      <div class="mr"><span>접수 상태</span><span style="color:var(--gn);font-weight:700">접수완료</span></div>
+    </div>
+    <button class="mcl" onclick="closeM()">확인</button>
+  </div>
+</div>
+
+<script>
+/* 카운트다운 */
+function tick(){const n=new Date(),mid=new Date(n);mid.setHours(24,0,0,0);const d=Math.max(0,Math.floor((mid-n)/1000));const p=v=>String(v).padStart(2,'0');document.getElementById('cd').textContent=p(Math.floor(d/3600))+':'+p(Math.floor(d%3600/60))+':'+p(d%60);}
+tick();setInterval(tick,1000);
+
+/* 슬라이딩 배너 */
+(function(){const slides=document.querySelectorAll('.sl-slide');const dw=document.getElementById('slDots');let cur=0,timer;slides.forEach((_,i)=>{const d=document.createElement('button');d.className='sl-dot'+(i===0?' on':'');d.onclick=()=>go(i);dw.appendChild(d);});function go(n){slides[cur].classList.remove('on');dw.children[cur].classList.remove('on');cur=(n+slides.length)%slides.length;slides[cur].classList.add('on');dw.children[cur].classList.add('on');reset();}function reset(){clearInterval(timer);timer=setInterval(()=>go(cur+1),3500);}document.getElementById('slPrev').onclick=()=>go(cur-1);document.getElementById('slNext').onclick=()=>go(cur+1);reset();})();
+
+/* 폼 접기/펼치기 — 기본: 접힌 상태 */
+let isOpen = false;
+function toggleForm(){
+  isOpen=!isOpen;
+  const wrap=document.getElementById('fbodyWrap');
+  const arrow=document.getElementById('arrow');
+  const head=document.getElementById('fhead');
+  if(isOpen){wrap.classList.add('open');arrow.classList.add('open');head.classList.remove('collapsed');}
+  else{wrap.classList.remove('open');arrow.classList.remove('open');head.classList.add('collapsed');}
+}
+
+/* 폼 기능 */
+let cv='';
+function selC(el,v){document.querySelectorAll('.cbt').forEach(b=>b.classList.remove('on'));el.classList.add('on');cv=v;}
+function togAg(cb){document.querySelectorAll('.agc').forEach(c=>c.checked=cb.checked);}
+function doSubmit(){
+  const nm=document.getElementById('nm').value.trim();
+  const t2=document.getElementById('t2').value.trim();
+  const t3=document.getElementById('t3').value.trim();
+  const t1=document.getElementById('t1').value;
+  if(!nm){alert('이름을 입력해주세요.');return;}
+  if(!t2||!t3){alert('연락처를 입력해주세요.');return;}
+  if(!document.querySelectorAll('.agc')[0].checked){alert('개인정보 수집·이용 동의가 필요합니다.');return;}
+  document.getElementById('cn').textContent=nm;
+  document.getElementById('cp').textContent=t1+'-'+t2+'-'+t3;
+  document.getElementById('cc').textContent=cv||'미선택';
+  document.getElementById('modal').classList.add('show');
+  const tb=document.getElementById('rtBody');
+  const tr=document.createElement('tr');
+  const mk=nm[0]+'*'+(nm[2]||'*');
+  tr.innerHTML='<td>'+mk+'</td><td>'+t1+'-'+t2+'**-****</td><td><span class="rtb">'+(cv?cv[0]+'*':'미*')+'</span></td>';
+  tr.style.cssText='background:#EFF6FF;font-weight:700';
+  tb.insertBefore(tr,tb.firstChild);
+  if(tb.children.length>6)tb.removeChild(tb.lastChild);
+}
+function closeM(){document.getElementById('modal').classList.remove('show');}
+</script>
+</body>
+</html>
