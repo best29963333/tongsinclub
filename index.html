@@ -84,7 +84,7 @@ header{background:#fff;border-bottom:2px solid var(--pr);padding:0 20px;position
 
 /* 연락처 — 삐져나오지 않게 */
 .trow{display:flex;align-items:center;gap:4px;width:100%}
-.tsel{border:1.5px solid var(--g3);border-radius:8px;padding:11px 6px;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;color:var(--g8);background:#F8FAFC;flex-shrink:0;width:68px}
+.ti010{flex:1;min-width:0;border:1.5px solid var(--g3);border-radius:8px;padding:11px 6px;font-size:13px;color:var(--g8);background:#F8FAFC;text-align:center;font-family:'Noto Sans KR',sans-serif;font-weight:700}
 .tdiv{color:var(--g4);font-weight:700;font-size:14px;flex-shrink:0}
 .ti{flex:1;min-width:0;border:1.5px solid var(--g3);border-radius:8px;padding:11px 6px;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;color:var(--g8);background:#F8FAFC;text-align:center}
 .ti:focus{border-color:var(--pr);background:#fff}
@@ -317,7 +317,7 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
           <div class="fg">
             <label class="fl">연락처</label>
             <div class="trow">
-              <select class="tsel" id="t1"><option>010</option><option>011</option><option>016</option><option>017</option><option>019</option></select>
+              <div class="ti010">010</div>
               <span class="tdiv">-</span>
               <input class="ti" id="t2" type="tel" placeholder="0000" maxlength="4">
               <span class="tdiv">-</span>
@@ -357,7 +357,7 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
 <!-- 체크리스트 -->
 <section class="cl-sec">
   <div class="cl-in">
-    <div class="cl-cta"><em>하나라도 해당</em> 한다면<br>인터넷을 갈아타야합니다.</div>
+    <div class="cl-cta">아래 <em>하나라도 해당</em> 한다면<br>인터넷을 갈아타야합니다.</div>
     <div class="cl-csub">통신클럽이 최적의 요금제와 최대 혜택을 찾아드립니다</div>
     <div class="cl-items">
       <div class="cl-item"><div class="cl-sq"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>혜택 하나 못받고 3년 넘게 인터넷 쓰고 있어요</div>
@@ -539,7 +539,7 @@ function doSubmit(){
   const nm=document.getElementById('nm').value.trim();
   const t2=document.getElementById('t2').value.trim();
   const t3=document.getElementById('t3').value.trim();
-  const t1=document.getElementById('t1').value;
+  const t1='010';
   if(!nm){alert('이름을 입력해주세요.');return;}
   if(!t2||!t3){alert('연락처를 입력해주세요.');return;}
   if(!document.querySelectorAll('.agc')[0].checked){alert('개인정보 수집·이용 동의가 필요합니다.');return;}
