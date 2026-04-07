@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>통신클럽 - 인터넷 가입 설치 당일 지급</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="config.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--pr:#2563EB;--pd:#1D4ED8;--pl:#EFF6FF;--rd:#DC2626;--gn:#16A34A;--g1:#F8FAFC;--g2:#F1F5F9;--g3:#E2E8F0;--g4:#94A3B8;--g6:#475569;--g8:#1E293B}
@@ -120,7 +121,7 @@ section{padding:40px 20px}
 .wcard:hover{border-color:var(--pr);box-shadow:0 6px 24px rgba(37,99,235,.13);transform:translateY(-3px)}
 .wic{width:60px;height:60px;border-radius:14px;background:var(--pl);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
 .wnum{font-size:22px;font-weight:900;color:var(--pr);margin-bottom:4px}
-.wlb{font-size:13px;color:var(--g6);line-height:1.5}
+.wlb{font-size:13px;color:var(--g6);line-height:1.5;word-break:keep-all}
 
 /* ── TABLE ── */
 .cwrap{overflow-x:auto}
@@ -252,7 +253,7 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
 <header>
   <div class="hi">
     <div class="logo"><div class="logo-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M1 6l11 7L23 6"/><path d="M1 6a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2z"/></svg></div>통신클럽<span class="logo-b">공식</span></div>
-    <div class="htel" style="flex-direction:column;align-items:flex-end;gap:3px"><div style="display:flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>0000-0000</div><div class="h-tag" style="margin:0;padding:2px 7px;font-size:9px;gap:4px;border-radius:20px"><span class="dot-live" style="width:5px;height:5px;flex-shrink:0"></span>지금 실시간 상담 가능</div></div>
+    <div class="htel" style="flex-direction:column;align-items:flex-end;gap:3px"><div style="display:flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span id="cfg-phone-header">0000-0000</span></div><div class="h-tag" style="margin:0;padding:2px 7px;font-size:9px;gap:4px;border-radius:20px"><span class="dot-live" style="width:5px;height:5px;flex-shrink:0"></span>지금 실시간 상담 가능</div></div>
   </div>
 </header>
 
@@ -260,8 +261,8 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
 <div class="hero">
   <div class="hero-in">
     <div>
-      <h1 style="margin-top:20px"><em>최저 요금</em>으로 인터넷·TV 가입,<br><strong>현금 최대 48만원 + α</strong> 받으세요</h1>
-      <p class="hero-sub">통신클럽은 SK·KT·LG 공식 대리점입니다.<br>전담 매니저가 딱 맞는 요금제를 찾아드립니다.</p>
+      <h1 style="margin-top:20px"><em id="cfg-h1-em">최저 요금</em><span id="cfg-h1-mid">으로 인터넷·TV 가입,</span><br><strong id="cfg-h1-strong">현금 최대 48만원 + α</strong> <span id="cfg-h1-end">받으세요</span></h1>
+      <p class="hero-sub" id="cfg-hero-sub">통신클럽은 SK·KT·LG 공식 대리점입니다.<br>전담 매니저가 딱 맞는 요금제를 찾아드립니다.</p>
       <div class="hbadges">
         <div class="badge-track">
           <div class="hbadge"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>유통단계 최소화</div>
@@ -282,13 +283,13 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
       </div>
       
       <div class="stats" style="background:#fff;border-radius:14px;padding:18px 24px;box-shadow:0 2px 12px rgba(37,99,235,.08);margin-bottom:30px">
-        <div class="si"><div class="sn">98,000+</div><div class="sl2">누적 가입자</div></div>
+        <div class="si"><div class="sn" id="cfg-stat0v">98,000+</div><div class="sl2" id="cfg-stat0l">누적 가입자</div></div>
         <div class="sdiv"></div>
-        <div class="si"><div class="sn">4.9점</div><div class="sl2">평균 만족도</div></div>
+        <div class="si"><div class="sn" id="cfg-stat1v">4.9점</div><div class="sl2" id="cfg-stat1l">평균 만족도</div></div>
         <div class="sdiv"></div>
-        <div class="si"><div class="sn">48만원+@</div><div class="sl2">최대 현금</div></div>
+        <div class="si"><div class="sn" id="cfg-stat2v">48만원+α</div><div class="sl2" id="cfg-stat2l">최대 현금</div></div>
         <div class="sdiv"></div>
-        <div class="si"><div class="sn">당일</div><div class="sl2">현금 지급</div></div>
+        <div class="si"><div class="sn" id="cfg-stat3v">당일</div><div class="sl2" id="cfg-stat3l">현금 지급</div></div>
       </div>
     </div>
 
@@ -371,7 +372,7 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
     <div class="wgrid">
       <div class="wcard"><div class="wic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><div class="wnum">48만원 + @</div><div class="wlb">최대 현금 지원<br>설치 당일 즉시 지급</div></div>
       <div class="wcard"><div class="wic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="wnum">정찰제</div><div class="wlb">투명한 사은품 공개<br>박리다매 방식</div></div>
-      <div class="wcard"><div class="wic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="wnum">1:1</div><div class="wlb">전담 매니저 배정<br>전화·카카오 모두 가능</div></div>
+      <div class="wcard"><div class="wic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="wnum">1:1</div><div class="wlb">전담 매니저 배정<br>전화·카카오 상담 가능</div></div>
       <div class="wcard"><div class="wic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="wnum">고객 맞춤형</div><div class="wlb">설치 일정 및 요금제<br>고객 만족 우선 조율</div></div>
     </div>
   </div>
@@ -389,27 +390,27 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
         <tbody>
           <tr>
             <td><div style="display:flex;align-items:center;height:52px">
-              <img src="SK-나비.png" alt="SK브로드밴드" style="height:36px;max-width:90px;object-fit:contain;display:block">
+              <img id="carrierImg1" src="SK-나비.png" alt="SK브로드밴드" style="height:36px;max-width:90px;object-fit:contain;display:block">
             </div></td>
-            <td>인터넷 1G</td>
-            <td><div class="price-cell"><span class="price-orig">38,500원</span><span class="price-final">27,500원</span></div></td>
-            <td><span class="ca">30</span><span class="ca-unit">만원</span></td>
+            <td id="cfg-td-product1">인터넷 1G</td>
+            <td><div class="price-cell" id="cfg-td-price1"><span class="price-orig">38,500원</span><span class="price-final">27,500원</span></div></td>
+            <td id="cfg-td-support1"><span class="ca">30</span><span class="ca-unit">만원</span></td>
           </tr>
           <tr>
             <td><div style="display:flex;align-items:center;height:52px">
-              <img src="KT_Logo.png" alt="KT" style="height:36px;max-width:90px;object-fit:contain;display:block">
+              <img id="carrierImg2" src="KT_Logo.png" alt="KT" style="height:36px;max-width:90px;object-fit:contain;display:block">
             </div></td>
-            <td>인터넷 1G</td>
-            <td><div class="price-cell"><span class="price-orig">38,500원</span><span class="price-final">27,500원</span></div></td>
-            <td><span class="ca">28</span><span class="ca-unit">만원</span></td>
+            <td id="cfg-td-product2">인터넷 1G</td>
+            <td><div class="price-cell" id="cfg-td-price2"><span class="price-orig">38,500원</span><span class="price-final">27,500원</span></div></td>
+            <td id="cfg-td-support2"><span class="ca">28</span><span class="ca-unit">만원</span></td>
           </tr>
           <tr>
             <td><div style="display:flex;align-items:center;height:52px">
-              <img src="LGU_Logo.png" alt="LG U+" style="height:36px;max-width:90px;object-fit:contain;display:block">
+              <img id="carrierImg3" src="LGU_Logo.png" alt="LG U+" style="height:36px;max-width:90px;object-fit:contain;display:block">
             </div></td>
-            <td>인터넷 1G</td>
-            <td><div class="price-cell"><span class="price-orig">38,500원</span><span class="price-final">27,500원</span></div></td>
-            <td><span class="ca">26</span><span class="ca-unit">만원</span></td>
+            <td id="cfg-td-product3">인터넷 1G</td>
+            <td><div class="price-cell" id="cfg-td-price3"><span class="price-orig">38,500원</span><span class="price-final">27,500원</span></div></td>
+            <td id="cfg-td-support3"><span class="ca">26</span><span class="ca-unit">만원</span></td>
           </tr>
         </tbody>
       </table>
@@ -690,10 +691,10 @@ rvInit(2);
   <div class="fin">
     <div>
       <div class="flogo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M1 6l11 7L23 6"/><path d="M1 6a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2z"/></svg>통신클럽</div>
-      <div class="finfo">사업자등록번호: 000-00-00000 · 통신판매업신고: 제0000-서울-00000호<br>주소: 서울특별시 OO구 OO로 00 OO빌딩 0층<br>© 2025 통신클럽. All rights reserved.</div>
+      <div class="finfo" id="cfg-footer-info">사업자등록번호: 000-00-00000 · 통신판매업신고: 제0000-서울-00000호<br>주소: 서울특별시 OO구 OO로 00 OO빌딩 0층<br>© 2025 통신클럽. All rights reserved.</div>
     </div>
     <div style="text-align:right">
-      <div class="ftel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>0000-0000</div>
+      <div class="ftel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span id="cfg-phone-footer">0000-0000</span></div>
       <div style="font-size:12px;color:var(--g4);margin-top:4px">365일 24시간 무료상담</div>
     </div>
   </div>
@@ -744,6 +745,23 @@ function toggleForm(){
 let cv='';
 function selC(el,v){document.querySelectorAll('#formBody .cbt').forEach(b=>b.classList.remove('on'));el.classList.add('on');cv=v;}
 function togAg(cb){document.querySelectorAll('.agc').forEach(c=>c.checked=cb.checked);}
+function saveSubmission(nm, phone, carrier, callTime){
+  try{
+    var list = JSON.parse(localStorage.getItem('tc_submissions')||'[]');
+    var sel = document.querySelector('.tsel2');
+    list.unshift({
+      id: Date.now(),
+      name: nm,
+      phone: phone,
+      carrier: carrier||'미선택',
+      callTime: callTime||(sel?sel.value:''),
+      status: '상담',
+      memo: '',
+      createdAt: new Date().toISOString()
+    });
+    localStorage.setItem('tc_submissions', JSON.stringify(list));
+  }catch(e){}
+}
 function doSubmit(){
   const nm=document.getElementById('nm').value.trim();
   const t2=document.getElementById('t2').value.trim();
@@ -752,11 +770,12 @@ function doSubmit(){
   if(!nm){alert('이름을 입력해주세요.');return;}
   if(!t2||!t3){alert('연락처를 입력해주세요.');return;}
   const agcs=document.querySelectorAll('.agc');if(!agcs[0].checked){alert('개인정보 수집·이용 동의가 필요합니다.');return;}if(!agcs[1].checked){alert('광고성 정보 수신 동의가 필요합니다.');return;}if(!agcs[2].checked){alert('개인정보 제3자제공 동의가 필요합니다.');return;}
+  const phone=t1+'-'+t2+'-'+t3;
+  saveSubmission(nm, phone, cv);
   document.getElementById('cn').textContent=nm;
-  document.getElementById('cp').textContent=t1+'-'+t2+'-'+t3;
+  document.getElementById('cp').textContent=phone;
   document.getElementById('cc').textContent=cv||'미선택';
   document.getElementById('modal').classList.add('show');
-  /* 실시간 접수 현황 롤링 테이블에 추가 */
   const mk=nm[0]+'*'+(nm[2]||'*');
   const phone2='010-'+t2+'**-****';
   const carrier2=(cv?cv[0]+'*':'미*');
@@ -770,18 +789,57 @@ function closeM(){document.getElementById('modal').classList.remove('show');}
 
 
 
+/* ── config 적용 ── */
+(function(){
+  if(typeof SITE_CONFIG === 'undefined') return;
+  var c = SITE_CONFIG;
+  function s(id,v){var el=document.getElementById(id);if(el&&v!==undefined)el.textContent=v;}
+  function h(id,v){var el=document.getElementById(id);if(el&&v!==undefined)el.innerHTML=v;}
+  /* 전화번호 */
+  s('cfg-phone-header', c.phone); s('cfg-phone-footer', c.phone);
+  /* 히어로 */
+  if(c.hero){
+    s('cfg-h1-em', c.hero.headline_em);
+    s('cfg-h1-mid', c.hero.headline_mid);
+    s('cfg-h1-strong', c.hero.headline_strong);
+    s('cfg-h1-end', c.hero.headline_end);
+    h('cfg-hero-sub', (c.hero.sub||'').replace(/\n/g,'<br>'));
+  }
+  /* 통계 */
+  if(c.stats) c.stats.forEach(function(st,i){s('cfg-stat'+i+'v',st.value);s('cfg-stat'+i+'l',st.label);});
+  /* 테이블 */
+  if(c.table) c.table.forEach(function(row,i){
+    var img=document.getElementById('carrierImg'+(i+1));
+    if(img){img.src=row.logo;img.alt=row.logo;}
+    s('cfg-td-product'+(i+1), row.product);
+    h('cfg-td-price'+(i+1), '<span class="price-orig">'+row.orig+'</span><span class="price-final">'+row.final+'</span>');
+    h('cfg-td-support'+(i+1), '<span class="ca">'+row.support+'</span><span class="ca-unit">만원</span>');
+  });
+  /* 후기 슬라이드 생성 */
+  var STARS='<svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'.repeat(5);
+  var PIN='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+  if(c.reviews_white){
+    var t1=document.getElementById('rvTrack1');
+    if(t1){t1.innerHTML=c.reviews_white.map(function(r){
+      return '<div class="rv-card white"><div class="rstars">'+STARS+'</div><p class="rtxt">'+r.text+'</p><div class="rmeta"><div class="rav">'+r.initial+'</div><div><div class="rname">'+r.name+'</div><div class="rdate">'+r.date+'</div></div>'+(r.tag?'<span class="rtag">'+r.tag+'</span>':'')+'</div></div>';
+    }).join('');rvInit(1);}
+  }
+  if(c.reviews_yellow){
+    var t2=document.getElementById('rvTrack2');
+    if(t2){t2.innerHTML=c.reviews_yellow.map(function(r){
+      return '<div class="rv-card yellow"><div class="rstars">'+STARS+'</div><div class="rq">'+r.quote+'</div><div class="rloc">'+PIN+r.loc+'</div><p class="rtxt">'+r.text+'</p><div class="rmeta"><div class="rav">'+r.initial+'</div><div><div class="rname">'+r.name+'</div><div class="rdate">'+r.date+'</div></div></div></div>';
+    }).join('');rvInit(2);}
+  }
+  /* 푸터 */
+  if(c.footer){
+    h('cfg-footer-info','사업자등록번호: '+c.footer.biz_no+' · 통신판매업신고: '+c.footer.sales_no+'<br>주소: '+c.footer.address+'<br>© '+c.footer.copyright+' 통신클럽. All rights reserved.');
+  }
+})();
+
 /* ── 실시간 접수 롤링 ── */
-const rtDB = [
+var rtDB = (typeof SITE_CONFIG!=='undefined' && SITE_CONFIG.rtDB) ? SITE_CONFIG.rtDB.slice() : [
   {name:'박*백', phone:'010-2***-****', carrier:'L*'},
-  {name:'이*준', phone:'010-8***-****', carrier:'L*'},
-  {name:'박*우', phone:'010-6***-****', carrier:'K*'},
-  {name:'김*정', phone:'010-9***-****', carrier:'S*'},
-  {name:'심*',   phone:'010-3***-****', carrier:'S*'},
-  {name:'최*영', phone:'010-7***-****', carrier:'K*'},
-  {name:'정*훈', phone:'010-5***-****', carrier:'L*'},
-  {name:'강*수', phone:'010-4***-****', carrier:'S*'},
-  {name:'윤*희', phone:'010-1***-****', carrier:'K*'},
-  {name:'장*민', phone:'010-0***-****', carrier:'S*'},
+  {name:'이*준', phone:'010-8***-****', carrier:'L*'}
 ];
 const RT_ROW_H = 42;
 const RT_SHOW = 5;
@@ -846,11 +904,13 @@ function doSubmit2(){
   if(!agcs[0].checked){alert('개인정보 수집·이용 동의가 필요합니다.');return;}
   if(!agcs[1].checked){alert('광고성 정보 수신 동의가 필요합니다.');return;}
   if(!agcs[2].checked){alert('개인정보 제3자제공 동의가 필요합니다.');return;}
+  const phone='010-'+t2+'-'+t3;
+  const sel2=document.querySelector('#hform2 .tsel2');
+  saveSubmission(nm, phone, cv2, sel2?sel2.value:'');
   document.getElementById('cn').textContent=nm;
-  document.getElementById('cp').textContent='010-'+t2+'-'+t3;
+  document.getElementById('cp').textContent=phone;
   document.getElementById('cc').textContent=cv2||'미선택';
   document.getElementById('modal').classList.add('show');
-  /* 실시간 접수 현황 롤링 테이블에 추가 */
   const mk2=nm[0]+'*'+(nm[2]||'*');
   rtDB.unshift({name:mk2, phone:'010-'+t2+'**-****', carrier:(cv2?cv2[0]+'*':'미*')});
   if(rtDB.length>10)rtDB.pop();
