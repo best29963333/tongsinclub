@@ -39,10 +39,8 @@ header{background:#fff;border-bottom:2px solid var(--pr);padding:0 20px;position
 @keyframes badgeRoll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .hbadge{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #DBEAFE;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--g8);box-shadow:0 1px 4px rgba(37,99,235,.08);white-space:nowrap;flex-shrink:0}
 .hbadge.r{border-color:#FEE2E2;color:var(--rd);background:#FFF5F5}
-.hbadge{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #DBEAFE;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--g8);box-shadow:0 1px 4px rgba(37,99,235,.08)}
-.hbadge.r{border-color:#FEE2E2;color:var(--rd);background:#FFF5F5}
 .bi{width:18px;height:18px;flex-shrink:0}
-.stats{display:flex;gap:0;margin-bottom:30px;justify-content:space-between;padding:0 24px}
+.stats{display:flex;gap:0;justify-content:space-between;padding:0 24px}
 .si{text-align:center}
 .sn{font-size:18px;font-weight:900;color:var(--pr);letter-spacing:-1px;white-space:nowrap}
 .sl2{font-size:11px;color:var(--g4);margin-top:2px;white-space:nowrap}
@@ -118,8 +116,8 @@ section{padding:40px 20px}
 
 /* ── WHY ── */
 .wgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-.wcard{border:1.5px solid var(--g2);border-radius:16px;padding:28px 20px;text-align:center;transition:all .2s}
-.wcard:hover{border-color:var(--pr);box-shadow:0 4px 20px rgba(37,99,235,.1);transform:translateY(-2px)}
+.wcard{border:1.5px solid var(--g2);border-radius:16px;padding:28px 20px;text-align:center;transition:all .2s;background:#fff}
+.wcard:hover{border-color:var(--pr);box-shadow:0 6px 24px rgba(37,99,235,.13);transform:translateY(-3px)}
 .wic{width:60px;height:60px;border-radius:14px;background:var(--pl);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
 .wnum{font-size:22px;font-weight:900;color:var(--pr);margin-bottom:4px}
 .wlb{font-size:13px;color:var(--g6);line-height:1.5}
@@ -136,6 +134,7 @@ table.ct tbody tr:hover{background:var(--pl)}
 table.ct td{padding:12px 10px;font-size:13px;text-align:center;vertical-align:middle} table.ct td:nth-child(2){text-align:left;padding-left:0}
 table.ct td:first-child{text-align:left;font-weight:600}
 .ca{font-size:16px;font-weight:900;color:var(--rd)}
+.ca-unit{font-size:13px;font-weight:700;color:var(--rd)}
 .tbst{display:inline-block;background:var(--rd);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:6px}
 .tbnw{display:inline-block;background:var(--gn);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:6px}
 .tnote{font-size:12px;color:var(--g4);margin-top:10px}
@@ -253,7 +252,7 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
 <header>
   <div class="hi">
     <div class="logo"><div class="logo-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M1 6l11 7L23 6"/><path d="M1 6a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2z"/></svg></div>통신클럽<span class="logo-b">공식</span></div>
-    <div class="htel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><div>0000-0000<small>365일 24시간 무료상담</small></div></div>
+    <div class="htel" style="flex-direction:column;align-items:flex-end;gap:3px"><div style="display:flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>0000-0000</div><div class="h-tag" style="margin:0;padding:2px 7px;font-size:9px;gap:4px;border-radius:20px"><span class="dot-live" style="width:5px;height:5px;flex-shrink:0"></span>지금 실시간 상담 가능</div></div>
   </div>
 </header>
 
@@ -261,8 +260,7 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
 <div class="hero">
   <div class="hero-in">
     <div>
-      <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:20px"> <div class="h-tag" style="margin-bottom:0;flex-shrink:0;font-size:10px;padding:3px 8px"><span class="dot-live"></span> 지금 실시간 상담 가능</div></div>
-      <h1><em>최저 요금</em>으로 인터넷 TV 가입,<br><strong>현금 최대 48만원 + @</strong> 받으세요</h1>
+      <h1 style="margin-top:20px"><em>최저 요금</em>으로 인터넷·TV 가입,<br><strong>현금 최대 48만원 + α</strong> 받으세요</h1>
       <p class="hero-sub">통신클럽은 SK·KT·LG 공식 대리점입니다.<br>전담 매니저가 딱 맞는 요금제를 찾아드립니다.</p>
       <div class="hbadges">
         <div class="badge-track">
@@ -283,7 +281,7 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
         </div>
       </div>
       
-      <div class="stats">
+      <div class="stats" style="background:#fff;border-radius:14px;padding:18px 24px;box-shadow:0 2px 12px rgba(37,99,235,.08);margin-bottom:30px">
         <div class="si"><div class="sn">98,000+</div><div class="sl2">누적 가입자</div></div>
         <div class="sdiv"></div>
         <div class="si"><div class="sn">4.9점</div><div class="sl2">평균 만족도</div></div>
@@ -390,19 +388,25 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
         <thead><tr><th>통신사</th><th>상품</th><th>월요금</th><th>지원금</th></tr></thead>
         <tbody>
           <tr>
-            <td><div style="display:flex;align-items:center;height:52px"></div></td>
+            <td><div style="display:flex;align-items:center;height:52px">
+              <img src="SK-나비.png" alt="SK브로드밴드" style="height:36px;max-width:90px;object-fit:contain;display:block">
+            </div></td>
             <td>인터넷 1G</td>
             <td><div class="price-cell"><span class="price-orig">38,500원</span><span class="price-final">27,500원</span></div></td>
             <td><span class="ca">30</span><span class="ca-unit">만원</span></td>
           </tr>
           <tr>
-            <td><div style="display:flex;align-items:center;height:52px"></div></td>
+            <td><div style="display:flex;align-items:center;height:52px">
+              <img src="kt.jpg" alt="KT" style="height:36px;max-width:90px;object-fit:contain;display:block">
+            </div></td>
             <td>인터넷 1G</td>
             <td><div class="price-cell"><span class="price-orig">38,500원</span><span class="price-final">27,500원</span></div></td>
             <td><span class="ca">28</span><span class="ca-unit">만원</span></td>
           </tr>
           <tr>
-            <td><div style="display:flex;align-items:center;height:52px"></div></td>
+            <td><div style="display:flex;align-items:center;height:52px">
+              <img src="LGU_Logo.png" alt="LG U+" style="height:36px;max-width:90px;object-fit:contain;display:block">
+            </div></td>
             <td>인터넷 1G</td>
             <td><div class="price-cell"><span class="price-orig">38,500원</span><span class="price-final">27,500원</span></div></td>
             <td><span class="ca">26</span><span class="ca-unit">만원</span></td>
@@ -430,20 +434,179 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
 </section>
 
 <!-- REVIEWS -->
-<section>
-  <div class="si2">
+<style>
+/* ── 후기 슬라이드 ── */
+.rv-sec{padding:40px 20px}
+.rv-head{max-width:480px;margin:0 auto}
+.rv-rows{display:flex;flex-direction:column;gap:20px;margin-top:28px}
+
+/* 슬라이더 래퍼 */
+.rv-slider{position:relative;overflow:hidden;border-radius:16px}
+.rv-track{display:flex;transition:transform .38s cubic-bezier(.4,0,.2,1)}
+/* 카드 */
+.rv-card{min-width:100%;box-sizing:border-box;padding:20px 18px;border-radius:16px}
+.rv-card.white{background:#fff;border:1.5px solid var(--g2);box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.rv-card.yellow{background:#FEFCE8;border:1.5px solid #FDE68A;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.rv-card .rstars{display:flex;gap:2px;margin-bottom:8px}
+.rv-card .rtxt{font-size:14px;line-height:1.7;color:var(--g6);margin-bottom:12px}
+.rv-card .rmeta{display:flex;align-items:center;gap:10px}
+.rv-card .rav{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--pr),#60A5FA);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0}
+.rv-card .rname{font-size:13px;font-weight:700;color:var(--g8)}
+.rv-card .rdate{font-size:11px;color:var(--g4);margin-top:1px}
+.rv-card .rtag{margin-left:auto;background:var(--pl);color:var(--pr);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap}
+.rv-card .rq{font-size:15px;font-weight:900;color:var(--g8);margin-bottom:4px}
+.rv-card .rloc{font-size:12px;color:var(--g4);display:flex;align-items:center;gap:4px;margin-bottom:8px}
+
+/* 도트 + 화살표 */
+.rv-ctrl{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px}
+.rv-dots{display:flex;gap:6px;align-items:center}
+.rv-dot{width:7px;height:7px;border-radius:50%;background:var(--g3);transition:all .25s;cursor:pointer;border:none;padding:0}
+.rv-dot.on{width:20px;border-radius:4px;background:var(--pr)}
+.rv-arr{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--g3);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0}
+.rv-arr:hover{border-color:var(--pr);background:var(--pl)}
+</style>
+
+<section class="rv-sec">
+  <div class="rv-head">
     <div class="stag"><svg width="12" height="12" viewBox="0 0 24 24" fill="#CA8A04" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>실제 후기</div>
     <h2 class="stit"><em>98,000명</em>이 선택한 이유</h2>
     <p class="ssub">꾸미지 않은 실제 가입 고객 후기입니다</p>
-    <div class="rgrid">
-      <div class="rcard"><div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><p class="rtxt">통신클럽 아니었으면 혜택금이 있는지도 몰랐을 거예요. 매니저분이 알아서 맞춤 요금 찾아주니 너무 간편했습니다!</p><div class="rmeta"><div class="rav">K</div><div><div class="rname">@kim*****님</div><div class="rdate">2025.12.03 · SK 1G 가입</div></div><span class="rtag">현금 30만</span></div></div>
-      <div class="rcard"><div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><p class="rtxt">여기저기 비교해봤는데 여기가 제일 많이 챙겨주는 것 같아요. 설치 당일 입금 바로 확인했어요!</p><div class="rmeta"><div class="rav">L</div><div><div class="rname">@lee*****님</div><div class="rdate">2025.10.29 · LG 1G 가입</div></div><span class="rtag">즉시입금</span></div></div>
-      <div class="rcard"><div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><p class="rtxt">이사하면서 새로 가입했는데 현금도 받고 TV도 같이 묶어서 더 저렴해졌어요. 결합 할인 감사해요.</p><div class="rmeta"><div class="rav">S</div><div><div class="rname">@shin*****님</div><div class="rdate">2025.09.08 · KT 인터넷+TV</div></div><span class="rtag">인터넷+TV</span></div></div>
-      <div class="rcard qs"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="flex:1"><div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="rq">"정확한 날짜에 입금 해주셨어요"</div><div class="rloc"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>서울시 강*구</div><p class="rtxt">약정 끝나서 인터넷 알아보는데 통신클럽에서 한 번에 비교해서 딱 맞는 거 찾아주셨어요.</p></div></div>
-      <div class="rcard qs"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="flex:1"><div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="rq">"설치 다음날 바로 입금됐어요"</div><div class="rloc"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>경기도 성*시</div><p class="rtxt">상담사분이 정말 친절하셨어요. 다른 곳보다 혜택도 훨씬 좋고 설치도 바로 다음날 와주셨네요!</p>
+  </div>
+
+  <div class="rv-rows">
+
+    <!-- ━━━ 1번째 줄: 흰색 후기 ━━━
+         카드 추가 방법: #rvTrack1 안에 .rv-card.white 블록 추가
+    -->
+    <div>
+      <div class="rv-slider" id="rvSlider1">
+        <div class="rv-track" id="rvTrack1">
+
+          <!-- 흰색 카드 여기에 추가 ↓ -->
+          <div class="rv-card white">
+            <div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            <p class="rtxt">통신클럽 아니었으면 혜택금이 있는지도 몰랐을 거예요. 매니저분이 알아서 맞춤 요금 찾아주니 너무 간편했습니다!</p>
+            <div class="rmeta"><div class="rav">K</div><div><div class="rname">@kim*****님</div><div class="rdate">2025.12.03 · SK 1G 가입</div></div><span class="rtag">현금 30만</span></div>
+          </div>
+          <div class="rv-card white">
+            <div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            <p class="rtxt">여기저기 비교해봤는데 여기가 제일 많이 챙겨주는 것 같아요. 설치 당일 입금 바로 확인했어요!</p>
+            <div class="rmeta"><div class="rav">L</div><div><div class="rname">@lee*****님</div><div class="rdate">2025.10.29 · LG 1G 가입</div></div><span class="rtag">즉시입금</span></div>
+          </div>
+          <div class="rv-card white">
+            <div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            <p class="rtxt">이사하면서 새로 가입했는데 현금도 받고 TV도 같이 묶어서 더 저렴해졌어요. 결합 할인 감사해요.</p>
+            <div class="rmeta"><div class="rav">S</div><div><div class="rname">@shin*****님</div><div class="rdate">2025.09.08 · KT 인터넷+TV</div></div><span class="rtag">인터넷+TV</span></div>
+          </div>
+          <!-- 흰색 카드 여기까지 ↑ -->
+
+        </div>
+      </div>
+      <div class="rv-ctrl">
+        <button class="rv-arr" onclick="rvMove(1,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--g6)" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="rv-dots" id="rvDots1"></div>
+        <button class="rv-arr" onclick="rvMove(1,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--g6)" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
     </div>
+
+    <!-- ━━━ 2번째 줄: 노란색 후기 ━━━
+         카드 추가 방법: #rvTrack2 안에 .rv-card.yellow 블록 추가
+    -->
+    <div>
+      <div class="rv-slider" id="rvSlider2">
+        <div class="rv-track" id="rvTrack2">
+
+          <!-- 노란색 카드 여기에 추가 ↓ -->
+          <div class="rv-card yellow">
+            <div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            <div class="rq">"정확한 날짜에 입금 해주셨어요"</div>
+            <div class="rloc"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>서울시 강*구</div>
+            <p class="rtxt">약정 끝나서 인터넷 알아보는데 통신클럽에서 한 번에 비교해서 딱 맞는 거 찾아주셨어요.</p>
+            <div class="rmeta"><div class="rav">박</div><div><div class="rname">박*수님</div><div class="rdate">2025.11.14 · SK 가입</div></div></div>
+          </div>
+          <div class="rv-card yellow">
+            <div class="rstars"><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            <div class="rq">"설치 다음날 바로 입금됐어요"</div>
+            <div class="rloc"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>경기도 성*시</div>
+            <p class="rtxt">상담사분이 정말 친절하셨어요. 다른 곳보다 혜택도 훨씬 좋고 설치도 바로 다음날 와주셨네요!</p>
+            <div class="rmeta"><div class="rav">정</div><div><div class="rname">정*훈님</div><div class="rdate">2025.10.22 · LG 가입</div></div></div>
+          </div>
+          <!-- 노란색 카드 여기까지 ↑ -->
+
+        </div>
+      </div>
+      <div class="rv-ctrl">
+        <button class="rv-arr" onclick="rvMove(2,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--g6)" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="rv-dots" id="rvDots2"></div>
+        <button class="rv-arr" onclick="rvMove(2,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--g6)" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+    </div>
+
   </div>
 </section>
+
+<script>
+/* ── 후기 슬라이드 ── */
+var rvState = {
+  1: {idx:0, total:0, timer:null},
+  2: {idx:0, total:0, timer:null}
+};
+
+function rvInit(n) {
+  var track = document.getElementById('rvTrack'+n);
+  var dotsEl = document.getElementById('rvDots'+n);
+  var cards = track.children;
+  var total = cards.length;
+  rvState[n].total = total;
+
+  /* 도트 생성 */
+  dotsEl.innerHTML = '';
+  for(var i=0;i<total;i++){
+    var d = document.createElement('button');
+    d.className = 'rv-dot' + (i===0?' on':'');
+    d.setAttribute('data-n', n);
+    d.setAttribute('data-i', i);
+    d.onclick = (function(nn,ii){return function(){rvGo(nn,ii,true);};})(n,i);
+    dotsEl.appendChild(d);
+  }
+
+  /* 스와이프 */
+  var slider = document.getElementById('rvSlider'+n);
+  var sx=0;
+  slider.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;},{ passive:true });
+  slider.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx;
+    if(Math.abs(dx)>40) rvMove(n, dx<0?1:-1);
+  },{ passive:true });
+
+  rvGo(n, 0, false);
+  rvAutoStart(n);
+}
+
+function rvGo(n, idx, resetTimer) {
+  var st = rvState[n];
+  st.idx = (idx + st.total) % st.total;
+  document.getElementById('rvTrack'+n).style.transform = 'translateX(-'+( st.idx * 100 )+'%)';
+  document.querySelectorAll('#rvDots'+n+' .rv-dot').forEach(function(d,i){
+    d.classList.toggle('on', i===st.idx);
+  });
+  if(resetTimer){ rvAutoStop(n); rvAutoStart(n); }
+}
+
+function rvMove(n, dir) {
+  rvGo(n, rvState[n].idx + dir, true);
+}
+
+function rvAutoStart(n) {
+  rvState[n].timer = setInterval(function(){ rvMove(n,1); }, 3500);
+}
+function rvAutoStop(n) {
+  clearInterval(rvState[n].timer);
+}
+
+rvInit(1);
+rvInit(2);
+</script>
 
 <!-- 실시간 접수 -->
 <div class="rt-sec">
@@ -579,7 +742,7 @@ function toggleForm(){
 
 /* 폼 기능 */
 let cv='';
-function selC(el,v){document.querySelectorAll('.cbt').forEach(b=>b.classList.remove('on'));el.classList.add('on');cv=v;}
+function selC(el,v){document.querySelectorAll('#formBody .cbt').forEach(b=>b.classList.remove('on'));el.classList.add('on');cv=v;}
 function togAg(cb){document.querySelectorAll('.agc').forEach(c=>c.checked=cb.checked);}
 function doSubmit(){
   const nm=document.getElementById('nm').value.trim();
