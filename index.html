@@ -832,7 +832,7 @@ function applyConfig(c){
     if(t2){t2.innerHTML=c.reviews_yellow.map(function(r){
       var photoHtml=r.photo?'<div class="rv-photo"><img src="'+r.photo+'" alt="후기 사진"></div>':'';
       var padRight=r.photo?' style="padding-right:88px"':'';
-      return '<div class="rv-card yellow"><div class="rstars">'+STARS+'</div>'+photoHtml+'<div class="rq"'+padRight+'>'+r.quote+'</div><div class="rloc">'+PIN+r.loc+'</div><p class="rtxt">'+r.text+'</p><div class="rmeta"><div class="rav">'+r.initial+'</div><div><div class="rname">'+r.name+'</div><div class="rdate">'+r.date+'</div></div></div></div>';
+      return '<div class="rv-card yellow"><div class="rstars">'+STARS+'</div>'+photoHtml+'<div class="rq"'+padRight+'>'+r.quote+'</div><div class="rloc">'+PIN+r.loc+'</div><p class="rtxt">'+r.text+'</p></div>';
     }).join('');rvInit(2);}
   }
   if(c.footer){
