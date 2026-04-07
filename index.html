@@ -264,7 +264,7 @@ footer{background:#F1F5F9;padding:30px 20px;border-top:1px solid var(--g3)}
 <header>
   <div class="hi">
     <div class="logo"><div class="logo-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M1 6l11 7L23 6"/><path d="M1 6a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2z"/></svg></div>통신클럽<span class="logo-b">공식</span></div>
-    <div class="htel" style="flex-direction:column;align-items:flex-end;gap:3px"><div style="display:flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span id="cfg-phone-header">0000-0000</span></div><div class="h-tag" style="margin:0;padding:2px 7px;font-size:9px;gap:4px;border-radius:20px"><span class="dot-live" style="width:5px;height:5px;flex-shrink:0"></span>지금 실시간 상담 가능</div></div>
+    <div class="htel" style="flex-direction:column;align-items:flex-end;gap:3px"><div style="display:flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><a id="cfg-phone-header" href="tel:00000000" style="color:inherit;text-decoration:none">0000-0000</a></div><div class="h-tag" style="margin:0;padding:2px 7px;font-size:9px;gap:4px;border-radius:20px"><span class="dot-live" style="width:5px;height:5px;flex-shrink:0"></span>지금 실시간 상담 가능</div></div>
   </div>
 </header>
 
@@ -715,8 +715,8 @@ rvInit(2);
 
 <!-- FLOAT -->
 <div class="flbtns">
-  <button class="flbtn ka"><svg width="22" height="22" viewBox="0 0 24 24" fill="#1A1A1A"><path d="M12 3C6.477 3 2 6.582 2 11c0 2.709 1.57 5.104 3.969 6.629L4.9 21l4.23-2.115C10.012 19.28 11 19.4 12 19.4c5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg><span class="fllb">카카오</span></button>
-  <button class="flbtn ca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span class="fllb">전화</span></button>
+  <button id="btn-kakao" class="flbtn ka" onclick="var u=window._cfgData&&window._cfgData.kakao_url;if(u)window.open(u,'_blank');"><svg width="22" height="22" viewBox="0 0 24 24" fill="#1A1A1A"><path d="M12 3C6.477 3 2 6.582 2 11c0 2.709 1.57 5.104 3.969 6.629L4.9 21l4.23-2.115C10.012 19.28 11 19.4 12 19.4c5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg><span class="fllb">카카오</span></button>
+  <button id="btn-call" class="flbtn ca" onclick="var p=window._cfgData&&window._cfgData.phone;if(p)location.href='tel:'+p.replace(/-/g,'');"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span class="fllb">전화</span></button>
 </div>
 
 <!-- MODAL -->
@@ -804,6 +804,14 @@ function applyConfig(c){
   function s(id,v){var el=document.getElementById(id);if(el&&v!==undefined)el.textContent=v;}
   function h(id,v){var el=document.getElementById(id);if(el&&v!==undefined)el.innerHTML=v;}
   s('cfg-phone-header', c.phone); s('cfg-phone-footer', c.phone);
+  /* 전화 링크 업데이트 */
+  var phoneEl=document.getElementById('cfg-phone-header');
+  if(phoneEl&&c.phone) phoneEl.href='tel:'+c.phone.replace(/-/g,'');
+  /* 카카오 URL */
+  if(c.kakao_url){
+    var kb=document.getElementById('btn-kakao');
+    if(kb) kb.onclick=function(){window.open(c.kakao_url,'_blank');};
+  }
   if(c.hero){
     s('cfg-h1-em', c.hero.headline_em);
     s('cfg-h1-mid', c.hero.headline_mid);
