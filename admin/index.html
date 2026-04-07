@@ -529,14 +529,18 @@ function exportExcel(){
 /* ─────────── 설정 ─────────── */
 var cfg=(typeof SITE_CONFIG!=='undefined')?JSON.parse(JSON.stringify(SITE_CONFIG)):{hero:{},stats:[],table:[],reviews_white:[],reviews_yellow:[],rtDB:[],footer:{}};
 
-function initCfgForm(){
+async function initCfgForm(){
   document.getElementById('c-lid').value=localStorage.getItem(K_ID)||DI;
   document.getElementById('c-lpw').value='';
   document.getElementById('c-lpw2').value='';
-  var saved={};
-  try{saved=JSON.parse(localStorage.getItem('tc_site_config')||'{}');}catch(e){}
-  var c=Object.keys(saved).length?saved:cfg;
-  cfg=c;
+  /* Supabase에서 최신 config 로드 */
+  try{
+    var res = await _SB.from('site_config').select('data').eq('id',1).single();
+    if(res.data && res.data.data && Object.keys(res.data.data).length > 0){
+      cfg = Object.assign({}, cfg, res.data.data);
+    }
+  }catch(e){}
+  var c=cfg;
   sv('f-phone',c.phone);
   sv('f-h1-em',c.hero&&c.hero.headline_em);
   sv('f-h1-mid',c.hero&&c.hero.headline_mid);
@@ -559,49 +563,68 @@ function initCfgForm(){
 }
 function sv(id,v){var el=document.getElementById(id);if(el&&v!=null)el.value=v;}
 
-/* 섹션별 저장 */
+/* ─────────── Supabase config 저장 ─────────── */
+async function sbSaveConfig(patch){
+  try{
+    /* 현재 Supabase config 읽기 */
+    var res = await _SB.from('site_config').select('data').eq('id',1).single();
+    var current = (res.data && res.data.data) ? res.data.data : {};
+    /* 패치 병합 */
+    var merged = Object.assign({}, current, patch);
+    /* upsert */
+    await _SB.from('site_config').upsert({id:1, data:merged, updated_at:new Date().toISOString()});
+    return true;
+  }catch(e){ console.error('config 저장 오류',e); return false; }
+}
+
 function getSaved(){try{return JSON.parse(localStorage.getItem('tc_site_config')||'{}');}catch(e){return {};}}
 function putSaved(obj){localStorage.setItem('tc_site_config',JSON.stringify(obj));}
 
-function saveSection(key){
-  var saved=getSaved();
+async function saveSection(key){
+  var patch={};
   if(key==='phone'){
-    saved.phone=document.getElementById('f-phone').value;
-    if(!cfg.hero)cfg.hero={};
+    patch.phone=document.getElementById('f-phone').value;
+  } else if(key==='hero'){
+    patch.hero={
+      headline_em:    document.getElementById('f-h1-em').value,
+      headline_mid:   document.getElementById('f-h1-mid').value,
+      headline_strong:document.getElementById('f-h1-strong').value,
+      headline_end:   document.getElementById('f-h1-end').value,
+      sub:            document.getElementById('f-hero-sub').value
+    };
+  } else if(key==='stats'){
+    patch.stats=cfg.stats;
+  } else if(key==='table'){
+    patch.table=cfg.table;
+  } else if(key==='reviews_white'){
+    patch.reviews_white=cfg.reviews_white;
+  } else if(key==='reviews_yellow'){
+    patch.reviews_yellow=cfg.reviews_yellow;
+  } else if(key==='footer'){
+    patch.footer={
+      company:  document.getElementById('f-company').value,
+      ceo:      document.getElementById('f-ceo').value,
+      biz_no:   document.getElementById('f-biz').value,
+      sales_no: document.getElementById('f-sales').value,
+      address:  document.getElementById('f-addr').value,
+      email:    document.getElementById('f-email').value,
+      copyright:document.getElementById('f-copy').value
+    };
   }
-  else if(key==='hero'){
-    if(!saved.hero)saved.hero={};
-    saved.hero.headline_em    =document.getElementById('f-h1-em').value;
-    saved.hero.headline_mid   =document.getElementById('f-h1-mid').value;
-    saved.hero.headline_strong=document.getElementById('f-h1-strong').value;
-    saved.hero.headline_end   =document.getElementById('f-h1-end').value;
-    saved.hero.sub            =document.getElementById('f-hero-sub').value;
-  }
-  else if(key==='stats'){
-    saved.stats=cfg.stats;
-  }
-  else if(key==='table'){
-    saved.table=cfg.table;
-  }
-  else if(key==='reviews_white'){
-    saved.reviews_white=cfg.reviews_white;
-  }
-  else if(key==='reviews_yellow'){
-    saved.reviews_yellow=cfg.reviews_yellow;
-  }
-  else if(key==='footer'){
-    if(!saved.footer)saved.footer={};
-    saved.footer.company  =document.getElementById('f-company').value;
-    saved.footer.ceo      =document.getElementById('f-ceo').value;
-    saved.footer.biz_no   =document.getElementById('f-biz').value;
-    saved.footer.sales_no =document.getElementById('f-sales').value;
-    saved.footer.address  =document.getElementById('f-addr').value;
-    saved.footer.email    =document.getElementById('f-email').value;
-    saved.footer.copyright=document.getElementById('f-copy').value;
-  }
-  putSaved(saved);
+  var ok = await sbSaveConfig(patch);
   var labels={phone:'전화번호',hero:'히어로 섹션',stats:'통계 수치',table:'요금 테이블',reviews_white:'흰색 후기',reviews_yellow:'노란색 후기',footer:'푸터 정보'};
-  showToast((labels[key]||key)+' 저장 완료!');
+  showToast(ok ? (labels[key]||key)+' 저장 완료!' : '저장 실패. 다시 시도해주세요.');
+}
+
+async function saveTerm(key){
+  var map={privacy:'f-terms-privacy',marketing:'f-terms-marketing',thirdparty:'f-terms-thirdparty'};
+  var val=document.getElementById(map[key]).value;
+  if(!cfg.terms)cfg.terms={};
+  cfg.terms[key]=val;
+  var termPatch={terms:Object.assign({},cfg.terms)};
+  var ok = await sbSaveConfig(termPatch);
+  var label={privacy:'개인정보 수집·이용',marketing:'광고성 정보 수신',thirdparty:'개인정보 제3자 제공'};
+  showToast(ok ? label[key]+' 약관 저장 완료!' : '저장 실패. 다시 시도해주세요.');
 }
 
 function saveLogin(){
@@ -695,44 +718,6 @@ function mkRt(row,i){
 function addRt(){cfg.rtDB=cfg.rtDB||[];cfg.rtDB.push({name:'',phone:'',carrier:''});rRt();}
 function dRt(i){cfg.rtDB.splice(i,1);rRt();}
 
-
-function saveTerm(key){
-  var map={privacy:'f-terms-privacy',marketing:'f-terms-marketing',thirdparty:'f-terms-thirdparty'};
-  var val=document.getElementById(map[key]).value;
-  if(!cfg.terms)cfg.terms={};
-  cfg.terms[key]=val;
-  var saved=JSON.parse(localStorage.getItem('tc_site_config')||'{}');
-  if(!saved.terms)saved.terms={};
-  saved.terms[key]=val;
-  localStorage.setItem('tc_site_config',JSON.stringify(saved));
-  var label={privacy:'개인정보 수집·이용',marketing:'광고성 정보 수신',thirdparty:'개인정보 제3자 제공'};
-  showToast(label[key]+' 약관이 저장되었습니다.');
-}
-
-function saveCfgToStorage(){
-  var saved=getSaved();
-  saved.phone=document.getElementById('f-phone').value;
-  if(!saved.hero)saved.hero={};
-  saved.hero.headline_em    =document.getElementById('f-h1-em').value;
-  saved.hero.headline_mid   =document.getElementById('f-h1-mid').value;
-  saved.hero.headline_strong=document.getElementById('f-h1-strong').value;
-  saved.hero.headline_end   =document.getElementById('f-h1-end').value;
-  saved.hero.sub            =document.getElementById('f-hero-sub').value;
-  if(!saved.footer)saved.footer={};
-  saved.footer.company  =document.getElementById('f-company').value;
-  saved.footer.ceo      =document.getElementById('f-ceo').value;
-  saved.footer.biz_no   =document.getElementById('f-biz').value;
-  saved.footer.sales_no =document.getElementById('f-sales').value;
-  saved.footer.address  =document.getElementById('f-addr').value;
-  saved.footer.email    =document.getElementById('f-email').value;
-  saved.footer.copyright=document.getElementById('f-copy').value;
-  saved.stats=cfg.stats;
-  saved.table=cfg.table;
-  saved.reviews_white=cfg.reviews_white;
-  saved.reviews_yellow=cfg.reviews_yellow;
-  putSaved(saved);
-  showToast('전체 설정이 저장되었습니다.');
-}
 
 /* ─────────── 유틸 ─────────── */
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
