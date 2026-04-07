@@ -1113,10 +1113,10 @@ async function loadAccounts(){
           +'<td style="padding:10px 12px;font-size:12px;color:var(--g4)">'+dt+'</td>'
           +'<td style="padding:10px 12px"><div style="display:flex;gap:6px;align-items:center">'
           +'<input type="password" id="pw-'+r.id+'" placeholder="새 비밀번호" style="border:1.5px solid var(--g3);border-radius:6px;padding:5px 8px;font-size:12px;font-family:inherit;outline:none;width:130px">'
-          +'<button class="btn btn-gray btn-sm" onclick="changePw('+r.id+',''+esc(r.username)+'')">변경</button>'
+          +'<button class="btn btn-gray btn-sm" onclick="changePw('+r.id+',\''+esc(r.username)+'\')">변경</button>'
           +'</div></td>'
           +'<td style="padding:10px 12px">'
-          +(isMe?'':'<button class="btn btn-red btn-sm" onclick="deleteAccount('+r.id+',''+esc(r.username)+'')">삭제</button>')
+          +(isMe?'':'<button class="btn btn-red btn-sm" onclick="deleteAccount('+r.id+',\''+esc(r.username)+'\')">삭제</button>')
           +'</td>'
           +'</tr>';
       }).join('')+'</tbody></table>';
