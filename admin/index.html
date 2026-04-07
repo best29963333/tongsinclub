@@ -5,365 +5,622 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>통신클럽 어드민</title>
 <script src="../config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px}
-.top{background:#2563EB;color:#fff;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-.top-title{font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px}
-.top-actions{display:flex;gap:10px}
-.btn{padding:8px 18px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;transition:all .15s}
-.btn-primary{background:#fff;color:#2563EB}
-.btn-primary:hover{background:#EFF6FF}
-.btn-preview{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)}
-.btn-preview:hover{background:rgba(255,255,255,.25)}
-.wrap{max-width:860px;margin:0 auto;padding:24px}
-.card{background:#fff;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:20px;overflow:hidden}
-.card-head{padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:10px;background:#fafbfc}
-.card-head-icon{width:32px;height:32px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.card-head-title{font-size:14px;font-weight:700;color:#1e293b}
-.card-body{padding:20px}
-.field{margin-bottom:16px}
-.field:last-child{margin-bottom:0}
-.field label{display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:6px;letter-spacing:.3px}
-.field input,.field textarea,.field select{width:100%;border:1.5px solid #e2e8f0;border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;outline:none;color:#1e293b;background:#fff;transition:border .15s}
-.field input:focus,.field textarea:focus{border-color:#2563EB}
-.field textarea{resize:vertical;min-height:70px;line-height:1.6}
+:root{--pr:#2563EB;--g1:#F8FAFC;--g2:#F1F5F9;--g3:#E2E8F0;--g4:#94A3B8;--g6:#475569;--g8:#1E293B;--rd:#DC2626;--gn:#16A34A}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:#f1f5f9;color:var(--g8);font-size:14px}
+
+/* ── 로그인 ── */
+#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#1e3a8a,#2563EB);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:#fff;border-radius:20px;padding:40px 36px;width:340px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.login-logo{font-size:22px;font-weight:900;color:var(--pr);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--g4);margin-bottom:28px}
+.lf{margin-bottom:14px;text-align:left}
+.lf label{font-size:12px;font-weight:600;color:var(--g6);display:block;margin-bottom:6px}
+.lf input{width:100%;border:1.5px solid var(--g3);border-radius:8px;padding:11px 14px;font-size:14px;outline:none;transition:border .2s;font-family:inherit}
+.lf input:focus{border-color:var(--pr)}
+.login-btn{width:100%;background:var(--pr);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s;font-family:inherit}
+.login-btn:hover{background:#1D4ED8}
+.login-err{color:var(--rd);font-size:12px;margin-top:10px;min-height:18px}
+
+/* ── 레이아웃 ── */
+#app{display:none}
+.topbar{background:#1e293b;height:54px;display:flex;align-items:center;padding:0 20px;gap:4px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.topbar-logo{font-size:15px;font-weight:700;color:#fff;margin-right:12px;white-space:nowrap}
+.tab-btn{padding:7px 14px;border-radius:6px;border:none;background:none;color:#94a3b8;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.tab-btn.on{background:rgba(255,255,255,.12);color:#fff}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.logout-btn{padding:6px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:none;color:#94a3b8;font-size:12px;cursor:pointer;font-family:inherit}
+.logout-btn:hover{color:#fff}
+
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
+
+/* ── 카드 ── */
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:16px;overflow:hidden}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--g2);display:flex;align-items:center;justify-content:space-between;background:#fafbfc}
+.card-head-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-body{padding:18px}
+
+/* ── 버튼 ── */
+.btn{padding:8px 16px;border-radius:7px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+.btn-blue{background:var(--pr);color:#fff}.btn-blue:hover{background:#1D4ED8}
+.btn-green{background:#16A34A;color:#fff}.btn-green:hover{background:#15803d}
+.btn-gray{background:var(--g2);color:var(--g8)}.btn-gray:hover{background:var(--g3)}
+.btn-red{background:#fee2e2;color:var(--rd)}.btn-red:hover{background:#fecaca}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:5px}
+
+/* ── 필터 바 ── */
+.filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:16px}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:11px;font-weight:600;color:var(--g4);letter-spacing:.2px}
+.fg input,.fg select{border:1.5px solid var(--g3);border-radius:7px;padding:7px 10px;font-size:13px;font-family:inherit;outline:none;color:var(--g8);background:#fff}
+.fg input:focus,.fg select:focus{border-color:var(--pr)}
+.date-btns{display:flex;gap:4px}
+.date-btn{padding:7px 11px;border:1.5px solid var(--g3);border-radius:6px;background:#fff;font-size:12px;font-weight:600;color:var(--g6);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.date-btn:hover,.date-btn.on{border-color:var(--pr);background:var(--pr);color:#fff}
+
+/* ── 집계 ── */
+.summary-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.sum-card{background:#fff;border:1.5px solid var(--g2);border-radius:8px;padding:10px 14px;text-align:center;min-width:80px}
+.sum-num{font-size:20px;font-weight:900;line-height:1.1}
+.sum-lbl{font-size:10px;color:var(--g4);margin-top:2px}
+
+/* ── 테이블 ── */
+.tbl-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--g2)}
+table.dtbl{width:100%;border-collapse:collapse;font-size:13px}
+table.dtbl thead tr{background:var(--pr)}
+table.dtbl th{padding:10px 12px;color:#fff;font-size:12px;font-weight:700;text-align:left;white-space:nowrap}
+table.dtbl tbody tr{border-bottom:1px solid var(--g2)}
+table.dtbl tbody tr:hover{background:#f8faff}
+table.dtbl td{padding:9px 12px;vertical-align:middle}
+.empty-row td{text-align:center;color:var(--g4);padding:36px;font-size:13px}
+
+.status-sel{border:1.5px solid var(--g3);border-radius:5px;padding:4px 6px;font-size:11px;font-family:inherit;outline:none;cursor:pointer;font-weight:700;min-width:96px}
+.s0{border-color:#3b82f6;color:#1d4ed8;background:#eff6ff}
+.s1{border-color:#f59e0b;color:#92400e;background:#fef9c3}
+.s2{border-color:#8b5cf6;color:#5b21b6;background:#f5f3ff}
+.s3{border-color:#10b981;color:#065f46;background:#ecfdf5}
+.s4{border-color:#f97316;color:#7c2d12;background:#fff7ed}
+.s5{border-color:#06b6d4;color:#164e63;background:#ecfeff}
+.s6{border-color:#16a34a;color:#14532d;background:#dcfce7}
+
+.memo-inp{border:1.5px solid var(--g3);border-radius:5px;padding:4px 8px;font-size:12px;font-family:inherit;outline:none;width:130px}
+.memo-inp:focus{border-color:var(--pr)}
+
+/* 페이지네이션 */
+.pager{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:12px;flex-wrap:wrap}
+.pg-btn{width:32px;height:32px;border-radius:6px;border:1.5px solid var(--g3);background:#fff;font-size:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;color:var(--g6)}
+.pg-btn:hover,.pg-btn.on{border-color:var(--pr);background:var(--pr);color:#fff}
+.pg-info{font-size:12px;color:var(--g4);margin:0 6px}
+
+/* 설정 탭 */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--g6);margin-bottom:5px}
+.field input,.field textarea{width:100%;border:1.5px solid var(--g3);border-radius:7px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;color:var(--g8);transition:border .15s}
+.field input:focus,.field textarea:focus{border-color:var(--pr)}
+.field textarea{resize:vertical;min-height:60px;line-height:1.6}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
-
-/* 후기 카드 */
-.review-item{border:1.5px solid #e2e8f0;border-radius:10px;padding:14px;margin-bottom:10px;position:relative}
-.review-item.yellow-card{border-color:#FDE68A;background:#FEFCE8}
-.review-del{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:#fee2e2;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#dc2626;font-size:14px;font-weight:700;line-height:1}
-.add-btn{width:100%;padding:10px;border:1.5px dashed #cbd5e1;border-radius:8px;background:none;cursor:pointer;font-size:13px;color:#64748b;font-family:inherit;font-weight:600;transition:all .15s;margin-top:4px}
-.add-btn:hover{border-color:#2563EB;color:#2563EB;background:#EFF6FF}
-
-/* 실시간 접수 */
-.rt-item{display:grid;grid-template-columns:1fr 1.6fr 80px 28px;gap:8px;align-items:center;margin-bottom:8px}
-.rt-item input{border:1.5px solid #e2e8f0;border-radius:6px;padding:7px 10px;font-size:12px;font-family:inherit;outline:none}
-.rt-item input:focus{border-color:#2563EB}
-.rt-del{width:28px;height:28px;border-radius:50%;background:#fee2e2;border:none;cursor:pointer;color:#dc2626;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.rt-head-row{display:grid;grid-template-columns:1fr 1.6fr 80px 28px;gap:8px;margin-bottom:6px}
-.rt-head-row span{font-size:11px;font-weight:600;color:#94a3b8;padding:0 10px}
-
-/* 다운로드 패널 */
-.dl-box{background:#1e293b;border-radius:12px;padding:20px;margin-top:20px}
-.dl-box-title{color:#94a3b8;font-size:12px;font-weight:600;margin-bottom:12px;letter-spacing:.5px}
-.dl-actions{display:flex;gap:10px;flex-wrap:wrap}
-.btn-dl{padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit}
-.btn-dl-main{background:#2563EB;color:#fff}
-.btn-dl-main:hover{background:#1D4ED8}
-.btn-dl-copy{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
-.btn-dl-copy:hover{background:rgba(255,255,255,.15)}
-.dl-note{color:#64748b;font-size:12px;margin-top:10px;line-height:1.6}
+.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.rv-item{border:1.5px solid var(--g3);border-radius:8px;padding:12px;margin-bottom:10px;position:relative}
+.rv-item.yc{border-color:#FDE68A;background:#FEFCE8}
+.rv-del{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:#fee2e2;border:none;cursor:pointer;color:var(--rd);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.add-btn{width:100%;padding:9px;border:1.5px dashed #cbd5e1;border-radius:7px;background:none;cursor:pointer;font-size:13px;color:var(--g4);font-family:inherit;font-weight:600;transition:all .15s;margin-top:4px}
+.add-btn:hover{border-color:var(--pr);color:var(--pr);background:#EFF6FF}
+.rt-item{display:grid;grid-template-columns:1fr 1.5fr 72px 28px;gap:8px;align-items:center;margin-bottom:8px}
+.rt-item input{border:1.5px solid var(--g3);border-radius:6px;padding:7px 10px;font-size:12px;font-family:inherit;outline:none}
+.rt-item input:focus{border-color:var(--pr)}
+.rt-del{width:28px;height:28px;border-radius:50%;background:#fee2e2;border:none;cursor:pointer;color:var(--rd);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.rt-hdr{display:grid;grid-template-columns:1fr 1.5fr 72px 28px;gap:8px;margin-bottom:6px}
+.rt-hdr span{font-size:11px;font-weight:600;color:var(--g4);padding:0 10px}
+.dl-box{background:#1e293b;border-radius:10px;padding:18px;margin-top:16px}
+.dl-box-label{color:#64748b;font-size:11px;font-weight:700;margin-bottom:10px;letter-spacing:.5px}
+.dl-note{color:#64748b;font-size:12px;margin-top:10px;line-height:1.7}
 
 /* toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;z-index:99999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1}
+
+@media(max-width:700px){
+  .row4{grid-template-columns:1fr 1fr}
+  table.dtbl{font-size:11px}
+  table.dtbl th,table.dtbl td{padding:7px 6px}
+  .memo-inp{width:80px}
+  .filter-bar{flex-direction:column;align-items:stretch}
+}
 </style>
 </head>
 <body>
 
-<div class="top">
-  <div class="top-title">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-    통신클럽 어드민
-  </div>
-  <div class="top-actions">
-    <button class="btn btn-preview" onclick="window.open('../index.html','_blank')">🔗 랜딩 미리보기</button>
-    <button class="btn btn-primary" onclick="downloadConfig()">⬇ config.js 다운로드</button>
+<!-- 로그인 -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">📡 통신클럽</div>
+    <div class="login-sub">어드민 패널 로그인</div>
+    <div class="lf"><label>아이디</label><input id="l-id" type="text" placeholder="admin" autocomplete="username"></div>
+    <div class="lf"><label>비밀번호</label><input id="l-pw" type="password" placeholder="비밀번호" autocomplete="current-password"></div>
+    <button class="login-btn" onclick="doLogin()">로그인</button>
+    <div class="login-err" id="login-err"></div>
   </div>
 </div>
 
-<div class="wrap">
-
-  <!-- 기본 설정 -->
-  <div class="card">
-    <div class="card-head">
-      <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.27 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-      <div class="card-head-title">기본 설정</div>
-    </div>
-    <div class="card-body">
-      <div class="field"><label>대표 전화번호</label><input id="f-phone" type="text" placeholder="0000-0000"></div>
-    </div>
-  </div>
-
-  <!-- 히어로 -->
-  <div class="card">
-    <div class="card-head">
-      <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-      <div class="card-head-title">히어로 섹션</div>
-    </div>
-    <div class="card-body">
-      <div class="field"><label>헤드라인 강조 (파란색)</label><input id="f-h1-em" type="text" placeholder="최저 요금"></div>
-      <div class="field"><label>헤드라인 중간 텍스트</label><input id="f-h1-mid" type="text" placeholder="으로 인터넷·TV 가입,"></div>
-      <div class="field"><label>헤드라인 강조2 (빨간색)</label><input id="f-h1-strong" type="text" placeholder="현금 최대 48만원 + α"></div>
-      <div class="field"><label>헤드라인 끝 텍스트</label><input id="f-h1-end" type="text" placeholder="받으세요"></div>
-      <div class="field"><label>서브 텍스트 (줄바꿈: \n)</label><textarea id="f-hero-sub" rows="2"></textarea></div>
+<!-- 앱 -->
+<div id="app">
+  <div class="topbar">
+    <span class="topbar-logo">📡 통신클럽 어드민</span>
+    <button class="tab-btn on" id="tab-btn-db" onclick="showTab('db')">📋 접수 DB</button>
+    <button class="tab-btn" id="tab-btn-cfg" onclick="showTab('cfg')">⚙️ 사이트 설정</button>
+    <div class="topbar-right">
+      <button class="btn btn-blue btn-sm" onclick="window.open('../index.html','_blank')">🔗 랜딩 미리보기</button>
+      <button class="logout-btn" onclick="doLogout()">로그아웃</button>
     </div>
   </div>
 
-  <!-- 통계 -->
-  <div class="card">
-    <div class="card-head">
-      <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-      <div class="card-head-title">통계 수치</div>
-    </div>
-    <div class="card-body">
-      <div class="row4" id="stats-wrap"></div>
-    </div>
-  </div>
-
-  <!-- 요금 비교 테이블 -->
-  <div class="card">
-    <div class="card-head">
-      <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg></div>
-      <div class="card-head-title">요금 비교 테이블</div>
-    </div>
-    <div class="card-body" id="table-wrap"></div>
-  </div>
-
-  <!-- 후기 1줄 (흰색) -->
-  <div class="card">
-    <div class="card-head">
-      <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-      <div class="card-head-title">후기 1줄 — 흰색 카드</div>
-    </div>
-    <div class="card-body">
-      <div id="reviews-white-wrap"></div>
-      <button class="add-btn" onclick="addReviewWhite()">+ 흰색 후기 추가</button>
-    </div>
-  </div>
-
-  <!-- 후기 2줄 (노란색) -->
-  <div class="card">
-    <div class="card-head">
-      <div class="card-head-icon" style="background:#FEFCE8"><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-      <div class="card-head-title">후기 2줄 — 노란색 카드</div>
-    </div>
-    <div class="card-body">
-      <div id="reviews-yellow-wrap"></div>
-      <button class="add-btn" onclick="addReviewYellow()">+ 노란색 후기 추가</button>
-    </div>
-  </div>
-
-  <!-- 실시간 접수 현황 -->
-  <div class="card">
-    <div class="card-head">
-      <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-      <div class="card-head-title">실시간 접수 현황 데이터</div>
-    </div>
-    <div class="card-body">
-      <div class="rt-head-row">
-        <span>이름</span><span>연락처</span><span>통신사</span><span></span>
+  <!-- ══ DB 탭 ══ -->
+  <div id="pane-db" class="wrap">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          접수 현황 조회
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-green btn-sm" onclick="exportExcel()">⬇ 엑셀 저장</button>
+          <button class="btn btn-gray btn-sm" onclick="applyFilter()">새로고침</button>
+        </div>
       </div>
-      <div id="rt-wrap"></div>
-      <button class="add-btn" onclick="addRt()">+ 행 추가</button>
-    </div>
-  </div>
+      <div class="card-body">
 
-  <!-- 푸터 -->
-  <div class="card">
-    <div class="card-head">
-      <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-      <div class="card-head-title">푸터 정보</div>
-    </div>
-    <div class="card-body">
-      <div class="row2">
-        <div class="field"><label>사업자등록번호</label><input id="f-biz-no" type="text" placeholder="000-00-00000"></div>
-        <div class="field"><label>통신판매업신고번호</label><input id="f-sales-no" type="text" placeholder="제0000-서울-00000호"></div>
-      </div>
-      <div class="row2">
-        <div class="field"><label>주소</label><input id="f-address" type="text" placeholder="서울특별시 OO구 OO로 00"></div>
-        <div class="field"><label>저작권 연도</label><input id="f-copyright" type="text" placeholder="2025"></div>
+        <div class="filter-bar">
+          <div class="fg">
+            <label>기간 선택</label>
+            <div class="date-btns">
+              <button class="date-btn on" onclick="setPreset('today',this)">당일</button>
+              <button class="date-btn" onclick="setPreset('yesterday',this)">전일</button>
+              <button class="date-btn" onclick="setPreset('month',this)">당월</button>
+              <button class="date-btn" onclick="setPreset('lastmonth',this)">전월</button>
+              <button class="date-btn" onclick="setPreset('all',this)">전체</button>
+            </div>
+          </div>
+          <div class="fg"><label>시작 날짜</label><input type="date" id="f-from"></div>
+          <div class="fg"><label>종료 날짜</label><input type="date" id="f-to"></div>
+          <div class="fg"><label>검색 (이름·연락처)</label><input type="text" id="f-search" placeholder="김철수 / 010-1234" style="min-width:170px"></div>
+          <div class="fg">
+            <label>처리 상태</label>
+            <select id="f-status">
+              <option value="">전체</option>
+              <option>상담</option><option>부재</option><option>문자발송</option>
+              <option>청약</option><option>필수항목 안내</option><option>설치 완료</option><option>송금 완료</option>
+            </select>
+          </div>
+          <button class="btn btn-blue" onclick="applyFilter()" style="align-self:flex-end">조회</button>
+        </div>
+
+        <div class="summary-row" id="sum-row"></div>
+
+        <div class="tbl-wrap">
+          <table class="dtbl">
+            <thead>
+              <tr>
+                <th>No</th><th>접수일시</th><th>성함</th><th>연락처</th>
+                <th>희망통신사</th><th>연락시간</th><th>처리상태</th><th>메모</th><th>삭제</th>
+              </tr>
+            </thead>
+            <tbody id="db-tbody"></tbody>
+          </table>
+        </div>
+        <div class="pager" id="pager"></div>
       </div>
     </div>
   </div>
 
-  <!-- 다운로드 -->
-  <div class="dl-box">
-    <div class="dl-box-title">📦 배포 방법</div>
-    <div class="dl-actions">
-      <button class="btn-dl btn-dl-main" onclick="downloadConfig()">config.js 다운로드</button>
-      <button class="btn-dl btn-dl-copy" onclick="copyConfig()">코드 복사</button>
+  <!-- ══ 설정 탭 ══ -->
+  <div id="pane-cfg" class="wrap" style="display:none">
+
+    <div class="card">
+      <div class="card-head"><div class="card-head-title">🔑 로그인 계정 변경</div></div>
+      <div class="card-body">
+        <div class="row3">
+          <div class="field"><label>아이디</label><input id="c-lid" type="text"></div>
+          <div class="field"><label>새 비밀번호</label><input id="c-lpw" type="password"></div>
+          <div class="field"><label>비밀번호 확인</label><input id="c-lpw2" type="password"></div>
+        </div>
+        <button class="btn btn-blue btn-sm" onclick="saveLogin()">계정 저장</button>
+      </div>
     </div>
-    <div class="dl-note">
-      1. <b>config.js 다운로드</b> 클릭<br>
-      2. GitHub 레포에 기존 config.js 덮어쓰기 업로드<br>
-      3. Vercel이 자동 재배포 → 완료!
+
+    <div class="card">
+      <div class="card-head"><div class="card-head-title">📞 기본 설정</div></div>
+      <div class="card-body">
+        <div class="field" style="max-width:240px"><label>대표 전화번호</label><input id="f-phone" type="text"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-head-title">🌟 히어로 섹션</div></div>
+      <div class="card-body">
+        <div class="field"><label>헤드라인 강조 (파란색)</label><input id="f-h1-em" type="text"></div>
+        <div class="field"><label>헤드라인 중간 텍스트</label><input id="f-h1-mid" type="text"></div>
+        <div class="field"><label>헤드라인 강조2 (빨간색)</label><input id="f-h1-strong" type="text"></div>
+        <div class="field"><label>헤드라인 끝 텍스트</label><input id="f-h1-end" type="text"></div>
+        <div class="field"><label>서브 텍스트</label><textarea id="f-hero-sub" rows="2"></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-head-title">📊 통계 수치</div></div>
+      <div class="card-body"><div class="row4" id="stats-wrap"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-head-title">📋 요금 비교 테이블</div></div>
+      <div class="card-body" id="tbl-wrap"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-head-title">⭐ 후기 1줄 — 흰색</div></div>
+      <div class="card-body">
+        <div id="rw-wrap"></div>
+        <button class="add-btn" onclick="addRW()">+ 흰색 후기 추가</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-head-title">🌟 후기 2줄 — 노란색</div></div>
+      <div class="card-body">
+        <div id="ry-wrap"></div>
+        <button class="add-btn" onclick="addRY()">+ 노란색 후기 추가</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-head-title">🔄 실시간 접수 현황 데이터</div></div>
+      <div class="card-body">
+        <div class="rt-hdr"><span>이름</span><span>연락처</span><span>통신사</span><span></span></div>
+        <div id="rt-wrap"></div>
+        <button class="add-btn" onclick="addRt()">+ 행 추가</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-head-title">🏢 푸터 정보</div></div>
+      <div class="card-body">
+        <div class="row2">
+          <div class="field"><label>사업자등록번호</label><input id="f-biz" type="text"></div>
+          <div class="field"><label>통신판매업신고번호</label><input id="f-sales" type="text"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>주소</label><input id="f-addr" type="text"></div>
+          <div class="field"><label>저작권 연도</label><input id="f-copy" type="text"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dl-box">
+      <div class="dl-box-label">📦 배포 방법</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-blue" onclick="dlConfig()">config.js 다운로드</button>
+        <button class="btn btn-gray" onclick="cpConfig()">코드 복사</button>
+      </div>
+      <div class="dl-note">1. config.js 다운로드 → 2. GitHub 레포에 덮어쓰기 업로드 → 3. Vercel 자동 재배포</div>
     </div>
   </div>
-
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-var cfg = (typeof SITE_CONFIG !== 'undefined') ? JSON.parse(JSON.stringify(SITE_CONFIG)) : {
-  phone:'0000-0000',
-  hero:{headline_em:'최저 요금',headline_mid:'으로 인터넷·TV 가입,',headline_strong:'현금 최대 48만원 + α',headline_end:'받으세요',sub:'통신클럽은 SK·KT·LG 공식 대리점입니다.\n전담 매니저가 딱 맞는 요금제를 찾아드립니다.'},
-  stats:[{value:'98,000+',label:'누적 가입자'},{value:'4.9점',label:'평균 만족도'},{value:'48만원+α',label:'최대 현금'},{value:'당일',label:'현금 지급'}],
-  table:[{logo:'SK-나비.png',product:'인터넷 1G',orig:'38,500원',final:'27,500원',support:'30'},{logo:'KT_Logo.png',product:'인터넷 1G',orig:'38,500원',final:'27,500원',support:'28'},{logo:'LGU_Logo.png',product:'인터넷 1G',orig:'38,500원',final:'27,500원',support:'26'}],
-  reviews_white:[],reviews_yellow:[],
-  rtDB:[{name:'박*백',phone:'010-2***-****',carrier:'L*'}],
-  footer:{biz_no:'000-00-00000',sales_no:'제0000-서울-00000호',address:'서울특별시 OO구 OO로 00 OO빌딩 0층',copyright:'2025'}
-};
+/* ─────────── 로그인 ─────────── */
+var K_ID='tc_aid', K_PW='tc_apw', K_SS='tc_sess';
+var DI='admin', DP='1234';
+var getAId=function(){return localStorage.getItem(K_ID)||DI;};
+var getAPw=function(){return localStorage.getItem(K_PW)||DP;};
 
-/* ── 초기값 채우기 ── */
-function init(){
-  document.getElementById('f-phone').value = cfg.phone||'';
-  document.getElementById('f-h1-em').value = cfg.hero.headline_em||'';
-  document.getElementById('f-h1-mid').value = cfg.hero.headline_mid||'';
-  document.getElementById('f-h1-strong').value = cfg.hero.headline_strong||'';
-  document.getElementById('f-h1-end').value = cfg.hero.headline_end||'';
-  document.getElementById('f-hero-sub').value = (cfg.hero.sub||'').replace(/<br>/g,'\n');
-  document.getElementById('f-biz-no').value = cfg.footer.biz_no||'';
-  document.getElementById('f-sales-no').value = cfg.footer.sales_no||'';
-  document.getElementById('f-address').value = cfg.footer.address||'';
-  document.getElementById('f-copyright').value = cfg.footer.copyright||'';
-  renderStats(); renderTable(); renderReviewsWhite(); renderReviewsYellow(); renderRt();
+function doLogin(){
+  var id=document.getElementById('l-id').value.trim();
+  var pw=document.getElementById('l-pw').value;
+  if(id===getAId()&&pw===getAPw()){
+    sessionStorage.setItem(K_SS,'1');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    bootApp();
+  } else {
+    document.getElementById('login-err').textContent='아이디 또는 비밀번호가 올바르지 않습니다.';
+  }
+}
+function doLogout(){sessionStorage.removeItem(K_SS);location.reload();}
+['l-pw','l-id'].forEach(function(id){
+  document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+});
+if(sessionStorage.getItem(K_SS)==='1'){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
 }
 
-/* ── 통계 ── */
-function renderStats(){
-  var w=document.getElementById('stats-wrap'); w.innerHTML='';
+/* ─────────── 탭 ─────────── */
+function showTab(name){
+  document.getElementById('pane-db').style.display  = name==='db'  ? '' : 'none';
+  document.getElementById('pane-cfg').style.display = name==='cfg' ? '' : 'none';
+  document.getElementById('tab-btn-db').classList.toggle('on', name==='db');
+  document.getElementById('tab-btn-cfg').classList.toggle('on', name==='cfg');
+  if(name==='cfg') initCfgForm();
+  if(name==='db')  applyFilter();
+}
+
+function bootApp(){
+  setPreset('today', document.querySelector('.date-btn.on'));
+  applyFilter();
+}
+
+/* ─────────── DB ─────────── */
+var allRows=[], filtered=[], PAGE=20, cur=1;
+var SL=['상담','부재','문자발송','청약','필수항목 안내','설치 완료','송금 완료'];
+var SC=['s0','s1','s2','s3','s4','s5','s6'];
+var SC_COLOR=['#3b82f6','#f59e0b','#8b5cf6','#10b981','#f97316','#06b6d4','#16a34a'];
+
+function applyFilter(){
+  try{allRows=JSON.parse(localStorage.getItem('tc_submissions')||'[]');}catch(e){allRows=[];}
+  var from=document.getElementById('f-from').value;
+  var to  =document.getElementById('f-to').value;
+  var q   =document.getElementById('f-search').value.trim().toLowerCase();
+  var st  =document.getElementById('f-status').value;
+  filtered=allRows.filter(function(r){
+    var dt=r.createdAt?r.createdAt.slice(0,10):'';
+    if(from&&dt<from)return false;
+    if(to&&dt>to)return false;
+    if(st&&r.status!==st)return false;
+    if(q){var h=(r.name||'').toLowerCase()+(r.phone||'').toLowerCase();if(h.indexOf(q)<0)return false;}
+    return true;
+  });
+  cur=1;
+  renderSum();
+  renderTbl();
+}
+
+function renderSum(){
+  var cnt={};SL.forEach(function(s){cnt[s]=0;});
+  filtered.forEach(function(r){if(cnt[r.status]!==undefined)cnt[r.status]++;});
+  var h='<div class="sum-card"><div class="sum-num" style="color:var(--pr)">'+filtered.length+'</div><div class="sum-lbl">전체</div></div>';
+  SL.forEach(function(s,i){h+='<div class="sum-card"><div class="sum-num" style="color:'+SC_COLOR[i]+'">'+cnt[s]+'</div><div class="sum-lbl">'+s+'</div></div>';});
+  document.getElementById('sum-row').innerHTML=h;
+}
+
+function renderTbl(){
+  var tbody=document.getElementById('db-tbody');
+  var s=(cur-1)*PAGE, pg=filtered.slice(s,s+PAGE);
+  if(!pg.length){
+    tbody.innerHTML='<tr class="empty-row"><td colspan="9">조회된 접수 건이 없습니다.</td></tr>';
+    document.getElementById('pager').innerHTML='';return;
+  }
+  tbody.innerHTML=pg.map(function(r,i){
+    var no=filtered.length-s-i;
+    var dt=r.createdAt?r.createdAt.replace('T',' ').slice(0,16):'-';
+    var si=SL.indexOf(r.status);if(si<0)si=0;
+    var opts=SL.map(function(s){return '<option'+(s===r.status?' selected':'')+'>'+s+'</option>';}).join('');
+    return '<tr>'
+      +'<td style="color:var(--g4);font-size:11px">'+no+'</td>'
+      +'<td style="white-space:nowrap;font-size:12px;color:var(--g6)">'+dt+'</td>'
+      +'<td style="font-weight:700">'+esc(r.name||'-')+'</td>'
+      +'<td style="font-family:monospace;font-size:12px">'+esc(r.phone||'-')+'</td>'
+      +'<td style="font-weight:700;color:var(--pr)">'+esc(r.carrier||'-')+'</td>'
+      +'<td style="font-size:12px;color:var(--g6)">'+esc(r.callTime||'-')+'</td>'
+      +'<td><select class="status-sel '+SC[si]+'" onchange="updStatus('+r.id+',this)">'+opts+'</select></td>'
+      +'<td><input class="memo-inp" value="'+esc(r.memo||'')+'" placeholder="메모..." onblur="updMemo('+r.id+',this)"></td>'
+      +'<td><button class="btn btn-red btn-sm" onclick="delRow('+r.id+')">삭제</button></td>'
+      +'</tr>';
+  }).join('');
+  renderPager();
+}
+
+function renderPager(){
+  var tot=Math.ceil(filtered.length/PAGE);
+  if(tot<=1){document.getElementById('pager').innerHTML='<span class="pg-info">총 '+filtered.length+'건</span>';return;}
+  var h='';
+  if(cur>1)h+='<button class="pg-btn" onclick="goPg('+(cur-1)+')">‹</button>';
+  var s2=Math.max(1,cur-2),e=Math.min(tot,cur+2);
+  for(var p=s2;p<=e;p++)h+='<button class="pg-btn'+(p===cur?' on':'')+'" onclick="goPg('+p+')">'+p+'</button>';
+  if(cur<tot)h+='<button class="pg-btn" onclick="goPg('+(cur+1)+')">›</button>';
+  h+='<span class="pg-info">총 '+filtered.length+'건 / '+tot+'페이지</span>';
+  document.getElementById('pager').innerHTML=h;
+}
+function goPg(p){cur=p;renderTbl();window.scrollTo(0,200);}
+
+function updStatus(id,sel){
+  var si=SL.indexOf(sel.value);if(si<0)si=0;
+  sel.className='status-sel '+SC[si];
+  saveF(id,'status',sel.value);
+}
+function updMemo(id,inp){saveF(id,'memo',inp.value);}
+function saveF(id,key,val){
+  var idx=allRows.findIndex(function(r){return r.id===id;});
+  if(idx<0)return;
+  allRows[idx][key]=val;
+  localStorage.setItem('tc_submissions',JSON.stringify(allRows));
+}
+function delRow(id){
+  if(!confirm('이 접수 건을 삭제하시겠습니까?'))return;
+  allRows=allRows.filter(function(r){return r.id!==id;});
+  localStorage.setItem('tc_submissions',JSON.stringify(allRows));
+  applyFilter();
+  showToast('삭제되었습니다.');
+}
+
+function setPreset(preset,btn){
+  document.querySelectorAll('.date-btn').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  var now=new Date();
+  var fmt=function(d){return d.toISOString().slice(0,10);};
+  var from='',to='';
+  if(preset==='today'){from=to=fmt(now);}
+  else if(preset==='yesterday'){var y=new Date(now);y.setDate(y.getDate()-1);from=to=fmt(y);}
+  else if(preset==='month'){from=fmt(new Date(now.getFullYear(),now.getMonth(),1));to=fmt(now);}
+  else if(preset==='lastmonth'){from=fmt(new Date(now.getFullYear(),now.getMonth()-1,1));to=fmt(new Date(now.getFullYear(),now.getMonth(),0));}
+  document.getElementById('f-from').value=from;
+  document.getElementById('f-to').value=to;
+}
+
+function exportExcel(){
+  if(!filtered.length){showToast('조회된 데이터가 없습니다.');return;}
+  var rows=[['No','접수일시','성함','연락처','희망통신사','연락시간','처리상태','메모']];
+  filtered.forEach(function(r,i){
+    rows.push([filtered.length-i,(r.createdAt||'').replace('T',' ').slice(0,16),r.name||'',r.phone||'',r.carrier||'',r.callTime||'',r.status||'',r.memo||'']);
+  });
+  var wb=XLSX.utils.book_new();
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:5},{wch:18},{wch:10},{wch:16},{wch:12},{wch:16},{wch:14},{wch:24}];
+  XLSX.utils.book_append_sheet(wb,ws,'접수현황');
+  XLSX.writeFile(wb,'통신클럽_접수현황_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  showToast('엑셀 저장 완료!');
+}
+
+/* ─────────── 설정 ─────────── */
+var cfg=(typeof SITE_CONFIG!=='undefined')?JSON.parse(JSON.stringify(SITE_CONFIG)):{hero:{},stats:[],table:[],reviews_white:[],reviews_yellow:[],rtDB:[],footer:{}};
+
+function initCfgForm(){
+  document.getElementById('c-lid').value=localStorage.getItem(K_ID)||DI;
+  document.getElementById('c-lpw').value='';
+  document.getElementById('c-lpw2').value='';
+  var c=cfg;
+  sv('f-phone',c.phone);
+  sv('f-h1-em',c.hero&&c.hero.headline_em);
+  sv('f-h1-mid',c.hero&&c.hero.headline_mid);
+  sv('f-h1-strong',c.hero&&c.hero.headline_strong);
+  sv('f-h1-end',c.hero&&c.hero.headline_end);
+  sv('f-hero-sub',(c.hero&&c.hero.sub||'').replace(/<br>/g,'\n'));
+  sv('f-biz',c.footer&&c.footer.biz_no);
+  sv('f-sales',c.footer&&c.footer.sales_no);
+  sv('f-addr',c.footer&&c.footer.address);
+  sv('f-copy',c.footer&&c.footer.copyright);
+  rStats();rTbl();rRW();rRY();rRt();
+}
+function sv(id,v){var el=document.getElementById(id);if(el&&v!=null)el.value=v;}
+
+function saveLogin(){
+  var id=document.getElementById('c-lid').value.trim();
+  var pw=document.getElementById('c-lpw').value;
+  var pw2=document.getElementById('c-lpw2').value;
+  if(!id){showToast('아이디를 입력해주세요.');return;}
+  if(pw&&pw!==pw2){showToast('비밀번호가 일치하지 않습니다.');return;}
+  localStorage.setItem(K_ID,id);
+  if(pw)localStorage.setItem(K_PW,pw);
+  showToast('계정 정보가 저장되었습니다.');
+}
+
+function rStats(){
+  var w=document.getElementById('stats-wrap');if(!w)return;w.innerHTML='';
   (cfg.stats||[]).forEach(function(st,i){
     var d=document.createElement('div');
-    d.innerHTML='<div class="field"><label>값 '+(i+1)+'</label><input data-si="'+i+'" data-sk="value" value="'+esc(st.value)+'"></div><div class="field"><label>레이블 '+(i+1)+'</label><input data-si="'+i+'" data-sk="label" value="'+esc(st.label)+'"></div>';
+    d.innerHTML='<div class="field"><label>값 '+(i+1)+'</label><input data-si="'+i+'" data-sk="value" value="'+esc(st.value||'')+'"></div>'
+               +'<div class="field"><label>레이블 '+(i+1)+'</label><input data-si="'+i+'" data-sk="label" value="'+esc(st.label||'')+'"></div>';
     d.querySelectorAll('input').forEach(function(el){el.addEventListener('input',function(){cfg.stats[+this.dataset.si][this.dataset.sk]=this.value;});});
     w.appendChild(d);
   });
 }
-
-/* ── 테이블 ── */
-function renderTable(){
-  var w=document.getElementById('table-wrap'); w.innerHTML='';
-  var carriers=['SK브로드밴드','KT','LG U+'];
+function rTbl(){
+  var w=document.getElementById('tbl-wrap');if(!w)return;w.innerHTML='';
+  var lbs=['SK브로드밴드','KT','LG U+'];
   (cfg.table||[]).forEach(function(row,i){
-    var d=document.createElement('div');
-    d.style.marginBottom='16px';
-    d.innerHTML='<div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f1f5f9">'+carriers[i]+' 로우</div>'
+    var d=document.createElement('div');d.style.marginBottom='14px';
+    d.innerHTML='<div style="font-size:11px;font-weight:700;color:var(--g4);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--g2)">'+lbs[i]+'</div>'
       +'<div class="row4">'
-      +'<div class="field"><label>로고 파일명</label><input data-ti="'+i+'" data-tk="logo" value="'+esc(row.logo)+'"></div>'
-      +'<div class="field"><label>상품명</label><input data-ti="'+i+'" data-tk="product" value="'+esc(row.product)+'"></div>'
-      +'<div class="field"><label>정가</label><input data-ti="'+i+'" data-tk="orig" value="'+esc(row.orig)+'"></div>'
-      +'<div class="field"><label>할인가</label><input data-ti="'+i+'" data-tk="final" value="'+esc(row.final)+'"></div>'
+      +'<div class="field"><label>로고 파일명</label><input data-ti="'+i+'" data-tk="logo" value="'+esc(row.logo||'')+'"></div>'
+      +'<div class="field"><label>상품명</label><input data-ti="'+i+'" data-tk="product" value="'+esc(row.product||'')+'"></div>'
+      +'<div class="field"><label>정가</label><input data-ti="'+i+'" data-tk="orig" value="'+esc(row.orig||'')+'"></div>'
+      +'<div class="field"><label>할인가</label><input data-ti="'+i+'" data-tk="final" value="'+esc(row.final||'')+'"></div>'
       +'</div>'
-      +'<div class="field" style="max-width:120px"><label>지원금 (만원)</label><input data-ti="'+i+'" data-tk="support" value="'+esc(row.support)+'"></div>';
+      +'<div class="field" style="max-width:100px"><label>지원금(만원)</label><input data-ti="'+i+'" data-tk="support" value="'+esc(row.support||'')+'"></div>';
     d.querySelectorAll('input').forEach(function(el){el.addEventListener('input',function(){cfg.table[+this.dataset.ti][this.dataset.tk]=this.value;});});
     w.appendChild(d);
   });
 }
-
-/* ── 후기 흰색 ── */
-function renderReviewsWhite(){
-  var w=document.getElementById('reviews-white-wrap'); w.innerHTML='';
-  (cfg.reviews_white||[]).forEach(function(r,i){ w.appendChild(makeReviewWhiteEl(r,i)); });
+function rRW(){
+  var w=document.getElementById('rw-wrap');if(!w)return;w.innerHTML='';
+  (cfg.reviews_white||[]).forEach(function(r,i){w.appendChild(mkRW(r,i));});
 }
-function makeReviewWhiteEl(r,i){
-  var d=document.createElement('div'); d.className='review-item';
-  d.innerHTML='<button class="review-del" onclick="delRW('+i+')">×</button>'
-    +'<div class="row2" style="margin-bottom:8px">'
-    +'<div class="field"><label>이니셜</label><input data-rwi="'+i+'" data-rwk="initial" value="'+esc(r.initial||'')+'"></div>'
-    +'<div class="field"><label>태그 (선택)</label><input data-rwi="'+i+'" data-rwk="tag" value="'+esc(r.tag||'')+'"></div>'
-    +'</div>'
+function mkRW(r,i){
+  var d=document.createElement('div');d.className='rv-item';
+  d.innerHTML='<button class="rv-del" onclick="dRW('+i+')">×</button>'
+    +'<div class="row2" style="margin-bottom:8px"><div class="field"><label>이니셜</label><input data-rwi="'+i+'" data-rwk="initial" value="'+esc(r.initial||'')+'"></div>'
+    +'<div class="field"><label>태그</label><input data-rwi="'+i+'" data-rwk="tag" value="'+esc(r.tag||'')+'"></div></div>'
     +'<div class="field"><label>후기 내용</label><textarea data-rwi="'+i+'" data-rwk="text" rows="2">'+esc(r.text||'')+'</textarea></div>'
-    +'<div class="row2">'
-    +'<div class="field"><label>닉네임</label><input data-rwi="'+i+'" data-rwk="name" value="'+esc(r.name||'')+'"></div>'
-    +'<div class="field"><label>날짜·가입정보</label><input data-rwi="'+i+'" data-rwk="date" value="'+esc(r.date||'')+'"></div>'
-    +'</div>';
+    +'<div class="row2"><div class="field"><label>닉네임</label><input data-rwi="'+i+'" data-rwk="name" value="'+esc(r.name||'')+'"></div>'
+    +'<div class="field"><label>날짜·가입정보</label><input data-rwi="'+i+'" data-rwk="date" value="'+esc(r.date||'')+'"></div></div>';
   d.querySelectorAll('input,textarea').forEach(function(el){el.addEventListener('input',function(){cfg.reviews_white[+this.dataset.rwi][this.dataset.rwk]=this.value;});});
   return d;
 }
-function addReviewWhite(){cfg.reviews_white.push({initial:'',text:'',name:'',date:'',tag:''});renderReviewsWhite();}
-function delRW(i){cfg.reviews_white.splice(i,1);renderReviewsWhite();}
+function addRW(){cfg.reviews_white=cfg.reviews_white||[];cfg.reviews_white.push({initial:'',text:'',name:'',date:'',tag:''});rRW();}
+function dRW(i){cfg.reviews_white.splice(i,1);rRW();}
 
-/* ── 후기 노란색 ── */
-function renderReviewsYellow(){
-  var w=document.getElementById('reviews-yellow-wrap'); w.innerHTML='';
-  (cfg.reviews_yellow||[]).forEach(function(r,i){ w.appendChild(makeReviewYellowEl(r,i)); });
+function rRY(){
+  var w=document.getElementById('ry-wrap');if(!w)return;w.innerHTML='';
+  (cfg.reviews_yellow||[]).forEach(function(r,i){w.appendChild(mkRY(r,i));});
 }
-function makeReviewYellowEl(r,i){
-  var d=document.createElement('div'); d.className='review-item yellow-card';
-  d.innerHTML='<button class="review-del" onclick="delRY('+i+')">×</button>'
-    +'<div class="row2" style="margin-bottom:8px">'
-    +'<div class="field"><label>이니셜</label><input data-ryi="'+i+'" data-ryk="initial" value="'+esc(r.initial||'')+'"></div>'
-    +'<div class="field"><label>지역</label><input data-ryi="'+i+'" data-ryk="loc" value="'+esc(r.loc||'')+'"></div>'
-    +'</div>'
+function mkRY(r,i){
+  var d=document.createElement('div');d.className='rv-item yc';
+  d.innerHTML='<button class="rv-del" onclick="dRY('+i+')">×</button>'
+    +'<div class="row2" style="margin-bottom:8px"><div class="field"><label>이니셜</label><input data-ryi="'+i+'" data-ryk="initial" value="'+esc(r.initial||'')+'"></div>'
+    +'<div class="field"><label>지역</label><input data-ryi="'+i+'" data-ryk="loc" value="'+esc(r.loc||'')+'"></div></div>'
     +'<div class="field"><label>따옴표 제목</label><input data-ryi="'+i+'" data-ryk="quote" value="'+esc(r.quote||'')+'"></div>'
     +'<div class="field"><label>후기 내용</label><textarea data-ryi="'+i+'" data-ryk="text" rows="2">'+esc(r.text||'')+'</textarea></div>'
-    +'<div class="row2">'
-    +'<div class="field"><label>이름</label><input data-ryi="'+i+'" data-ryk="name" value="'+esc(r.name||'')+'"></div>'
-    +'<div class="field"><label>날짜·가입정보</label><input data-ryi="'+i+'" data-ryk="date" value="'+esc(r.date||'')+'"></div>'
-    +'</div>';
+    +'<div class="row2"><div class="field"><label>이름</label><input data-ryi="'+i+'" data-ryk="name" value="'+esc(r.name||'')+'"></div>'
+    +'<div class="field"><label>날짜·가입정보</label><input data-ryi="'+i+'" data-ryk="date" value="'+esc(r.date||'')+'"></div></div>';
   d.querySelectorAll('input,textarea').forEach(function(el){el.addEventListener('input',function(){cfg.reviews_yellow[+this.dataset.ryi][this.dataset.ryk]=this.value;});});
   return d;
 }
-function addReviewYellow(){cfg.reviews_yellow.push({initial:'',quote:'',loc:'',text:'',name:'',date:''});renderReviewsYellow();}
-function delRY(i){cfg.reviews_yellow.splice(i,1);renderReviewsYellow();}
+function addRY(){cfg.reviews_yellow=cfg.reviews_yellow||[];cfg.reviews_yellow.push({initial:'',quote:'',loc:'',text:'',name:'',date:''});rRY();}
+function dRY(i){cfg.reviews_yellow.splice(i,1);rRY();}
 
-/* ── 실시간 접수 ── */
-function renderRt(){
-  var w=document.getElementById('rt-wrap'); w.innerHTML='';
-  (cfg.rtDB||[]).forEach(function(row,i){ w.appendChild(makeRtEl(row,i)); });
+function rRt(){
+  var w=document.getElementById('rt-wrap');if(!w)return;w.innerHTML='';
+  (cfg.rtDB||[]).forEach(function(row,i){w.appendChild(mkRt(row,i));});
 }
-function makeRtEl(row,i){
-  var d=document.createElement('div'); d.className='rt-item';
+function mkRt(row,i){
+  var d=document.createElement('div');d.className='rt-item';
   d.innerHTML='<input data-rti="'+i+'" data-rtk="name" value="'+esc(row.name||'')+'" placeholder="이름">'
     +'<input data-rti="'+i+'" data-rtk="phone" value="'+esc(row.phone||'')+'" placeholder="010-0***-****">'
     +'<input data-rti="'+i+'" data-rtk="carrier" value="'+esc(row.carrier||'')+'" placeholder="S*">'
-    +'<button class="rt-del" onclick="delRt('+i+')">×</button>';
+    +'<button class="rt-del" onclick="dRt('+i+')">×</button>';
   d.querySelectorAll('input').forEach(function(el){el.addEventListener('input',function(){cfg.rtDB[+this.dataset.rti][this.dataset.rtk]=this.value;});});
   return d;
 }
-function addRt(){cfg.rtDB.push({name:'',phone:'',carrier:''});renderRt();}
-function delRt(i){cfg.rtDB.splice(i,1);renderRt();}
+function addRt(){cfg.rtDB=cfg.rtDB||[];cfg.rtDB.push({name:'',phone:'',carrier:''});rRt();}
+function dRt(i){cfg.rtDB.splice(i,1);rRt();}
 
-/* ── config 수집 ── */
-function collectConfig(){
-  cfg.phone = document.getElementById('f-phone').value;
-  cfg.hero.headline_em = document.getElementById('f-h1-em').value;
-  cfg.hero.headline_mid = document.getElementById('f-h1-mid').value;
-  cfg.hero.headline_strong = document.getElementById('f-h1-strong').value;
-  cfg.hero.headline_end = document.getElementById('f-h1-end').value;
-  cfg.hero.sub = document.getElementById('f-hero-sub').value;
-  cfg.footer.biz_no = document.getElementById('f-biz-no').value;
-  cfg.footer.sales_no = document.getElementById('f-sales-no').value;
-  cfg.footer.address = document.getElementById('f-address').value;
-  cfg.footer.copyright = document.getElementById('f-copyright').value;
+function collectCfg(){
+  cfg.phone=document.getElementById('f-phone').value;
+  if(!cfg.hero)cfg.hero={};
+  cfg.hero.headline_em    =document.getElementById('f-h1-em').value;
+  cfg.hero.headline_mid   =document.getElementById('f-h1-mid').value;
+  cfg.hero.headline_strong=document.getElementById('f-h1-strong').value;
+  cfg.hero.headline_end   =document.getElementById('f-h1-end').value;
+  cfg.hero.sub            =document.getElementById('f-hero-sub').value;
+  if(!cfg.footer)cfg.footer={};
+  cfg.footer.biz_no   =document.getElementById('f-biz').value;
+  cfg.footer.sales_no =document.getElementById('f-sales').value;
+  cfg.footer.address  =document.getElementById('f-addr').value;
+  cfg.footer.copyright=document.getElementById('f-copy').value;
   return cfg;
 }
-
-function buildConfigJs(){
-  var c = collectConfig();
-  return 'var SITE_CONFIG = ' + JSON.stringify(c, null, 2) + ';\n';
-}
-
-function downloadConfig(){
-  var blob = new Blob([buildConfigJs()], {type:'text/javascript'});
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'config.js';
-  a.click();
+function buildJs(){return 'var SITE_CONFIG = '+JSON.stringify(collectCfg(),null,2)+';\n';}
+function dlConfig(){
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([buildJs()],{type:'text/javascript'}));
+  a.download='config.js';a.click();
   showToast('config.js 다운로드 완료!');
 }
+function cpConfig(){navigator.clipboard.writeText(buildJs()).then(function(){showToast('클립보드에 복사됐습니다!');});}
 
-function copyConfig(){
-  navigator.clipboard.writeText(buildConfigJs()).then(function(){
-    showToast('클립보드에 복사됐습니다!');
-  });
-}
-
+/* ─────────── 유틸 ─────────── */
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
 function showToast(msg){
   var t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
+  t.textContent=msg;t.classList.add('show');
   setTimeout(function(){t.classList.remove('show');},2200);
 }
 
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
-
-init();
+/* 세션 유지 후 초기 로드 */
+if(sessionStorage.getItem(K_SS)==='1'){bootApp();}
 </script>
 </body>
 </html>
