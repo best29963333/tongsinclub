@@ -380,6 +380,7 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
                 <div class="photo-preview" style="display:none"><img src="" alt="미리보기"><button class="photo-del" onclick="event.stopPropagation();delPhoto(this)">×</button></div>
                 <div class="photo-placeholder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>클릭하여 사진 업로드</span></div>
                 <input type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadPhoto(this)">
+                <input type="hidden" class="photo-url-input" value="">
               </div>
             </div>
           </div>
@@ -399,6 +400,7 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
                 <div class="photo-preview" style="display:none"><img src="" alt="미리보기"><button class="photo-del" onclick="event.stopPropagation();delPhoto(this)">×</button></div>
                 <div class="photo-placeholder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>클릭하여 사진 업로드</span></div>
                 <input type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadPhoto(this)">
+                <input type="hidden" class="photo-url-input" value="">
               </div>
             </div>
           </div>
@@ -705,12 +707,11 @@ async function initCfgForm(){
       if(r.photo){
         var box=ryItems[i].querySelector('.photo-upload-box');
         if(box){
+          box.querySelector('.photo-url-input').value=r.photo;
           var prev=box.querySelector('.photo-preview');
           prev.querySelector('img').src=r.photo;
           prev.style.display='inline-block';
           box.querySelector('.photo-placeholder').style.display='none';
-          var fi=box.querySelector('input[type=file]');
-          if(fi) fi.dataset.url=r.photo;
         }
       }
     });
@@ -784,11 +785,18 @@ async function saveSection(key){
     });
   } else if(key==='reviews_yellow'){
     patch.reviews_yellow = Array.from(document.querySelectorAll('#ry-wrap .rv-item')).map(function(el){
-      var ins=el.querySelectorAll('input[type=text], input[type=text]'),ta=el.querySelector('textarea');
-      var allInputs=Array.from(el.querySelectorAll('input:not([type=file])'));
-      var fileInput=el.querySelector('input[type=file]');
-      var photo=fileInput&&fileInput.dataset.url ? fileInput.dataset.url : '';
-      return {initial:allInputs[0]?allInputs[0].value:'', loc:allInputs[1]?allInputs[1].value:'', quote:allInputs[2]?allInputs[2].value:'', text:ta?ta.value:'', name:allInputs[3]?allInputs[3].value:'', date:allInputs[4]?allInputs[4].value:'', photo:photo};
+      var allInputs=Array.from(el.querySelectorAll('input[type=text]'));
+      var ta=el.querySelector('textarea');
+      var photoUrl=el.querySelector('.photo-url-input');
+      return {
+        initial: allInputs[0]?allInputs[0].value:'',
+        loc:     allInputs[1]?allInputs[1].value:'',
+        quote:   allInputs[2]?allInputs[2].value:'',
+        text:    ta?ta.value:'',
+        name:    allInputs[3]?allInputs[3].value:'',
+        date:    allInputs[4]?allInputs[4].value:'',
+        photo:   photoUrl?photoUrl.value:''
+      };
     });
   } else if(key==='footer'){
     patch.footer={
@@ -881,7 +889,9 @@ function addRY(){
     +'<div class="photo-upload-box" onclick="triggerPhotoUpload(this)">'
     +'<div class="photo-preview" style="display:none"><img src="" alt="미리보기"><button class="photo-del" onclick="event.stopPropagation();delPhoto(this)">×</button></div>'
     +'<div class="photo-placeholder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>클릭하여 사진 업로드</span></div>'
-    +'<input type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadPhoto(this)"></div></div>';
+    +'<input type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadPhoto(this)">'
+    +'<input type="hidden" class="photo-url-input" value="">'
+    +'</div></div>';
   w.appendChild(d);
 }
 
@@ -927,40 +937,36 @@ async function uploadPhoto(input){
   var ph = box.querySelector('.photo-placeholder');
   ph.innerHTML='<span style="color:var(--pr)">업로드 중...</span>';
   try{
-    /* 확장자를 MIME 타입에서 정확히 추출 */
     var mimeMap={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
     var ext = mimeMap[file.type] || file.name.split('.').pop().toLowerCase();
     var path = 'review-' + Date.now() + '.' + ext;
-    /* 기존 파일 있으면 upsert */
     var res = await _SB.storage.from('review-photos').upload(path, file, {
-      contentType: file.type,
-      cacheControl: '3600',
-      upsert: true
+      contentType: file.type, cacheControl: '3600', upsert: true
     });
     if(res.error) throw res.error;
-    var urlRes = _SB.storage.from('review-photos').getPublicUrl(res.data.path);
-    var url = urlRes.data.publicUrl;
-    /* 미리보기 표시 */
+    var url = _SB.storage.from('review-photos').getPublicUrl(res.data.path).data.publicUrl;
+    /* hidden input에 URL 저장 */
+    box.querySelector('.photo-url-input').value = url;
+    /* 미리보기 */
     var prev = box.querySelector('.photo-preview');
     prev.querySelector('img').src = url;
     prev.style.display = 'inline-block';
     ph.style.display = 'none';
-    input.dataset.url = url;
     showToast('사진 업로드 완료!');
   }catch(e){
     ph.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>클릭하여 사진 업로드</span>';
     console.error('업로드 오류:', e);
-    showToast('업로드 실패: Storage 정책을 확인해주세요.');
+    showToast('업로드 실패: ' + (e.message||'Storage 정책을 확인해주세요.'));
   }
 }
 
 function delPhoto(btn){
   var box = btn.closest('.photo-upload-box');
+  box.querySelector('.photo-url-input').value = '';
   var prev = box.querySelector('.photo-preview');
   prev.querySelector('img').src='';
   prev.style.display='none';
-  var fi = box.querySelector('input[type=file]');
-  fi.value=''; fi.dataset.url='';
+  box.querySelector('input[type=file]').value='';
   box.querySelector('.photo-placeholder').style.display='flex';
 }
 
