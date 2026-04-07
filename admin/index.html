@@ -259,7 +259,18 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
     <div class="card">
       <div class="card-head"><div class="card-head-title">📊 통계 수치</div></div>
       <div class="card-body">
-        <div class="row4" id="stats-wrap"></div>
+        <div class="row4">
+          <div class="field"><label>값 1</label><input id="f-stat0v" type="text" value="98,000+"></div>
+          <div class="field"><label>레이블 1</label><input id="f-stat0l" type="text" value="누적 가입자"></div>
+          <div class="field"><label>값 2</label><input id="f-stat1v" type="text" value="4.9점"></div>
+          <div class="field"><label>레이블 2</label><input id="f-stat1l" type="text" value="평균 만족도"></div>
+        </div>
+        <div class="row4" style="margin-top:8px">
+          <div class="field"><label>값 3</label><input id="f-stat2v" type="text" value="48만원+α"></div>
+          <div class="field"><label>레이블 3</label><input id="f-stat2l" type="text" value="최대 현금"></div>
+          <div class="field"><label>값 4</label><input id="f-stat3v" type="text" value="당일"></div>
+          <div class="field"><label>레이블 4</label><input id="f-stat3l" type="text" value="현금 지급"></div>
+        </div>
         <button class="btn btn-blue btn-sm" style="margin-top:8px" onclick="saveSection('stats')">저장</button>
       </div>
     </div>
@@ -268,8 +279,34 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
     <div class="card">
       <div class="card-head"><div class="card-head-title">📋 요금 비교 테이블</div></div>
       <div class="card-body">
-        <div id="tbl-wrap"></div>
-        <button class="btn btn-blue btn-sm" style="margin-top:8px" onclick="saveSection('table')">저장</button>
+        <div style="font-size:11px;font-weight:700;color:var(--g4);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--g2)">SK브로드밴드</div>
+        <div class="row4" style="margin-bottom:14px">
+          <div class="field"><label>로고 파일명</label><input id="f-tbl0-logo" type="text" value="SK-나비.png"></div>
+          <div class="field"><label>상품명</label><input id="f-tbl0-product" type="text" value="인터넷 1G"></div>
+          <div class="field"><label>정가</label><input id="f-tbl0-orig" type="text" value="38,500원"></div>
+          <div class="field"><label>할인가</label><input id="f-tbl0-final" type="text" value="27,500원"></div>
+        </div>
+        <div class="field" style="max-width:120px;margin-bottom:20px"><label>지원금(만원)</label><input id="f-tbl0-support" type="text" value="30"></div>
+
+        <div style="font-size:11px;font-weight:700;color:var(--g4);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--g2)">KT</div>
+        <div class="row4" style="margin-bottom:14px">
+          <div class="field"><label>로고 파일명</label><input id="f-tbl1-logo" type="text" value="KT_Logo.png"></div>
+          <div class="field"><label>상품명</label><input id="f-tbl1-product" type="text" value="인터넷 1G"></div>
+          <div class="field"><label>정가</label><input id="f-tbl1-orig" type="text" value="38,500원"></div>
+          <div class="field"><label>할인가</label><input id="f-tbl1-final" type="text" value="27,500원"></div>
+        </div>
+        <div class="field" style="max-width:120px;margin-bottom:20px"><label>지원금(만원)</label><input id="f-tbl1-support" type="text" value="28"></div>
+
+        <div style="font-size:11px;font-weight:700;color:var(--g4);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--g2)">LG U+</div>
+        <div class="row4" style="margin-bottom:14px">
+          <div class="field"><label>로고 파일명</label><input id="f-tbl2-logo" type="text" value="LGU_Logo.png"></div>
+          <div class="field"><label>상품명</label><input id="f-tbl2-product" type="text" value="인터넷 1G"></div>
+          <div class="field"><label>정가</label><input id="f-tbl2-orig" type="text" value="38,500원"></div>
+          <div class="field"><label>할인가</label><input id="f-tbl2-final" type="text" value="27,500원"></div>
+        </div>
+        <div class="field" style="max-width:120px;margin-bottom:8px"><label>지원금(만원)</label><input id="f-tbl2-support" type="text" value="26"></div>
+
+        <button class="btn btn-blue btn-sm" style="margin-top:4px" onclick="saveSection('table')">저장</button>
       </div>
     </div>
 
@@ -277,7 +314,41 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
     <div class="card">
       <div class="card-head"><div class="card-head-title">⭐ 후기 1줄 — 흰색</div></div>
       <div class="card-body">
-        <div id="rw-wrap"></div>
+        <div id="rw-wrap">
+          <div class="rv-item" data-rw="0">
+            <div class="row2" style="margin-bottom:8px">
+              <div class="field"><label>이니셜</label><input type="text" value="K"></div>
+              <div class="field"><label>태그</label><input type="text" value="현금 30만"></div>
+            </div>
+            <div class="field"><label>후기 내용</label><textarea rows="2">통신클럽 아니었으면 혜택금이 있는지도 몰랐을 거예요. 매니저분이 알아서 맞춤 요금 찾아주니 너무 간편했습니다!</textarea></div>
+            <div class="row2">
+              <div class="field"><label>닉네임</label><input type="text" value="@kim*****님"></div>
+              <div class="field"><label>날짜·가입정보</label><input type="text" value="2025.12.03 · SK 1G 가입"></div>
+            </div>
+          </div>
+          <div class="rv-item" data-rw="1">
+            <div class="row2" style="margin-bottom:8px">
+              <div class="field"><label>이니셜</label><input type="text" value="L"></div>
+              <div class="field"><label>태그</label><input type="text" value="즉시입금"></div>
+            </div>
+            <div class="field"><label>후기 내용</label><textarea rows="2">여기저기 비교해봤는데 여기가 제일 많이 챙겨주는 것 같아요. 설치 당일 입금 바로 확인했어요!</textarea></div>
+            <div class="row2">
+              <div class="field"><label>닉네임</label><input type="text" value="@lee*****님"></div>
+              <div class="field"><label>날짜·가입정보</label><input type="text" value="2025.10.29 · LG 1G 가입"></div>
+            </div>
+          </div>
+          <div class="rv-item" data-rw="2">
+            <div class="row2" style="margin-bottom:8px">
+              <div class="field"><label>이니셜</label><input type="text" value="S"></div>
+              <div class="field"><label>태그</label><input type="text" value="인터넷+TV"></div>
+            </div>
+            <div class="field"><label>후기 내용</label><textarea rows="2">이사하면서 새로 가입했는데 현금도 받고 TV도 같이 묶어서 더 저렴해졌어요. 결합 할인 감사해요.</textarea></div>
+            <div class="row2">
+              <div class="field"><label>닉네임</label><input type="text" value="@shin*****님"></div>
+              <div class="field"><label>날짜·가입정보</label><input type="text" value="2025.09.08 · KT 인터넷+TV"></div>
+            </div>
+          </div>
+        </div>
         <button class="add-btn" onclick="addRW()">+ 흰색 후기 추가</button>
         <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="saveSection('reviews_white')">저장</button>
       </div>
@@ -287,7 +358,32 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
     <div class="card">
       <div class="card-head"><div class="card-head-title">🌟 후기 2줄 — 노란색</div></div>
       <div class="card-body">
-        <div id="ry-wrap"></div>
+        <div id="ry-wrap">
+          <div class="rv-item yc" data-ry="0">
+            <div class="row2" style="margin-bottom:8px">
+              <div class="field"><label>이니셜</label><input type="text" value="박"></div>
+              <div class="field"><label>지역</label><input type="text" value="서울시 강*구"></div>
+            </div>
+            <div class="field"><label>따옴표 제목</label><input type="text" value="&quot;정확한 날짜에 입금 해주셨어요&quot;"></div>
+            <div class="field"><label>후기 내용</label><textarea rows="2">약정 끝나서 인터넷 알아보는데 통신클럽에서 한 번에 비교해서 딱 맞는 거 찾아주셨어요.</textarea></div>
+            <div class="row2">
+              <div class="field"><label>이름</label><input type="text" value="박*수님"></div>
+              <div class="field"><label>날짜·가입정보</label><input type="text" value="2025.11.14 · SK 가입"></div>
+            </div>
+          </div>
+          <div class="rv-item yc" data-ry="1">
+            <div class="row2" style="margin-bottom:8px">
+              <div class="field"><label>이니셜</label><input type="text" value="정"></div>
+              <div class="field"><label>지역</label><input type="text" value="경기도 성*시"></div>
+            </div>
+            <div class="field"><label>따옴표 제목</label><input type="text" value="&quot;설치 다음날 바로 입금됐어요&quot;"></div>
+            <div class="field"><label>후기 내용</label><textarea rows="2">상담사분이 정말 친절하셨어요. 다른 곳보다 혜택도 훨씬 좋고 설치도 바로 다음날 와주셨네요!</textarea></div>
+            <div class="row2">
+              <div class="field"><label>이름</label><input type="text" value="정*훈님"></div>
+              <div class="field"><label>날짜·가입정보</label><input type="text" value="2025.10.22 · LG 가입"></div>
+            </div>
+          </div>
+        </div>
         <button class="add-btn" onclick="addRY()">+ 노란색 후기 추가</button>
         <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="saveSection('reviews_yellow')">저장</button>
       </div>
@@ -547,6 +643,46 @@ async function initCfgForm(){
   sv('f-h1-strong',c.hero&&c.hero.headline_strong);
   sv('f-h1-end',c.hero&&c.hero.headline_end);
   sv('f-hero-sub',(c.hero&&c.hero.sub||'').replace(/<br>/g,'\n'));
+  if(c.stats&&c.stats.length){
+    c.stats.forEach(function(st,i){
+      sv('f-stat'+i+'v', st.value);
+      sv('f-stat'+i+'l', st.label);
+    });
+  }
+  if(c.table&&c.table.length){
+    c.table.forEach(function(row,i){
+      sv('f-tbl'+i+'-logo',    row.logo);
+      sv('f-tbl'+i+'-product', row.product);
+      sv('f-tbl'+i+'-orig',    row.orig);
+      sv('f-tbl'+i+'-final',   row.final);
+      sv('f-tbl'+i+'-support', row.support);
+    });
+  }
+  if(c.reviews_white&&c.reviews_white.length){
+    var rwItems=document.querySelectorAll('#rw-wrap .rv-item');
+    c.reviews_white.forEach(function(r,i){
+      if(i>=rwItems.length) return;
+      var ins=rwItems[i].querySelectorAll('input'),ta=rwItems[i].querySelector('textarea');
+      if(ins[0])ins[0].value=r.initial||'';
+      if(ins[1])ins[1].value=r.tag||'';
+      if(ta)ta.value=r.text||'';
+      if(ins[2])ins[2].value=r.name||'';
+      if(ins[3])ins[3].value=r.date||'';
+    });
+  }
+  if(c.reviews_yellow&&c.reviews_yellow.length){
+    var ryItems=document.querySelectorAll('#ry-wrap .rv-item');
+    c.reviews_yellow.forEach(function(r,i){
+      if(i>=ryItems.length) return;
+      var ins=ryItems[i].querySelectorAll('input'),ta=ryItems[i].querySelector('textarea');
+      if(ins[0])ins[0].value=r.initial||'';
+      if(ins[1])ins[1].value=r.loc||'';
+      if(ins[2])ins[2].value=r.quote||'';
+      if(ta)ta.value=r.text||'';
+      if(ins[3])ins[3].value=r.name||'';
+      if(ins[4])ins[4].value=r.date||'';
+    });
+  }
   sv('f-company',c.footer&&c.footer.company);
   sv('f-ceo',c.footer&&c.footer.ceo);
   sv('f-biz',c.footer&&c.footer.biz_no);
@@ -559,7 +695,7 @@ async function initCfgForm(){
     sv('f-terms-marketing', c.terms.marketing);
     sv('f-terms-thirdparty',c.terms.thirdparty);
   }
-  rStats();rTbl();rRW();rRY();
+  rTbl();rRW();rRY();
 }
 function sv(id,v){var el=document.getElementById(id);if(el&&v!=null)el.value=v;}
 
@@ -593,13 +729,32 @@ async function saveSection(key){
       sub:            document.getElementById('f-hero-sub').value
     };
   } else if(key==='stats'){
-    patch.stats=cfg.stats;
+    patch.stats=[
+      {value:document.getElementById('f-stat0v').value, label:document.getElementById('f-stat0l').value},
+      {value:document.getElementById('f-stat1v').value, label:document.getElementById('f-stat1l').value},
+      {value:document.getElementById('f-stat2v').value, label:document.getElementById('f-stat2l').value},
+      {value:document.getElementById('f-stat3v').value, label:document.getElementById('f-stat3l').value}
+    ];
   } else if(key==='table'){
-    patch.table=cfg.table;
+    patch.table=[0,1,2].map(function(i){
+      return {
+        logo:    document.getElementById('f-tbl'+i+'-logo').value,
+        product: document.getElementById('f-tbl'+i+'-product').value,
+        orig:    document.getElementById('f-tbl'+i+'-orig').value,
+        final:   document.getElementById('f-tbl'+i+'-final').value,
+        support: document.getElementById('f-tbl'+i+'-support').value
+      };
+    });
   } else if(key==='reviews_white'){
-    patch.reviews_white=cfg.reviews_white;
+    patch.reviews_white = Array.from(document.querySelectorAll('#rw-wrap .rv-item')).map(function(el){
+      var ins=el.querySelectorAll('input'),ta=el.querySelector('textarea');
+      return {initial:ins[0].value, tag:ins[1].value, text:ta?ta.value:'', name:ins[2].value, date:ins[3].value};
+    });
   } else if(key==='reviews_yellow'){
-    patch.reviews_yellow=cfg.reviews_yellow;
+    patch.reviews_yellow = Array.from(document.querySelectorAll('#ry-wrap .rv-item')).map(function(el){
+      var ins=el.querySelectorAll('input'),ta=el.querySelector('textarea');
+      return {initial:ins[0].value, loc:ins[1].value, quote:ins[2].value, text:ta?ta.value:'', name:ins[3].value, date:ins[4].value};
+    });
   } else if(key==='footer'){
     patch.footer={
       company:  document.getElementById('f-company').value,
@@ -665,42 +820,42 @@ function rTbl(){
     w.appendChild(d);
   });
 }
-function rRW(){
-  var w=document.getElementById('rw-wrap');if(!w)return;w.innerHTML='';
-  (cfg.reviews_white||[]).forEach(function(r,i){w.appendChild(mkRW(r,i));});
-}
-function mkRW(r,i){
+function addRW(){
+  var w=document.getElementById('rw-wrap');
   var d=document.createElement('div');d.className='rv-item';
-  d.innerHTML='<button class="rv-del" onclick="dRW('+i+')">×</button>'
-    +'<div class="row2" style="margin-bottom:8px"><div class="field"><label>이니셜</label><input data-rwi="'+i+'" data-rwk="initial" value="'+esc(r.initial||'')+'"></div>'
-    +'<div class="field"><label>태그</label><input data-rwi="'+i+'" data-rwk="tag" value="'+esc(r.tag||'')+'"></div></div>'
-    +'<div class="field"><label>후기 내용</label><textarea data-rwi="'+i+'" data-rwk="text" rows="2">'+esc(r.text||'')+'</textarea></div>'
-    +'<div class="row2"><div class="field"><label>닉네임</label><input data-rwi="'+i+'" data-rwk="name" value="'+esc(r.name||'')+'"></div>'
-    +'<div class="field"><label>날짜·가입정보</label><input data-rwi="'+i+'" data-rwk="date" value="'+esc(r.date||'')+'"></div></div>';
-  d.querySelectorAll('input,textarea').forEach(function(el){el.addEventListener('input',function(){cfg.reviews_white[+this.dataset.rwi][this.dataset.rwk]=this.value;});});
-  return d;
+  d.innerHTML='<button class="rv-del" onclick="this.closest(\'.rv-item\').remove()">×</button>'
+    +'<div class="row2" style="margin-bottom:8px"><div class="field"><label>이니셜</label><input type="text" placeholder="K"></div>'
+    +'<div class="field"><label>태그</label><input type="text" placeholder="현금 30만"></div></div>'
+    +'<div class="field"><label>후기 내용</label><textarea rows="2" placeholder="후기 내용"></textarea></div>'
+    +'<div class="row2"><div class="field"><label>닉네임</label><input type="text" placeholder="@kim*****님"></div>'
+    +'<div class="field"><label>날짜·가입정보</label><input type="text" placeholder="2025.12.03 · SK 1G 가입"></div></div>';
+  w.appendChild(d);
 }
-function addRW(){cfg.reviews_white=cfg.reviews_white||[];cfg.reviews_white.push({initial:'',text:'',name:'',date:'',tag:''});rRW();}
-function dRW(i){cfg.reviews_white.splice(i,1);rRW();}
 
-function rRY(){
-  var w=document.getElementById('ry-wrap');if(!w)return;w.innerHTML='';
-  (cfg.reviews_yellow||[]).forEach(function(r,i){w.appendChild(mkRY(r,i));});
-}
-function mkRY(r,i){
+function addRY(){
+  var w=document.getElementById('ry-wrap');
   var d=document.createElement('div');d.className='rv-item yc';
-  d.innerHTML='<button class="rv-del" onclick="dRY('+i+')">×</button>'
-    +'<div class="row2" style="margin-bottom:8px"><div class="field"><label>이니셜</label><input data-ryi="'+i+'" data-ryk="initial" value="'+esc(r.initial||'')+'"></div>'
-    +'<div class="field"><label>지역</label><input data-ryi="'+i+'" data-ryk="loc" value="'+esc(r.loc||'')+'"></div></div>'
-    +'<div class="field"><label>따옴표 제목</label><input data-ryi="'+i+'" data-ryk="quote" value="'+esc(r.quote||'')+'"></div>'
-    +'<div class="field"><label>후기 내용</label><textarea data-ryi="'+i+'" data-ryk="text" rows="2">'+esc(r.text||'')+'</textarea></div>'
-    +'<div class="row2"><div class="field"><label>이름</label><input data-ryi="'+i+'" data-ryk="name" value="'+esc(r.name||'')+'"></div>'
-    +'<div class="field"><label>날짜·가입정보</label><input data-ryi="'+i+'" data-ryk="date" value="'+esc(r.date||'')+'"></div></div>';
-  d.querySelectorAll('input,textarea').forEach(function(el){el.addEventListener('input',function(){cfg.reviews_yellow[+this.dataset.ryi][this.dataset.ryk]=this.value;});});
-  return d;
+  d.innerHTML='<button class="rv-del" onclick="this.closest(\'.rv-item\').remove()">×</button>'
+    +'<div class="row2" style="margin-bottom:8px"><div class="field"><label>이니셜</label><input type="text" placeholder="박"></div>'
+    +'<div class="field"><label>지역</label><input type="text" placeholder="서울시 강*구"></div></div>'
+    +'<div class="field"><label>따옴표 제목</label><input type="text" placeholder="&quot;입금 해주셨어요&quot;"></div>'
+    +'<div class="field"><label>후기 내용</label><textarea rows="2" placeholder="후기 내용"></textarea></div>'
+    +'<div class="row2"><div class="field"><label>이름</label><input type="text" placeholder="박*수님"></div>'
+    +'<div class="field"><label>날짜·가입정보</label><input type="text" placeholder="2025.11.14 · SK 가입"></div></div>';
+  w.appendChild(d);
 }
-function addRY(){cfg.reviews_yellow=cfg.reviews_yellow||[];cfg.reviews_yellow.push({initial:'',quote:'',loc:'',text:'',name:'',date:''});rRY();}
-function dRY(i){cfg.reviews_yellow.splice(i,1);rRY();}
+
+/* 기존 하드코딩 카드에도 삭제 버튼 추가 */
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('#rw-wrap .rv-item, #ry-wrap .rv-item').forEach(function(el){
+    if(!el.querySelector('.rv-del')){
+      var btn=document.createElement('button');
+      btn.className='rv-del';btn.textContent='×';
+      btn.onclick=function(){el.remove();};
+      el.appendChild(btn);
+    }
+  });
+});
 
 function rRt(){
   var w=document.getElementById('rt-wrap');if(!w)return;w.innerHTML='';
