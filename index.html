@@ -8,9 +8,13 @@
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-/* Supabase config 로드 — DOMContentLoaded 후 applyConfig 호출 */
-window._cfgReady = false;
-window._cfgData  = (typeof SITE_CONFIG !== 'undefined') ? SITE_CONFIG : {};
+/* 1단계: config.js 기본값 */
+window._cfgData = (typeof SITE_CONFIG !== 'undefined') ? SITE_CONFIG : {};
+/* 2단계: localStorage 캐시가 있으면 즉시 덮어쓰기 (깜빡임 방지) */
+try{
+  var _cached = localStorage.getItem('tc_cfg_cache');
+  if(_cached){ window._cfgData = Object.assign({}, window._cfgData, JSON.parse(_cached)); }
+}catch(e){}
 </script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -842,19 +846,25 @@ function applyConfig(c){
   if(c.terms) window._TERMS = c.terms;
 }
 
-/* 1단계: config.js 기본값 즉시 적용 */
+/* 1단계: config.js 기본값 + localStorage 캐시 즉시 적용 (깜빡임 없음) */
 applyConfig(window._cfgData);
 
-/* 2단계: Supabase에서 최신 config 로드 후 덮어쓰기 */
+/* 2단계: Supabase에서 최신값 백그라운드 로드 → 캐시 갱신 */
 (async function(){
   try{
     var res = await _SB.from('site_config').select('data').eq('id',1).single();
     if(res.data && res.data.data && Object.keys(res.data.data).length > 0){
-      var merged = Object.assign({}, window._cfgData, res.data.data);
-      window._cfgData = merged;
-      applyConfig(merged);
+      var sbData = res.data.data;
+      /* 캐시와 다를 때만 재적용 */
+      var cached = localStorage.getItem('tc_cfg_cache');
+      if(JSON.stringify(sbData) !== cached){
+        localStorage.setItem('tc_cfg_cache', JSON.stringify(sbData));
+        var merged = Object.assign({}, window._cfgData, sbData);
+        window._cfgData = merged;
+        applyConfig(merged);
+      }
     }
-  }catch(e){ console.log('config 로드 실패, 기본값 유지'); }
+  }catch(e){}
 })();
 
 /* ── 실시간 접수 롤링 ── */
