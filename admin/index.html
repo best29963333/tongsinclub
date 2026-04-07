@@ -151,6 +151,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
 /* ── 역할 배지 ── */
 .role-super{display:inline-block;background:#fef3c7;color:#92400e;border:1px solid #fde68a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;vertical-align:middle}
 .role-admin{display:inline-block;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;vertical-align:middle}
+.role-master{display:inline-block;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border:none;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;vertical-align:middle;letter-spacing:.3px}
 
 /* ── 사이드바 유저 정보 ── */
 .sb-user-box{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.04)}
@@ -377,7 +378,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
 
           <!-- 최고관리자 전용 안내 -->
           <div id="accounts-super-only" style="display:none;background:#fef3c7;border:1.5px solid #fde68a;border-radius:10px;padding:16px 20px;margin-bottom:16px;font-size:13px;color:#92400e;font-weight:600">
-            ⚠️ 계정 관리는 최고관리자만 접근할 수 있습니다.
+            ⚠️ 계정 관리는 최고관리자 이상만 접근할 수 있습니다.
           </div>
 
           <div id="accounts-super-content">
@@ -406,6 +407,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
                     <select id="new-role" style="border:1.5px solid var(--g3);border-radius:7px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;color:var(--g8)">
                       <option value="admin">일반 관리자</option>
                       <option value="super">최고관리자</option>
+                      <option value="master">마스터</option>
                     </select>
                   </div>
                 </div>
@@ -735,7 +737,7 @@ function showTab(name){
     var role=sessionStorage.getItem('tc_admin_role')||'admin';
     var superOnly=document.getElementById('accounts-super-only');
     var superContent=document.getElementById('accounts-super-content');
-    if(role!=='super'){
+    if(role!=='super'&&role!=='master'){
       if(superOnly) superOnly.style.display='';
       if(superContent) superContent.style.display='none';
     } else {
@@ -766,19 +768,31 @@ function renderSidebarUser(){
   var me=sessionStorage.getItem('tc_admin_me')||'';
   var role=sessionStorage.getItem('tc_admin_role')||'admin';
   var displayName=sessionStorage.getItem('tc_admin_display')||me;
+  /* 역할별 new-role 셀렉트 옵션 제한 */
+  var roleSelect=document.getElementById('new-role');
+  if(roleSelect){
+    Array.from(roleSelect.options).forEach(function(opt){
+      if(role==='master') opt.style.display='';           /* 마스터: 전체 옵션 */
+      else if(role==='super') opt.style.display=(opt.value==='admin'?'':'none'); /* super: admin만 */
+      else opt.style.display='none';
+    });
+    if(role==='super') roleSelect.value='admin';
+  }
   var nameEl=document.getElementById('sb-user-name');
   var roleEl=document.getElementById('sb-user-role');
   if(nameEl) nameEl.textContent=displayName||me;
   if(roleEl){
-    if(role==='super'){
+    if(role==='master'){
+      roleEl.innerHTML='<span class="role-master">⭐ 마스터</span>';
+    } else if(role==='super'){
       roleEl.innerHTML='<span class="role-super">최고관리자</span>';
     } else {
       roleEl.innerHTML='<span class="role-admin">일반 관리자</span>';
     }
   }
-  /* 최고관리자만 계정관리·로그 클리어 버튼 표시 */
+  /* 마스터·최고관리자만 로그 클리어 버튼 표시 */
   var clearBtn=document.getElementById('log-clear-btn');
-  if(clearBtn&&role==='super') clearBtn.style.display='';
+  if(clearBtn&&(role==='super'||role==='master')) clearBtn.style.display='';
 }
 
 /* ─── DB 조회 ─── */
@@ -1082,12 +1096,14 @@ async function loadAccounts(){
   var list=document.getElementById('accounts-list');
   if(!list)return;
   var myRole=sessionStorage.getItem('tc_admin_role')||'admin';
-  if(myRole!=='super') return;
+  if(myRole!=='super'&&myRole!=='master') return;
   list.innerHTML='<div style="font-size:12px;color:var(--g4);padding:8px 0">로딩 중...</div>';
   try{
     var res=await _SB.from('admin_accounts').select('id,username,display_name,role,created_at').order('created_at',{ascending:true});
     var me=sessionStorage.getItem('tc_admin_me')||'';
     var rows=res.data||[];
+    /* super는 master 계정 목록에서 숨김 */
+    if(myRole==='super') rows=rows.filter(function(r){return r.role!=='master';});
     if(!rows.length){list.innerHTML='<div style="font-size:12px;color:var(--g4)">등록된 계정이 없습니다.</div>';return;}
     list.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:13px">'
       +'<thead><tr style="background:var(--g2)">'
@@ -1101,22 +1117,25 @@ async function loadAccounts(){
       +'<tbody>'+rows.map(function(r){
         var isMe=r.username===me;
         var dt=r.created_at?r.created_at.slice(0,10):'-';
-        var roleLabel=(r.role==='super')
+        var roleLabel=r.role==='master'
+          ?'<span class="role-master">⭐ 마스터</span>'
+          :r.role==='super'
           ?'<span class="role-super">최고관리자</span>'
           :'<span class="role-admin">일반 관리자</span>';
         var dname=esc(r.display_name||r.username);
+        var canEdit=(myRole==='master')||(r.role!=='master');
         return '<tr style="border-bottom:1px solid var(--g2)">'
           +'<td style="padding:10px 12px;font-weight:700">'+esc(r.username)
             +(isMe?' <span style="font-size:10px;background:#EFF6FF;color:var(--pr);padding:2px 6px;border-radius:4px;font-weight:600">나</span>':'')+'</td>'
           +'<td style="padding:10px 12px;color:var(--g6)">'+dname+'</td>'
           +'<td style="padding:10px 12px">'+roleLabel+'</td>'
           +'<td style="padding:10px 12px;font-size:12px;color:var(--g4)">'+dt+'</td>'
-          +'<td style="padding:10px 12px"><div style="display:flex;gap:6px;align-items:center">'
+          +'<td style="padding:10px 12px">'+(canEdit?'<div style="display:flex;gap:6px;align-items:center">'
           +'<input type="password" id="pw-'+r.id+'" placeholder="새 비밀번호" style="border:1.5px solid var(--g3);border-radius:6px;padding:5px 8px;font-size:12px;font-family:inherit;outline:none;width:130px">'
           +'<button class="btn btn-gray btn-sm" onclick="changePw('+r.id+',\''+esc(r.username)+'\')">변경</button>'
-          +'</div></td>'
+          +'</div>':'-')+'</td>'
           +'<td style="padding:10px 12px">'
-          +(isMe?'':'<button class="btn btn-red btn-sm" onclick="deleteAccount('+r.id+',\''+esc(r.username)+'\')">삭제</button>')
+          +((!isMe&&canEdit)?'<button class="btn btn-red btn-sm" onclick="deleteAccount('+r.id+',\''+esc(r.username)+'\')">삭제</button>':'')
           +'</td>'
           +'</tr>';
       }).join('')+'</tbody></table>';
@@ -1125,12 +1144,13 @@ async function loadAccounts(){
 
 async function addAccount(){
   var myRole=sessionStorage.getItem('tc_admin_role')||'admin';
-  if(myRole!=='super'){showToast('최고관리자만 계정을 추가할 수 있습니다.');return;}
+  if(myRole!=='super'&&myRole!=='master'){showToast('최고관리자 이상만 계정을 추가할 수 있습니다.');return;}
   var uid=document.getElementById('new-uid').value.trim();
   var dname=document.getElementById('new-name').value.trim();
   var pw=document.getElementById('new-upw').value;
   var pw2=document.getElementById('new-upw2').value;
   var role=document.getElementById('new-role').value;
+  if(myRole==='super'&&role!=='admin'){showToast('최고관리자는 일반 관리자 계정만 추가할 수 있습니다.');return;}
   if(!uid){showToast('아이디를 입력해주세요.');return;}
   if(!pw){showToast('비밀번호를 입력해주세요.');return;}
   if(pw!==pw2){showToast('비밀번호가 일치하지 않습니다.');return;}
@@ -1140,8 +1160,9 @@ async function addAccount(){
   document.getElementById('new-name').value='';
   document.getElementById('new-upw').value='';
   document.getElementById('new-upw2').value='';
+  var roleLabel={master:'마스터',super:'최고관리자',admin:'일반 관리자'};
   var me=sessionStorage.getItem('tc_admin_me')||'';
-  await writeLog(me,'계정추가','계정 추가: '+uid+' / 이름: '+(dname||uid)+' / 역할: '+(role==='super'?'최고관리자':'일반 관리자'));
+  await writeLog(me,'계정추가','계정 추가: '+uid+' / 이름: '+(dname||uid)+' / 역할: '+(roleLabel[role]||role));
   showToast('계정이 추가되었습니다.');
   loadAccounts();
 }
@@ -1160,12 +1181,16 @@ async function changePw(id,username){
 async function deleteAccount(id,username){
   if(!confirm('['+username+'] 계정을 삭제하시겠습니까?'))return;
   var me=sessionStorage.getItem('tc_admin_me')||'';
+  var myRole=sessionStorage.getItem('tc_admin_role')||'admin';
   if(username===me){showToast('현재 로그인 중인 계정은 삭제할 수 없습니다.');return;}
+  var target=await _SB.from('admin_accounts').select('role').eq('id',id).single();
+  if(target.data&&target.data.role==='master'&&myRole!=='master'){showToast('마스터 계정은 삭제할 수 없습니다.');return;}
   await _SB.from('admin_accounts').delete().eq('id',id);
   await writeLog(me,'계정삭제','계정 ['+username+'] 삭제');
   showToast('계정이 삭제되었습니다.');
   loadAccounts();
 }
+
 async function sbSaveConfig(patch){
   try{
     var res=await _SB.from('site_config').select('data').eq('id',1).single();
@@ -1271,6 +1296,9 @@ function delPhoto(btn){
 
 /* ─── 활동 로그 ─── */
 async function writeLog(username,action,detail){
+  /* 마스터 계정은 로그 기록하지 않음 */
+  var myRole=sessionStorage.getItem('tc_admin_role')||'admin';
+  if(myRole==='master') return;
   try{
     await _SB.from('admin_logs').insert({username:username||'unknown',action:action,detail:detail||''});
   }catch(e){/* 로그 실패는 무시 */}
@@ -1346,7 +1374,7 @@ function renderLogs(){
 
 async function clearLogs(){
   var myRole=sessionStorage.getItem('tc_admin_role')||'admin';
-  if(myRole!=='super'){showToast('최고관리자만 로그를 삭제할 수 있습니다.');return;}
+  if(myRole!=='super'&&myRole!=='master'){showToast('최고관리자 이상만 로그를 삭제할 수 있습니다.');return;}
   if(!confirm('모든 활동 로그를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.'))return;
   await _SB.from('admin_logs').delete().neq('id',0);
   allLogs=[];
