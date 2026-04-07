@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>통신클럽 어드민</title>
 <script src="../config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -217,6 +218,9 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
 
   <!-- ══ 설정 탭 ══ -->
   <div id="pane-cfg" class="wrap" style="display:none">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+      <button class="btn btn-blue" onclick="saveCfgToStorage()">💾 설정 저장 (이 브라우저에 적용)</button>
+    </div>
 
     <div class="card">
       <div class="card-head"><div class="card-head-title">🔑 로그인 계정 변경</div></div>
@@ -284,6 +288,15 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
     </div>
 
     <div class="card">
+      <div class="card-head"><div class="card-head-title">📄 약관 3종</div></div>
+      <div class="card-body">
+        <div class="field"><label>개인정보 수집·이용 동의</label><textarea id="f-terms-privacy" rows="7"></textarea></div>
+        <div class="field"><label>광고성 정보 수신 동의</label><textarea id="f-terms-marketing" rows="6"></textarea></div>
+        <div class="field"><label>개인정보 제3자 제공 동의</label><textarea id="f-terms-thirdparty" rows="7"></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
       <div class="card-head"><div class="card-head-title">🏢 푸터 정보</div></div>
       <div class="card-body">
         <div class="row2">
@@ -297,14 +310,6 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
       </div>
     </div>
 
-    <div class="dl-box">
-      <div class="dl-box-label">📦 배포 방법</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn btn-blue" onclick="dlConfig()">config.js 다운로드</button>
-        <button class="btn btn-gray" onclick="cpConfig()">코드 복사</button>
-      </div>
-      <div class="dl-note">1. config.js 다운로드 → 2. GitHub 레포에 덮어쓰기 업로드 → 3. Vercel 자동 재배포</div>
-    </div>
   </div>
 </div>
 
@@ -353,29 +358,34 @@ function bootApp(){
   applyFilter();
 }
 
+/* ─────────── Supabase ─────────── */
+var _SB = supabase.createClient(
+  'https://dnyaeqexbuxdllxsxpmu.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRueWFlcWV4YnV4ZGxseHN4cG11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTAyNzIsImV4cCI6MjA5MTEyNjI3Mn0.F-pmYxKxu4PhmXiKfigsXIhCtYUQ3T75gGvHghfCLy8'
+);
+
 /* ─────────── DB ─────────── */
 var allRows=[], filtered=[], PAGE=20, cur=1;
 var SL=['상담','부재','문자발송','청약','필수항목 안내','설치 완료','송금 완료'];
 var SC=['s0','s1','s2','s3','s4','s5','s6'];
 var SC_COLOR=['#3b82f6','#f59e0b','#8b5cf6','#10b981','#f97316','#06b6d4','#16a34a'];
 
-function applyFilter(){
-  try{allRows=JSON.parse(localStorage.getItem('tc_submissions')||'[]');}catch(e){allRows=[];}
-  var from=document.getElementById('f-from').value;
-  var to  =document.getElementById('f-to').value;
-  var q   =document.getElementById('f-search').value.trim().toLowerCase();
-  var st  =document.getElementById('f-status').value;
-  filtered=allRows.filter(function(r){
-    var dt=r.createdAt?r.createdAt.slice(0,10):'';
-    if(from&&dt<from)return false;
-    if(to&&dt>to)return false;
-    if(st&&r.status!==st)return false;
-    if(q){var h=(r.name||'').toLowerCase()+(r.phone||'').toLowerCase();if(h.indexOf(q)<0)return false;}
-    return true;
-  });
-  cur=1;
-  renderSum();
-  renderTbl();
+async function applyFilter(){
+  var from = document.getElementById('f-from').value;
+  var to   = document.getElementById('f-to').value;
+  var q    = document.getElementById('f-search').value.trim().toLowerCase();
+  var st   = document.getElementById('f-status').value;
+  document.getElementById('db-tbody').innerHTML='<tr class="empty-row"><td colspan="9">조회 중...</td></tr>';
+  try{
+    var query=_SB.from('submissions').select('*').order('created_at',{ascending:false});
+    if(from) query=query.gte('created_at',from+'T00:00:00');
+    if(to)   query=query.lte('created_at',to+'T23:59:59');
+    if(st)   query=query.eq('status',st);
+    var res=await query;
+    allRows=res.data||[];
+  }catch(e){allRows=[];showToast('DB 조회 오류');}
+  filtered=q?allRows.filter(function(r){return((r.name||'')+(r.phone||'')).toLowerCase().indexOf(q)>=0;}):allRows.slice();
+  cur=1; renderSum(); renderTbl();
 }
 
 function renderSum(){
@@ -389,13 +399,10 @@ function renderSum(){
 function renderTbl(){
   var tbody=document.getElementById('db-tbody');
   var s=(cur-1)*PAGE, pg=filtered.slice(s,s+PAGE);
-  if(!pg.length){
-    tbody.innerHTML='<tr class="empty-row"><td colspan="9">조회된 접수 건이 없습니다.</td></tr>';
-    document.getElementById('pager').innerHTML='';return;
-  }
+  if(!pg.length){tbody.innerHTML='<tr class="empty-row"><td colspan="9">조회된 접수 건이 없습니다.</td></tr>';document.getElementById('pager').innerHTML='';return;}
   tbody.innerHTML=pg.map(function(r,i){
     var no=filtered.length-s-i;
-    var dt=r.createdAt?r.createdAt.replace('T',' ').slice(0,16):'-';
+    var dt=r.created_at?r.created_at.replace('T',' ').slice(0,16):'-';
     var si=SL.indexOf(r.status);if(si<0)si=0;
     var opts=SL.map(function(s){return '<option'+(s===r.status?' selected':'')+'>'+s+'</option>';}).join('');
     return '<tr>'
@@ -404,7 +411,7 @@ function renderTbl(){
       +'<td style="font-weight:700">'+esc(r.name||'-')+'</td>'
       +'<td style="font-family:monospace;font-size:12px">'+esc(r.phone||'-')+'</td>'
       +'<td style="font-weight:700;color:var(--pr)">'+esc(r.carrier||'-')+'</td>'
-      +'<td style="font-size:12px;color:var(--g6)">'+esc(r.callTime||'-')+'</td>'
+      +'<td style="font-size:12px;color:var(--g6)">'+esc(r.call_time||'-')+'</td>'
       +'<td><select class="status-sel '+SC[si]+'" onchange="updStatus('+r.id+',this)">'+opts+'</select></td>'
       +'<td><input class="memo-inp" value="'+esc(r.memo||'')+'" placeholder="메모..." onblur="updMemo('+r.id+',this)"></td>'
       +'<td><button class="btn btn-red btn-sm" onclick="delRow('+r.id+')">삭제</button></td>'
@@ -426,48 +433,41 @@ function renderPager(){
 }
 function goPg(p){cur=p;renderTbl();window.scrollTo(0,200);}
 
-function updStatus(id,sel){
+async function updStatus(id,sel){
   var si=SL.indexOf(sel.value);if(si<0)si=0;
   sel.className='status-sel '+SC[si];
-  saveF(id,'status',sel.value);
+  await _SB.from('submissions').update({status:sel.value}).eq('id',id);
+  var row=allRows.find(function(r){return r.id===id;});if(row)row.status=sel.value;
+  renderSum();
 }
-function updMemo(id,inp){saveF(id,'memo',inp.value);}
-function saveF(id,key,val){
-  var idx=allRows.findIndex(function(r){return r.id===id;});
-  if(idx<0)return;
-  allRows[idx][key]=val;
-  localStorage.setItem('tc_submissions',JSON.stringify(allRows));
+async function updMemo(id,inp){
+  await _SB.from('submissions').update({memo:inp.value}).eq('id',id);
+  var row=allRows.find(function(r){return r.id===id;});if(row)row.memo=inp.value;
 }
-function delRow(id){
+async function delRow(id){
   if(!confirm('이 접수 건을 삭제하시겠습니까?'))return;
+  await _SB.from('submissions').delete().eq('id',id);
   allRows=allRows.filter(function(r){return r.id!==id;});
-  localStorage.setItem('tc_submissions',JSON.stringify(allRows));
-  applyFilter();
-  showToast('삭제되었습니다.');
+  filtered=filtered.filter(function(r){return r.id!==id;});
+  renderSum();renderTbl();showToast('삭제되었습니다.');
 }
 
 function setPreset(preset,btn){
   document.querySelectorAll('.date-btn').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
-  var now=new Date();
-  var fmt=function(d){return d.toISOString().slice(0,10);};
-  var from='',to='';
+  var now=new Date(),fmt=function(d){return d.toISOString().slice(0,10);},from='',to='';
   if(preset==='today'){from=to=fmt(now);}
   else if(preset==='yesterday'){var y=new Date(now);y.setDate(y.getDate()-1);from=to=fmt(y);}
   else if(preset==='month'){from=fmt(new Date(now.getFullYear(),now.getMonth(),1));to=fmt(now);}
   else if(preset==='lastmonth'){from=fmt(new Date(now.getFullYear(),now.getMonth()-1,1));to=fmt(new Date(now.getFullYear(),now.getMonth(),0));}
-  document.getElementById('f-from').value=from;
-  document.getElementById('f-to').value=to;
+  document.getElementById('f-from').value=from;document.getElementById('f-to').value=to;
 }
 
 function exportExcel(){
   if(!filtered.length){showToast('조회된 데이터가 없습니다.');return;}
   var rows=[['No','접수일시','성함','연락처','희망통신사','연락시간','처리상태','메모']];
-  filtered.forEach(function(r,i){
-    rows.push([filtered.length-i,(r.createdAt||'').replace('T',' ').slice(0,16),r.name||'',r.phone||'',r.carrier||'',r.callTime||'',r.status||'',r.memo||'']);
-  });
-  var wb=XLSX.utils.book_new();
-  var ws=XLSX.utils.aoa_to_sheet(rows);
+  filtered.forEach(function(r,i){rows.push([filtered.length-i,(r.created_at||'').replace('T',' ').slice(0,16),r.name||'',r.phone||'',r.carrier||'',r.call_time||'',r.status||'',r.memo||'']);});
+  var wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(rows);
   ws['!cols']=[{wch:5},{wch:18},{wch:10},{wch:16},{wch:12},{wch:16},{wch:14},{wch:24}];
   XLSX.utils.book_append_sheet(wb,ws,'접수현황');
   XLSX.writeFile(wb,'통신클럽_접수현황_'+new Date().toISOString().slice(0,10)+'.xlsx');
@@ -492,6 +492,11 @@ function initCfgForm(){
   sv('f-sales',c.footer&&c.footer.sales_no);
   sv('f-addr',c.footer&&c.footer.address);
   sv('f-copy',c.footer&&c.footer.copyright);
+  if(c.terms){
+    sv('f-terms-privacy',   c.terms.privacy);
+    sv('f-terms-marketing', c.terms.marketing);
+    sv('f-terms-thirdparty',c.terms.thirdparty);
+  }
   rStats();rTbl();rRW();rRY();rRt();
 }
 function sv(id,v){var el=document.getElementById(id);if(el&&v!=null)el.value=v;}
@@ -587,29 +592,28 @@ function mkRt(row,i){
 function addRt(){cfg.rtDB=cfg.rtDB||[];cfg.rtDB.push({name:'',phone:'',carrier:''});rRt();}
 function dRt(i){cfg.rtDB.splice(i,1);rRt();}
 
-function collectCfg(){
-  cfg.phone=document.getElementById('f-phone').value;
-  if(!cfg.hero)cfg.hero={};
-  cfg.hero.headline_em    =document.getElementById('f-h1-em').value;
-  cfg.hero.headline_mid   =document.getElementById('f-h1-mid').value;
-  cfg.hero.headline_strong=document.getElementById('f-h1-strong').value;
-  cfg.hero.headline_end   =document.getElementById('f-h1-end').value;
-  cfg.hero.sub            =document.getElementById('f-hero-sub').value;
-  if(!cfg.footer)cfg.footer={};
-  cfg.footer.biz_no   =document.getElementById('f-biz').value;
-  cfg.footer.sales_no =document.getElementById('f-sales').value;
-  cfg.footer.address  =document.getElementById('f-addr').value;
-  cfg.footer.copyright=document.getElementById('f-copy').value;
-  return cfg;
+
+function saveCfgToStorage(){
+  var c=cfg;
+  c.phone=document.getElementById('f-phone').value;
+  if(!c.hero)c.hero={};
+  c.hero.headline_em    =document.getElementById('f-h1-em').value;
+  c.hero.headline_mid   =document.getElementById('f-h1-mid').value;
+  c.hero.headline_strong=document.getElementById('f-h1-strong').value;
+  c.hero.headline_end   =document.getElementById('f-h1-end').value;
+  c.hero.sub            =document.getElementById('f-hero-sub').value;
+  if(!c.footer)c.footer={};
+  c.footer.biz_no   =document.getElementById('f-biz').value;
+  c.footer.sales_no =document.getElementById('f-sales').value;
+  c.footer.address  =document.getElementById('f-addr').value;
+  c.footer.copyright=document.getElementById('f-copy').value;
+  if(!c.terms)c.terms={};
+  c.terms.privacy    =document.getElementById('f-terms-privacy').value;
+  c.terms.marketing  =document.getElementById('f-terms-marketing').value;
+  c.terms.thirdparty =document.getElementById('f-terms-thirdparty').value;
+  localStorage.setItem('tc_site_config', JSON.stringify(c));
+  showToast('설정이 저장되었습니다.');
 }
-function buildJs(){return 'var SITE_CONFIG = '+JSON.stringify(collectCfg(),null,2)+';\n';}
-function dlConfig(){
-  var a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([buildJs()],{type:'text/javascript'}));
-  a.download='config.js';a.click();
-  showToast('config.js 다운로드 완료!');
-}
-function cpConfig(){navigator.clipboard.writeText(buildJs()).then(function(){showToast('클립보드에 복사됐습니다!');});}
 
 /* ─────────── 유틸 ─────────── */
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
