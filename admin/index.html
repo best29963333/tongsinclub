@@ -365,16 +365,9 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
       <div class="card-body">
         <div id="ry-wrap">
           <div class="rv-item yc" data-ry="0">
-            <div class="row2" style="margin-bottom:8px">
-              <div class="field"><label>이니셜</label><input type="text" value="박"></div>
-              <div class="field"><label>지역</label><input type="text" value="서울시 강*구"></div>
-            </div>
+            <div class="field"><label>지역</label><input type="text" value="서울시 강*구"></div>
             <div class="field"><label>따옴표 제목</label><input type="text" value="&quot;정확한 날짜에 입금 해주셨어요&quot;"></div>
             <div class="field"><label>후기 내용</label><textarea rows="2">약정 끝나서 인터넷 알아보는데 통신클럽에서 한 번에 비교해서 딱 맞는 거 찾아주셨어요.</textarea></div>
-            <div class="row2">
-              <div class="field"><label>이름</label><input type="text" value="박*수님"></div>
-              <div class="field"><label>날짜·가입정보</label><input type="text" value="2025.11.14 · SK 가입"></div>
-            </div>
             <div class="field"><label>후기 사진 <span style="color:var(--g4);font-weight:400">(선택 · 최대 2MB · 권장 300×300px · JPG/PNG/WEBP)</span></label>
               <div class="photo-upload-box" onclick="triggerPhotoUpload(this)">
                 <div class="photo-preview" style="display:none"><img src="" alt="미리보기"><button class="photo-del" onclick="event.stopPropagation();delPhoto(this)">×</button></div>
@@ -385,16 +378,9 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
             </div>
           </div>
           <div class="rv-item yc" data-ry="1">
-            <div class="row2" style="margin-bottom:8px">
-              <div class="field"><label>이니셜</label><input type="text" value="정"></div>
-              <div class="field"><label>지역</label><input type="text" value="경기도 성*시"></div>
-            </div>
+            <div class="field"><label>지역</label><input type="text" value="경기도 성*시"></div>
             <div class="field"><label>따옴표 제목</label><input type="text" value="&quot;설치 다음날 바로 입금됐어요&quot;"></div>
             <div class="field"><label>후기 내용</label><textarea rows="2">상담사분이 정말 친절하셨어요. 다른 곳보다 혜택도 훨씬 좋고 설치도 바로 다음날 와주셨네요!</textarea></div>
-            <div class="row2">
-              <div class="field"><label>이름</label><input type="text" value="정*훈님"></div>
-              <div class="field"><label>날짜·가입정보</label><input type="text" value="2025.10.22 · LG 가입"></div>
-            </div>
             <div class="field"><label>후기 사진 <span style="color:var(--g4);font-weight:400">(선택 · 최대 2MB · 권장 300×300px · JPG/PNG/WEBP)</span></label>
               <div class="photo-upload-box" onclick="triggerPhotoUpload(this)">
                 <div class="photo-preview" style="display:none"><img src="" alt="미리보기"><button class="photo-del" onclick="event.stopPropagation();delPhoto(this)">×</button></div>
@@ -695,15 +681,11 @@ async function initCfgForm(){
     var ryItems=document.querySelectorAll('#ry-wrap .rv-item');
     c.reviews_yellow.forEach(function(r,i){
       if(i>=ryItems.length) return;
-      var allInputs=Array.from(ryItems[i].querySelectorAll('input:not([type=file])'));
+      var allInputs=Array.from(ryItems[i].querySelectorAll('input[type=text]'));
       var ta=ryItems[i].querySelector('textarea');
-      if(allInputs[0])allInputs[0].value=r.initial||'';
-      if(allInputs[1])allInputs[1].value=r.loc||'';
-      if(allInputs[2])allInputs[2].value=r.quote||'';
+      if(allInputs[0])allInputs[0].value=r.loc||'';
+      if(allInputs[1])allInputs[1].value=r.quote||'';
       if(ta)ta.value=r.text||'';
-      if(allInputs[3])allInputs[3].value=r.name||'';
-      if(allInputs[4])allInputs[4].value=r.date||'';
-      /* 사진 복원 */
       if(r.photo){
         var box=ryItems[i].querySelector('.photo-upload-box');
         if(box){
@@ -788,15 +770,11 @@ async function saveSection(key){
       var allInputs=Array.from(el.querySelectorAll('input[type=text]'));
       var ta=el.querySelector('textarea');
       var photoUrl=el.querySelector('.photo-url-input');
-      var photo = photoUrl ? photoUrl.value : '';
       return {
-        initial: allInputs[0]?allInputs[0].value:'',
-        loc:     allInputs[1]?allInputs[1].value:'',
-        quote:   allInputs[2]?allInputs[2].value:'',
-        text:    ta?ta.value:'',
-        name:    allInputs[3]?allInputs[3].value:'',
-        date:    allInputs[4]?allInputs[4].value:'',
-        photo:   photo
+        loc:   allInputs[0]?allInputs[0].value:'',
+        quote: allInputs[1]?allInputs[1].value:'',
+        text:  ta?ta.value:'',
+        photo: photoUrl?photoUrl.value:''
       };
     });
   } else if(key==='footer'){
@@ -880,12 +858,9 @@ function addRY(){
   var w=document.getElementById('ry-wrap');
   var d=document.createElement('div');d.className='rv-item yc';
   d.innerHTML='<button class="rv-del" onclick="this.closest(\'.rv-item\').remove()">×</button>'
-    +'<div class="row2" style="margin-bottom:8px"><div class="field"><label>이니셜</label><input type="text" placeholder="박"></div>'
-    +'<div class="field"><label>지역</label><input type="text" placeholder="서울시 강*구"></div></div>'
+    +'<div class="field"><label>지역</label><input type="text" placeholder="서울시 강*구"></div>'
     +'<div class="field"><label>따옴표 제목</label><input type="text" placeholder="&quot;입금 해주셨어요&quot;"></div>'
     +'<div class="field"><label>후기 내용</label><textarea rows="2" placeholder="후기 내용"></textarea></div>'
-    +'<div class="row2"><div class="field"><label>이름</label><input type="text" placeholder="박*수님"></div>'
-    +'<div class="field"><label>날짜·가입정보</label><input type="text" placeholder="2025.11.14 · SK 가입"></div></div>'
     +'<div class="field"><label>후기 사진 <span style="color:var(--g4);font-weight:400">(선택 · 최대 2MB · 권장 300×300px)</span></label>'
     +'<div class="photo-upload-box" onclick="triggerPhotoUpload(this)">'
     +'<div class="photo-preview" style="display:none"><img src="" alt="미리보기"><button class="photo-del" onclick="event.stopPropagation();delPhoto(this)">×</button></div>'
