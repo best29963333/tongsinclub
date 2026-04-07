@@ -329,14 +329,23 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
         <div class="wrap">
 
           <div class="card">
-            <div class="card-head"><div class="card-head-title">🔑 로그인 계정 변경</div></div>
+            <div class="card-head">
+              <div class="card-head-title">👥 계정 관리</div>
+              <button class="btn btn-blue btn-sm" onclick="loadAccounts()">새로고침</button>
+            </div>
             <div class="card-body">
-              <div class="row3">
-                <div class="field"><label>아이디</label><input id="c-lid" type="text"></div>
-                <div class="field"><label>새 비밀번호</label><input id="c-lpw" type="password"></div>
-                <div class="field"><label>비밀번호 확인</label><input id="c-lpw2" type="password"></div>
+              <!-- 계정 목록 -->
+              <div id="accounts-list" style="margin-bottom:16px"></div>
+              <!-- 계정 추가 -->
+              <div style="border:1.5px solid var(--g3);border-radius:8px;padding:14px;background:var(--g1)">
+                <div style="font-size:12px;font-weight:700;color:var(--g6);margin-bottom:10px">새 계정 추가</div>
+                <div class="row3">
+                  <div class="field"><label>아이디</label><input id="new-uid" type="text" placeholder="아이디"></div>
+                  <div class="field"><label>비밀번호</label><input id="new-upw" type="password" placeholder="비밀번호"></div>
+                  <div class="field"><label>비밀번호 확인</label><input id="new-upw2" type="password" placeholder="비밀번호 확인"></div>
+                </div>
+                <button class="btn btn-blue btn-sm" onclick="addAccount()">계정 추가</button>
               </div>
-              <button class="btn btn-blue btn-sm" onclick="saveLogin()">저장</button>
             </div>
           </div>
 
@@ -549,21 +558,31 @@ var _SB = supabase.createClient(
 );
 
 /* ─── 로그인 ─── */
-var K_ID='tc_aid',K_PW='tc_apw',K_SS='tc_sess',DI='admin',DP='1234';
-var getAId=function(){return localStorage.getItem(K_ID)||DI;};
-var getAPw=function(){return localStorage.getItem(K_PW)||DP;};
+var K_SS='tc_sess';
 
-function doLogin(){
+async function doLogin(){
   var id=document.getElementById('l-id').value.trim();
   var pw=document.getElementById('l-pw').value;
-  if(id===getAId()&&pw===getAPw()){
-    sessionStorage.setItem(K_SS,'1');
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('app').style.display='block';
-    bootApp();
-  } else { document.getElementById('login-err').textContent='아이디 또는 비밀번호가 올바르지 않습니다.'; }
+  var errEl=document.getElementById('login-err');
+  errEl.textContent='';
+  if(!id||!pw){errEl.textContent='아이디와 비밀번호를 입력해주세요.';return;}
+  var btn=document.querySelector('.login-btn');
+  btn.textContent='확인 중...';btn.disabled=true;
+  try{
+    var res=await _SB.from('admin_accounts').select('*').eq('username',id).eq('password',pw).single();
+    if(res.data){
+      sessionStorage.setItem(K_SS,'1');
+      sessionStorage.setItem('tc_admin_me',id);
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('app').style.display='block';
+      bootApp();
+    } else {
+      errEl.textContent='아이디 또는 비밀번호가 올바르지 않습니다.';
+    }
+  }catch(e){errEl.textContent='아이디 또는 비밀번호가 올바르지 않습니다.';}
+  btn.textContent='로그인';btn.disabled=false;
 }
-function doLogout(){sessionStorage.removeItem(K_SS);location.reload();}
+function doLogout(){sessionStorage.removeItem(K_SS);sessionStorage.removeItem('tc_admin_me');location.reload();}
 ['l-pw','l-id'].forEach(function(id){document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});});
 if(sessionStorage.getItem(K_SS)==='1'){
   document.getElementById('login-screen').style.display='none';
@@ -853,16 +872,70 @@ async function initCfgForm(){
   sv('f-addr',c.footer&&c.footer.address);sv('f-email',c.footer&&c.footer.email);sv('f-copy',c.footer&&c.footer.copyright);
   if(c.terms){sv('f-terms-privacy',c.terms.privacy);sv('f-terms-marketing',c.terms.marketing);sv('f-terms-thirdparty',c.terms.thirdparty);}
   rRt();
+  loadAccounts();
 }
 function sv(id,v){var el=document.getElementById(id);if(el&&v!=null)el.value=v;}
 
-function saveLogin(){
-  var id=document.getElementById('c-lid').value.trim();
-  var pw=document.getElementById('c-lpw').value,pw2=document.getElementById('c-lpw2').value;
-  if(!id){showToast('아이디를 입력해주세요.');return;}
-  if(pw&&pw!==pw2){showToast('비밀번호가 일치하지 않습니다.');return;}
-  localStorage.setItem(K_ID,id);if(pw)localStorage.setItem(K_PW,pw);
-  showToast('계정 정보가 저장되었습니다.');
+/* ─── 계정 관리 ─── */
+async function loadAccounts(){
+  var list=document.getElementById('accounts-list');
+  if(!list)return;
+  list.innerHTML='<div style="font-size:12px;color:var(--g4);padding:8px 0">로딩 중...</div>';
+  try{
+    var res=await _SB.from('admin_accounts').select('id,username,created_at').order('created_at',{ascending:true});
+    var me=sessionStorage.getItem('tc_admin_me')||'';
+    var rows=res.data||[];
+    if(!rows.length){list.innerHTML='<div style="font-size:12px;color:var(--g4)">등록된 계정이 없습니다.</div>';return;}
+    list.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:13px">'
+      +'<thead><tr style="background:var(--g2)"><th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--g6)">아이디</th><th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--g6)">생성일</th><th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--g6)">비밀번호 변경</th><th style="padding:8px 12px"></th></tr></thead>'
+      +'<tbody>'+rows.map(function(r){
+        var isMe=r.username===me;
+        var dt=r.created_at?r.created_at.slice(0,10):'-';
+        return '<tr style="border-bottom:1px solid var(--g2)">'
+          +'<td style="padding:10px 12px;font-weight:700">'+esc(r.username)+(isMe?' <span style="font-size:10px;background:#EFF6FF;color:var(--pr);padding:2px 6px;border-radius:4px;font-weight:600">현재 계정</span>':'')+'</td>'
+          +'<td style="padding:10px 12px;font-size:12px;color:var(--g4)">'+dt+'</td>'
+          +'<td style="padding:10px 12px"><div style="display:flex;gap:6px;align-items:center">'
+          +'<input type="password" id="pw-'+r.id+'" placeholder="새 비밀번호" style="border:1.5px solid var(--g3);border-radius:6px;padding:5px 8px;font-size:12px;font-family:inherit;outline:none;width:130px">'
+          +'<button class="btn btn-gray btn-sm" onclick="changePw('+r.id+')">변경</button>'
+          +'</div></td>'
+          +'<td style="padding:10px 12px">'+(rows.length>1?'<button class="btn btn-red btn-sm" onclick="deleteAccount('+r.id+',\''+esc(r.username)+'\')">삭제</button>':'')+'</td>'
+          +'</tr>';
+      }).join('')+'</tbody></table>';
+  }catch(e){list.innerHTML='<div style="font-size:12px;color:var(--rd)">계정 목록을 불러오지 못했습니다.</div>';}
+}
+
+async function addAccount(){
+  var uid=document.getElementById('new-uid').value.trim();
+  var pw=document.getElementById('new-upw').value;
+  var pw2=document.getElementById('new-upw2').value;
+  if(!uid){showToast('아이디를 입력해주세요.');return;}
+  if(!pw){showToast('비밀번호를 입력해주세요.');return;}
+  if(pw!==pw2){showToast('비밀번호가 일치하지 않습니다.');return;}
+  var res=await _SB.from('admin_accounts').insert({username:uid,password:pw});
+  if(res.error){showToast('이미 존재하는 아이디입니다.');return;}
+  document.getElementById('new-uid').value='';
+  document.getElementById('new-upw').value='';
+  document.getElementById('new-upw2').value='';
+  showToast('계정이 추가되었습니다.');
+  loadAccounts();
+}
+
+async function changePw(id){
+  var inp=document.getElementById('pw-'+id);
+  var pw=inp?inp.value:'';
+  if(!pw){showToast('새 비밀번호를 입력해주세요.');return;}
+  await _SB.from('admin_accounts').update({password:pw}).eq('id',id);
+  inp.value='';
+  showToast('비밀번호가 변경되었습니다.');
+}
+
+async function deleteAccount(id,username){
+  if(!confirm('['+username+'] 계정을 삭제하시겠습니까?'))return;
+  var me=sessionStorage.getItem('tc_admin_me')||'';
+  if(username===me){showToast('현재 로그인 중인 계정은 삭제할 수 없습니다.');return;}
+  await _SB.from('admin_accounts').delete().eq('id',id);
+  showToast('계정이 삭제되었습니다.');
+  loadAccounts();
 }
 
 async function sbSaveConfig(patch){
