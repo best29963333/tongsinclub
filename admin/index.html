@@ -732,9 +732,13 @@ if(sessionStorage.getItem(K_SS)==='1'){
 /* ─── 탭 ─── */
 var tabs=['db','trash','cfg','accounts','log'];
 function showTab(name){
+  /* 일반 관리자: 접수 DB·휴지통만 허용 */
+  var role=sessionStorage.getItem('tc_admin_role')||'admin';
+  if(role==='admin'&&(name==='cfg'||name==='accounts'||name==='log')){
+    showToast('접근 권한이 없습니다.');return;
+  }
   /* 계정관리: 최고관리자만 */
   if(name==='accounts'){
-    var role=sessionStorage.getItem('tc_admin_role')||'admin';
     var superOnly=document.getElementById('accounts-super-only');
     var superContent=document.getElementById('accounts-super-content');
     if(role!=='super'&&role!=='master'){
@@ -793,6 +797,18 @@ function renderSidebarUser(){
   /* 마스터·최고관리자만 로그 클리어 버튼 표시 */
   var clearBtn=document.getElementById('log-clear-btn');
   if(clearBtn&&(role==='super'||role==='master')) clearBtn.style.display='';
+
+  /* 일반 관리자: 사이트 설정·계정 관리·활동 로그 탭 숨김 */
+  var adminOnlyTabs=['nav-cfg','nav-accounts','nav-log'];
+  adminOnlyTabs.forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el) return;
+    el.style.display=(role==='admin')?'none':'';
+  });
+  /* 사이드바 구분선도 숨김 (일반 관리자) */
+  document.querySelectorAll('.sb-divider').forEach(function(el){
+    el.style.display=(role==='admin')?'none':'';
+  });
 }
 
 /* ─── DB 조회 ─── */
