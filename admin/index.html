@@ -9,7 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--pr:#2563EB;--g1:#F8FAFC;--g2:#F1F5F9;--g3:#E2E8F0;--g4:#94A3B8;--g6:#475569;--g8:#1E293B;--rd:#DC2626;--gn:#16A34A}
+:root{--pr:#2563EB;--g1:#F8FAFC;--g2:#F1F5F9;--g3:#E2E8F0;--g4:#94A3B8;--g6:#475569;--g8:#1E293B;--rd:#DC2626;--gn:#16A34A;--sb:220px}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:#f1f5f9;color:var(--g8);font-size:14px}
 
 /* ── 로그인 ── */
@@ -21,21 +21,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .lf label{font-size:12px;font-weight:600;color:var(--g6);display:block;margin-bottom:6px}
 .lf input{width:100%;border:1.5px solid var(--g3);border-radius:8px;padding:11px 14px;font-size:14px;outline:none;transition:border .2s;font-family:inherit}
 .lf input:focus{border-color:var(--pr)}
-.login-btn{width:100%;background:var(--pr);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s;font-family:inherit}
+.login-btn{width:100%;background:var(--pr);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;font-family:inherit}
 .login-btn:hover{background:#1D4ED8}
 .login-err{color:var(--rd);font-size:12px;margin-top:10px;min-height:18px}
 
-/* ── 레이아웃 ── */
-#app{display:none}
-.topbar{background:#1e293b;height:54px;display:flex;align-items:center;padding:0 20px;gap:4px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.topbar-logo{font-size:15px;font-weight:700;color:#fff;margin-right:12px;white-space:nowrap}
-.tab-btn{padding:7px 14px;border-radius:6px;border:none;background:none;color:#94a3b8;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
-.tab-btn.on{background:rgba(255,255,255,.12);color:#fff}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
-.logout-btn{padding:6px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:none;color:#94a3b8;font-size:12px;cursor:pointer;font-family:inherit}
-.logout-btn:hover{color:#fff}
+/* ── 사이드바 레이아웃 ── */
+#app{display:none;min-height:100vh}
+.layout{display:flex;min-height:100vh}
 
-.wrap{max-width:1100px;margin:0 auto;padding:20px}
+/* 사이드바 */
+.sidebar{width:var(--sb);background:#1e293b;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;flex-shrink:0}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo-title{font-size:16px;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+.sb-logo-sub{font-size:11px;color:#64748b;margin-top:3px}
+.sb-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:#94a3b8;font-size:13px;font-weight:600;transition:all .15s;border:none;background:none;font-family:inherit;width:100%;text-align:left}
+.sb-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.sb-item.on{background:rgba(37,99,235,.3);color:#93c5fd}
+.sb-item svg{flex-shrink:0;opacity:.7}
+.sb-item.on svg{opacity:1}
+.sb-divider{height:1px;background:rgba(255,255,255,.06);margin:8px 10px}
+.sb-bottom{padding:12px 10px;border-top:1px solid rgba(255,255,255,.08)}
+.sb-btn{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:7px;border:none;background:none;color:#64748b;font-size:12px;cursor:pointer;font-family:inherit;width:100%;transition:all .15s}
+.sb-btn:hover{background:rgba(255,255,255,.06);color:#94a3b8}
+
+/* 메인 */
+.main{margin-left:var(--sb);flex:1;min-width:0}
+.main-header{background:#fff;border-bottom:1px solid var(--g2);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.main-title{font-size:15px;font-weight:700;color:var(--g8)}
+.wrap{padding:20px 24px;max-width:1200px}
 
 /* ── 카드 ── */
 .card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:16px;overflow:hidden}
@@ -49,12 +63,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .btn-green{background:#16A34A;color:#fff}.btn-green:hover{background:#15803d}
 .btn-gray{background:var(--g2);color:var(--g8)}.btn-gray:hover{background:var(--g3)}
 .btn-red{background:#fee2e2;color:var(--rd)}.btn-red:hover{background:#fecaca}
+.btn-orange{background:#fed7aa;color:#9a3412}.btn-orange:hover{background:#fdba74}
 .btn-sm{padding:5px 10px;font-size:12px;border-radius:5px}
 
 /* ── 필터 바 ── */
 .filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:16px}
 .fg{display:flex;flex-direction:column;gap:4px}
-.fg label{font-size:11px;font-weight:600;color:var(--g4);letter-spacing:.2px}
+.fg label{font-size:11px;font-weight:600;color:var(--g4)}
 .fg input,.fg select{border:1.5px solid var(--g3);border-radius:7px;padding:7px 10px;font-size:13px;font-family:inherit;outline:none;color:var(--g8);background:#fff}
 .fg input:focus,.fg select:focus{border-color:var(--pr)}
 .date-btns{display:flex;gap:4px}
@@ -67,15 +82,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .sum-num{font-size:20px;font-weight:900;line-height:1.1}
 .sum-lbl{font-size:10px;color:var(--g4);margin-top:2px}
 
+/* ── 벌크 액션 바 ── */
+.bulk-bar{display:none;align-items:center;gap:10px;background:#fff3cd;border:1.5px solid #f59e0b;border-radius:8px;padding:10px 16px;margin-bottom:12px}
+.bulk-bar.show{display:flex}
+.bulk-count{font-size:13px;font-weight:700;color:#92400e}
+
 /* ── 테이블 ── */
 .tbl-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--g2)}
 table.dtbl{width:100%;border-collapse:collapse;font-size:13px}
 table.dtbl thead tr{background:var(--pr)}
 table.dtbl th{padding:10px 12px;color:#fff;font-size:12px;font-weight:700;text-align:left;white-space:nowrap}
-table.dtbl tbody tr{border-bottom:1px solid var(--g2)}
+table.dtbl tbody tr{border-bottom:1px solid var(--g2);transition:background .1s}
 table.dtbl tbody tr:hover{background:#f8faff}
+table.dtbl tbody tr.checked-row{background:#eff6ff}
 table.dtbl td{padding:9px 12px;vertical-align:middle}
 .empty-row td{text-align:center;color:var(--g4);padding:36px;font-size:13px}
+input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointer}
 
 .status-sel{border:1.5px solid var(--g3);border-radius:5px;padding:4px 6px;font-size:11px;font-family:inherit;outline:none;cursor:pointer;font-weight:700;min-width:96px}
 .s0{border-color:#3b82f6;color:#1d4ed8;background:#eff6ff}
@@ -86,7 +108,7 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
 .s5{border-color:#06b6d4;color:#164e63;background:#ecfeff}
 .s6{border-color:#16a34a;color:#14532d;background:#dcfce7}
 
-.memo-inp{border:1.5px solid var(--g3);border-radius:5px;padding:4px 8px;font-size:12px;font-family:inherit;outline:none;width:130px}
+.memo-inp{border:1.5px solid var(--g3);border-radius:5px;padding:4px 8px;font-size:12px;font-family:inherit;outline:none;width:120px}
 .memo-inp:focus{border-color:var(--pr)}
 
 /* 페이지네이션 */
@@ -121,18 +143,21 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
 .photo-preview{position:relative;display:inline-block}
 .photo-preview img{width:64px;height:64px;border-radius:8px;object-fit:cover;display:block}
 .photo-del{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--rd);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1}
-.dl-box-label{color:#64748b;font-size:11px;font-weight:700;margin-bottom:10px;letter-spacing:.5px}
-.dl-note{color:#64748b;font-size:12px;margin-top:10px;line-height:1.7}
 
 /* toast */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;z-index:99999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1}
 
-@media(max-width:700px){
+@media(max-width:900px){
+  .sidebar{width:56px}
+  .sb-logo,.sb-logo-sub,.sb-item span,.sb-btn span{display:none}
+  .sb-item{justify-content:center;padding:12px}
+  .main{margin-left:56px}
+  .wrap{padding:14px}
   .row4{grid-template-columns:1fr 1fr}
   table.dtbl{font-size:11px}
-  table.dtbl th,table.dtbl td{padding:7px 6px}
-  .memo-inp{width:80px}
+  table.dtbl th,table.dtbl td{padding:7px 5px}
+  .memo-inp{width:70px}
   .filter-bar{flex-direction:column;align-items:stretch}
 }
 </style>
@@ -153,259 +178,306 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
 
 <!-- 앱 -->
 <div id="app">
-  <div class="topbar">
-    <span class="topbar-logo">📡 통신클럽 어드민</span>
-    <button class="tab-btn on" id="tab-btn-db" onclick="showTab('db')">📋 접수 DB</button>
-    <button class="tab-btn" id="tab-btn-cfg" onclick="showTab('cfg')">⚙️ 사이트 설정</button>
-    <div class="topbar-right">
-      <button class="btn btn-blue btn-sm" onclick="window.open('../index.html','_blank')">🔗 랜딩 미리보기</button>
-      <button class="logout-btn" onclick="doLogout()">로그아웃</button>
-    </div>
-  </div>
+  <div class="layout">
 
-  <!-- ══ DB 탭 ══ -->
-  <div id="pane-db" class="wrap">
-    <div class="card">
-      <div class="card-head">
-        <div class="card-head-title">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-          접수 현황 조회
+    <!-- 사이드바 -->
+    <aside class="sidebar">
+      <div class="sb-logo">
+        <div class="sb-logo-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M1 6l11 7L23 6"/><path d="M1 6a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2z"/></svg>
+          <span>통신클럽</span>
         </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-green btn-sm" onclick="exportExcel()">⬇ 엑셀 저장</button>
-          <button class="btn btn-gray btn-sm" onclick="applyFilter()">새로고침</button>
-        </div>
+        <div class="sb-logo-sub">어드민 패널</div>
       </div>
-      <div class="card-body">
-
-        <div class="filter-bar">
-          <div class="fg">
-            <label>기간 선택</label>
-            <div class="date-btns">
-              <button class="date-btn on" onclick="setPreset('today',this)">당일</button>
-              <button class="date-btn" onclick="setPreset('yesterday',this)">전일</button>
-              <button class="date-btn" onclick="setPreset('month',this)">당월</button>
-              <button class="date-btn" onclick="setPreset('lastmonth',this)">전월</button>
-              <button class="date-btn" onclick="setPreset('all',this)">전체</button>
-            </div>
-          </div>
-          <div class="fg"><label>시작 날짜</label><input type="date" id="f-from"></div>
-          <div class="fg"><label>종료 날짜</label><input type="date" id="f-to"></div>
-          <div class="fg"><label>검색 (이름·연락처)</label><input type="text" id="f-search" placeholder="김철수 / 010-1234" style="min-width:170px"></div>
-          <div class="fg">
-            <label>처리 상태</label>
-            <select id="f-status">
-              <option value="">전체</option>
-              <option>상담</option><option>부재</option><option>문자발송</option>
-              <option>청약</option><option>필수항목 안내</option><option>설치 완료</option><option>송금 완료</option>
-            </select>
-          </div>
-          <button class="btn btn-blue" onclick="applyFilter()" style="align-self:flex-end">조회</button>
-        </div>
-
-        <div class="summary-row" id="sum-row"></div>
-
-        <div class="tbl-wrap">
-          <table class="dtbl">
-            <thead>
-              <tr>
-                <th>No</th><th>접수일시</th><th>성함</th><th>연락처</th>
-                <th>희망통신사</th><th>연락시간</th><th>처리상태</th><th>메모</th><th>삭제</th>
-              </tr>
-            </thead>
-            <tbody id="db-tbody"></tbody>
-          </table>
-        </div>
-        <div class="pager" id="pager"></div>
+      <nav class="sb-nav">
+        <button class="sb-item on" id="nav-db" onclick="showTab('db')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          <span>접수 DB</span>
+        </button>
+        <button class="sb-item" id="nav-trash" onclick="showTab('trash')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          <span>휴지통</span>
+        </button>
+        <div class="sb-divider"></div>
+        <button class="sb-item" id="nav-cfg" onclick="showTab('cfg')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>사이트 설정</span>
+        </button>
+      </nav>
+      <div class="sb-bottom">
+        <button class="sb-btn" onclick="window.open('../index.html','_blank')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <span>랜딩 미리보기</span>
+        </button>
+        <button class="sb-btn" onclick="doLogout()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>로그아웃</span>
+        </button>
       </div>
-    </div>
-  </div>
+    </aside>
 
-  <!-- ══ 설정 탭 ══ -->
-  <div id="pane-cfg" class="wrap" style="display:none">
+    <!-- 메인 -->
+    <main class="main">
 
-    <!-- 로그인 계정 -->
-    <div class="card">
-      <div class="card-head"><div class="card-head-title">🔑 로그인 계정 변경</div></div>
-      <div class="card-body">
-        <div class="row3">
-          <div class="field"><label>아이디</label><input id="c-lid" type="text"></div>
-          <div class="field"><label>새 비밀번호</label><input id="c-lpw" type="password"></div>
-          <div class="field"><label>비밀번호 확인</label><input id="c-lpw2" type="password"></div>
-        </div>
-        <button class="btn btn-blue btn-sm" onclick="saveLogin()">저장</button>
-      </div>
-    </div>
-
-    <!-- 기본 설정 -->
-    <div class="card">
-      <div class="card-head"><div class="card-head-title">📞 기본 설정</div></div>
-      <div class="card-body">
-        <div class="row2">
-          <div class="field"><label>대표 전화번호</label><input id="f-phone" type="text" value="0000-0000"></div>
-          <div class="field"><label>카카오 채널 URL</label><input id="f-kakao-url" type="text" placeholder="https://pf.kakao.com/_xxxxx"></div>
-        </div>
-        <button class="btn btn-blue btn-sm" style="margin-top:4px" onclick="saveSection('phone')">저장</button>
-      </div>
-    </div>
-
-    <!-- 히어로 -->
-    <div class="card">
-      <div class="card-head"><div class="card-head-title">🌟 히어로 섹션</div></div>
-      <div class="card-body">
-        <div class="field"><label>헤드라인 강조 (파란색)</label><input id="f-h1-em" type="text" value="최저 요금"></div>
-        <div class="field"><label>헤드라인 중간 텍스트</label><input id="f-h1-mid" type="text" value="으로 인터넷·TV 가입,"></div>
-        <div class="field"><label>헤드라인 강조2 (빨간색)</label><input id="f-h1-strong" type="text" value="현금 최대 48만원 + α"></div>
-        <div class="field"><label>헤드라인 끝 텍스트</label><input id="f-h1-end" type="text" value="받으세요"></div>
-        <div class="field"><label>서브 텍스트 (줄바꿈: Enter)</label><textarea id="f-hero-sub" rows="2">통신클럽은 SK·KT·LG 공식 대리점입니다.
-전담 매니저가 딱 맞는 요금제를 찾아드립니다.</textarea></div>
-        <button class="btn btn-blue btn-sm" style="margin-top:4px" onclick="saveSection('hero')">저장</button>
-      </div>
-    </div>
-
-    <!-- 통계 -->
-    <div class="card">
-      <div class="card-head"><div class="card-head-title">📊 통계 수치</div></div>
-      <div class="card-body">
-        <div class="row4">
-          <div class="field"><label>값 1</label><input id="f-stat0v" type="text" value="98,000+"></div>
-          <div class="field"><label>레이블 1</label><input id="f-stat0l" type="text" value="누적 가입자"></div>
-          <div class="field"><label>값 2</label><input id="f-stat1v" type="text" value="4.9점"></div>
-          <div class="field"><label>레이블 2</label><input id="f-stat1l" type="text" value="평균 만족도"></div>
-        </div>
-        <div class="row4" style="margin-top:8px">
-          <div class="field"><label>값 3</label><input id="f-stat2v" type="text" value="48만원+α"></div>
-          <div class="field"><label>레이블 3</label><input id="f-stat2l" type="text" value="최대 현금"></div>
-          <div class="field"><label>값 4</label><input id="f-stat3v" type="text" value="당일"></div>
-          <div class="field"><label>레이블 4</label><input id="f-stat3l" type="text" value="현금 지급"></div>
-        </div>
-        <button class="btn btn-blue btn-sm" style="margin-top:8px" onclick="saveSection('stats')">저장</button>
-      </div>
-    </div>
-
-    <!-- 요금 비교 테이블 -->
-    <div class="card">
-      <div class="card-head"><div class="card-head-title">📋 요금 비교 테이블</div></div>
-      <div class="card-body">
-        <div style="font-size:11px;font-weight:700;color:var(--g4);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--g2)">SK브로드밴드</div>
-        <div class="row4" style="margin-bottom:14px">
-          <div class="field"><label>로고 파일명</label><input id="f-tbl0-logo" type="text" value="SK-나비.png"></div>
-          <div class="field"><label>상품명</label><input id="f-tbl0-product" type="text" value="인터넷 1G"></div>
-          <div class="field"><label>정가</label><input id="f-tbl0-orig" type="text" value="38,500원"></div>
-          <div class="field"><label>할인가</label><input id="f-tbl0-final" type="text" value="27,500원"></div>
-        </div>
-        <div class="field" style="max-width:120px;margin-bottom:20px"><label>지원금(만원)</label><input id="f-tbl0-support" type="text" value="30"></div>
-
-        <div style="font-size:11px;font-weight:700;color:var(--g4);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--g2)">KT</div>
-        <div class="row4" style="margin-bottom:14px">
-          <div class="field"><label>로고 파일명</label><input id="f-tbl1-logo" type="text" value="KT_Logo.png"></div>
-          <div class="field"><label>상품명</label><input id="f-tbl1-product" type="text" value="인터넷 1G"></div>
-          <div class="field"><label>정가</label><input id="f-tbl1-orig" type="text" value="38,500원"></div>
-          <div class="field"><label>할인가</label><input id="f-tbl1-final" type="text" value="27,500원"></div>
-        </div>
-        <div class="field" style="max-width:120px;margin-bottom:20px"><label>지원금(만원)</label><input id="f-tbl1-support" type="text" value="28"></div>
-
-        <div style="font-size:11px;font-weight:700;color:var(--g4);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--g2)">LG U+</div>
-        <div class="row4" style="margin-bottom:14px">
-          <div class="field"><label>로고 파일명</label><input id="f-tbl2-logo" type="text" value="LGU_Logo.png"></div>
-          <div class="field"><label>상품명</label><input id="f-tbl2-product" type="text" value="인터넷 1G"></div>
-          <div class="field"><label>정가</label><input id="f-tbl2-orig" type="text" value="38,500원"></div>
-          <div class="field"><label>할인가</label><input id="f-tbl2-final" type="text" value="27,500원"></div>
-        </div>
-        <div class="field" style="max-width:120px;margin-bottom:8px"><label>지원금(만원)</label><input id="f-tbl2-support" type="text" value="26"></div>
-
-        <button class="btn btn-blue btn-sm" style="margin-top:4px" onclick="saveSection('table')">저장</button>
-      </div>
-    </div>
-
-    <!-- 후기 흰색 -->
-    <div class="card">
-      <div class="card-head"><div class="card-head-title">⭐ 후기 1줄 — 흰색</div></div>
-      <div class="card-body">
-        <div id="rw-wrap">
-          <div class="rv-item" data-rw="0">
-            <div class="row2" style="margin-bottom:8px">
-              <div class="field"><label>이니셜</label><input type="text" value="K"></div>
-              <div class="field"><label>태그</label><input type="text" value="현금 30만"></div>
-            </div>
-            <div class="field"><label>후기 내용</label><textarea rows="2">통신클럽 아니었으면 혜택금이 있는지도 몰랐을 거예요. 매니저분이 알아서 맞춤 요금 찾아주니 너무 간편했습니다!</textarea></div>
-            <div class="row2">
-              <div class="field"><label>닉네임</label><input type="text" value="@kim*****님"></div>
-              <div class="field"><label>날짜·가입정보</label><input type="text" value="2025.12.03 · SK 1G 가입"></div>
-            </div>
-          </div>
-          <div class="rv-item" data-rw="1">
-            <div class="row2" style="margin-bottom:8px">
-              <div class="field"><label>이니셜</label><input type="text" value="L"></div>
-              <div class="field"><label>태그</label><input type="text" value="즉시입금"></div>
-            </div>
-            <div class="field"><label>후기 내용</label><textarea rows="2">여기저기 비교해봤는데 여기가 제일 많이 챙겨주는 것 같아요. 설치 당일 입금 바로 확인했어요!</textarea></div>
-            <div class="row2">
-              <div class="field"><label>닉네임</label><input type="text" value="@lee*****님"></div>
-              <div class="field"><label>날짜·가입정보</label><input type="text" value="2025.10.29 · LG 1G 가입"></div>
-            </div>
-          </div>
-          <div class="rv-item" data-rw="2">
-            <div class="row2" style="margin-bottom:8px">
-              <div class="field"><label>이니셜</label><input type="text" value="S"></div>
-              <div class="field"><label>태그</label><input type="text" value="인터넷+TV"></div>
-            </div>
-            <div class="field"><label>후기 내용</label><textarea rows="2">이사하면서 새로 가입했는데 현금도 받고 TV도 같이 묶어서 더 저렴해졌어요. 결합 할인 감사해요.</textarea></div>
-            <div class="row2">
-              <div class="field"><label>닉네임</label><input type="text" value="@shin*****님"></div>
-              <div class="field"><label>날짜·가입정보</label><input type="text" value="2025.09.08 · KT 인터넷+TV"></div>
-            </div>
+      <!-- ══ 접수 DB ══ -->
+      <div id="pane-db">
+        <div class="main-header">
+          <span class="main-title">📋 접수 DB</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-green btn-sm" onclick="exportExcel()">⬇ 엑셀 저장</button>
+            <button class="btn btn-gray btn-sm" onclick="applyFilter()">새로고침</button>
           </div>
         </div>
-        <button class="add-btn" onclick="addRW()">+ 흰색 후기 추가</button>
-        <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="saveSection('reviews_white')">저장</button>
-      </div>
-    </div>
-
-    <!-- 후기 노란색 -->
-    <div class="card">
-      <div class="card-head"><div class="card-head-title">🌟 후기 2줄 — 노란색</div></div>
-      <div class="card-body">
-        <div id="ry-wrap">
-          <div class="rv-item yc" data-ry="0">
-            <div class="field"><label>지역</label><input type="text" value="서울시 강*구"></div>
-            <div class="field"><label>따옴표 제목</label><input type="text" value="&quot;정확한 날짜에 입금 해주셨어요&quot;"></div>
-            <div class="field"><label>후기 내용</label><textarea rows="2">약정 끝나서 인터넷 알아보는데 통신클럽에서 한 번에 비교해서 딱 맞는 거 찾아주셨어요.</textarea></div>
-            <div class="field"><label>후기 사진 <span style="color:var(--g4);font-weight:400">(선택 · 최대 2MB · 권장 300×300px · JPG/PNG/WEBP)</span></label>
-              <div class="photo-upload-box" onclick="triggerPhotoUpload(this)">
-                <div class="photo-preview" style="display:none"><img src="" alt="미리보기"><button class="photo-del" onclick="event.stopPropagation();delPhoto(this)">×</button></div>
-                <div class="photo-placeholder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>클릭하여 사진 업로드</span></div>
-                <input type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadPhoto(this)">
-                <input type="hidden" class="photo-url-input" value="">
+        <div class="wrap">
+          <div class="card">
+            <div class="card-body">
+              <div class="filter-bar">
+                <div class="fg">
+                  <label>기간 선택</label>
+                  <div class="date-btns">
+                    <button class="date-btn on" onclick="setPreset('today',this)">당일</button>
+                    <button class="date-btn" onclick="setPreset('yesterday',this)">전일</button>
+                    <button class="date-btn" onclick="setPreset('month',this)">당월</button>
+                    <button class="date-btn" onclick="setPreset('lastmonth',this)">전월</button>
+                    <button class="date-btn" onclick="setPreset('all',this)">전체</button>
+                  </div>
+                </div>
+                <div class="fg"><label>시작 날짜</label><input type="date" id="f-from"></div>
+                <div class="fg"><label>종료 날짜</label><input type="date" id="f-to"></div>
+                <div class="fg"><label>검색 (이름·연락처)</label><input type="text" id="f-search" placeholder="김철수 / 010-1234" style="min-width:160px"></div>
+                <div class="fg">
+                  <label>처리 상태</label>
+                  <select id="f-status">
+                    <option value="">전체</option>
+                    <option>상담</option><option>부재</option><option>문자발송</option>
+                    <option>청약</option><option>필수항목 안내</option><option>설치 완료</option><option>송금 완료</option>
+                  </select>
+                </div>
+                <button class="btn btn-blue" onclick="applyFilter()" style="align-self:flex-end">조회</button>
               </div>
-            </div>
-          </div>
-          <div class="rv-item yc" data-ry="1">
-            <div class="field"><label>지역</label><input type="text" value="경기도 성*시"></div>
-            <div class="field"><label>따옴표 제목</label><input type="text" value="&quot;설치 다음날 바로 입금됐어요&quot;"></div>
-            <div class="field"><label>후기 내용</label><textarea rows="2">상담사분이 정말 친절하셨어요. 다른 곳보다 혜택도 훨씬 좋고 설치도 바로 다음날 와주셨네요!</textarea></div>
-            <div class="field"><label>후기 사진 <span style="color:var(--g4);font-weight:400">(선택 · 최대 2MB · 권장 300×300px · JPG/PNG/WEBP)</span></label>
-              <div class="photo-upload-box" onclick="triggerPhotoUpload(this)">
-                <div class="photo-preview" style="display:none"><img src="" alt="미리보기"><button class="photo-del" onclick="event.stopPropagation();delPhoto(this)">×</button></div>
-                <div class="photo-placeholder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>클릭하여 사진 업로드</span></div>
-                <input type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadPhoto(this)">
-                <input type="hidden" class="photo-url-input" value="">
+
+              <div class="summary-row" id="sum-row"></div>
+
+              <!-- 벌크 액션 바 -->
+              <div class="bulk-bar" id="bulk-bar">
+                <span class="bulk-count" id="bulk-count">0건 선택됨</span>
+                <button class="btn btn-red btn-sm" onclick="deleteSelected()">🗑 휴지통으로 이동</button>
+                <button class="btn btn-gray btn-sm" onclick="clearChecks()">선택 해제</button>
               </div>
+
+              <div class="tbl-wrap">
+                <table class="dtbl">
+                  <thead>
+                    <tr>
+                      <th><input type="checkbox" id="chk-all" onchange="toggleAll(this)"></th>
+                      <th>No</th><th>접수일시</th><th>성함</th><th>연락처</th>
+                      <th>희망통신사</th><th>연락시간</th><th>처리상태</th><th>메모</th><th>저장</th>
+                    </tr>
+                  </thead>
+                  <tbody id="db-tbody"></tbody>
+                </table>
+              </div>
+              <div class="pager" id="pager"></div>
             </div>
           </div>
         </div>
-        <button class="add-btn" onclick="addRY()">+ 노란색 후기 추가</button>
-        <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="saveSection('reviews_yellow')">저장</button>
       </div>
-    </div>
 
-    <!-- 약관 3종 -->
-    <div class="card">
-      <div class="card-head"><div class="card-head-title">📄 약관 3종</div></div>
-      <div class="card-body">
-        <div class="field">
-          <label>개인정보 수집·이용 동의</label>
-          <textarea id="f-terms-privacy" rows="7">개인정보 수집·이용 동의
+      <!-- ══ 휴지통 ══ -->
+      <div id="pane-trash" style="display:none">
+        <div class="main-header">
+          <span class="main-title">🗑 휴지통</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-red btn-sm" onclick="permanentDeleteSelected()">영구 삭제</button>
+            <button class="btn btn-gray btn-sm" onclick="loadTrash()">새로고침</button>
+          </div>
+        </div>
+        <div class="wrap">
+          <div class="card">
+            <div class="card-body">
+              <div style="font-size:12px;color:var(--g4);margin-bottom:14px">휴지통의 데이터는 영구 삭제 전까지 복원할 수 있습니다.</div>
+
+              <!-- 벌크 액션 바 (휴지통) -->
+              <div class="bulk-bar" id="trash-bulk-bar">
+                <span class="bulk-count" id="trash-bulk-count">0건 선택됨</span>
+                <button class="btn btn-orange btn-sm" onclick="restoreSelected()">↩ 복원</button>
+                <button class="btn btn-red btn-sm" onclick="permanentDeleteSelected()">영구 삭제</button>
+                <button class="btn btn-gray btn-sm" onclick="clearTrashChecks()">선택 해제</button>
+              </div>
+
+              <div class="tbl-wrap">
+                <table class="dtbl">
+                  <thead>
+                    <tr>
+                      <th><input type="checkbox" id="trash-chk-all" onchange="toggleTrashAll(this)"></th>
+                      <th>No</th><th>접수일시</th><th>삭제일시</th><th>성함</th><th>연락처</th>
+                      <th>희망통신사</th><th>처리상태</th><th>복원</th>
+                    </tr>
+                  </thead>
+                  <tbody id="trash-tbody"></tbody>
+                </table>
+              </div>
+              <div class="pager" id="trash-pager"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ 사이트 설정 ══ -->
+      <div id="pane-cfg" style="display:none">
+        <div class="main-header"><span class="main-title">⚙️ 사이트 설정</span></div>
+        <div class="wrap">
+
+          <div class="card">
+            <div class="card-head"><div class="card-head-title">🔑 로그인 계정 변경</div></div>
+            <div class="card-body">
+              <div class="row3">
+                <div class="field"><label>아이디</label><input id="c-lid" type="text"></div>
+                <div class="field"><label>새 비밀번호</label><input id="c-lpw" type="password"></div>
+                <div class="field"><label>비밀번호 확인</label><input id="c-lpw2" type="password"></div>
+              </div>
+              <button class="btn btn-blue btn-sm" onclick="saveLogin()">저장</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><div class="card-head-title">📞 기본 설정</div></div>
+            <div class="card-body">
+              <div class="row2">
+                <div class="field"><label>대표 전화번호</label><input id="f-phone" type="text" value="0000-0000"></div>
+                <div class="field"><label>카카오 채널 URL</label><input id="f-kakao-url" type="text" placeholder="https://pf.kakao.com/_xxxxx"></div>
+              </div>
+              <button class="btn btn-blue btn-sm" style="margin-top:4px" onclick="saveSection('phone')">저장</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><div class="card-head-title">🌟 히어로 섹션</div></div>
+            <div class="card-body">
+              <div class="field"><label>헤드라인 강조 (파란색)</label><input id="f-h1-em" type="text"></div>
+              <div class="field"><label>헤드라인 중간 텍스트</label><input id="f-h1-mid" type="text"></div>
+              <div class="field"><label>헤드라인 강조2 (빨간색)</label><input id="f-h1-strong" type="text"></div>
+              <div class="field"><label>헤드라인 끝 텍스트</label><input id="f-h1-end" type="text"></div>
+              <div class="field"><label>서브 텍스트</label><textarea id="f-hero-sub" rows="2"></textarea></div>
+              <button class="btn btn-blue btn-sm" onclick="saveSection('hero')">저장</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><div class="card-head-title">📊 통계 수치</div></div>
+            <div class="card-body">
+              <div class="row4">
+                <div class="field"><label>값 1</label><input id="f-stat0v" type="text" value="98,000+"></div>
+                <div class="field"><label>레이블 1</label><input id="f-stat0l" type="text" value="누적 가입자"></div>
+                <div class="field"><label>값 2</label><input id="f-stat1v" type="text" value="4.9점"></div>
+                <div class="field"><label>레이블 2</label><input id="f-stat1l" type="text" value="평균 만족도"></div>
+              </div>
+              <div class="row4" style="margin-top:8px">
+                <div class="field"><label>값 3</label><input id="f-stat2v" type="text" value="48만원+α"></div>
+                <div class="field"><label>레이블 3</label><input id="f-stat2l" type="text" value="최대 현금"></div>
+                <div class="field"><label>값 4</label><input id="f-stat3v" type="text" value="당일"></div>
+                <div class="field"><label>레이블 4</label><input id="f-stat3l" type="text" value="현금 지급"></div>
+              </div>
+              <button class="btn btn-blue btn-sm" style="margin-top:8px" onclick="saveSection('stats')">저장</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><div class="card-head-title">📋 요금 비교 테이블</div></div>
+            <div class="card-body">
+              <div style="font-size:11px;font-weight:700;color:var(--g4);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--g2)">SK브로드밴드</div>
+              <div class="row4" style="margin-bottom:14px">
+                <div class="field"><label>로고 파일명</label><input id="f-tbl0-logo" type="text" value="SK-나비.png"></div>
+                <div class="field"><label>상품명</label><input id="f-tbl0-product" type="text" value="인터넷 1G"></div>
+                <div class="field"><label>정가</label><input id="f-tbl0-orig" type="text" value="38,500원"></div>
+                <div class="field"><label>할인가</label><input id="f-tbl0-final" type="text" value="27,500원"></div>
+              </div>
+              <div class="field" style="max-width:120px;margin-bottom:20px"><label>지원금(만원)</label><input id="f-tbl0-support" type="text" value="30"></div>
+              <div style="font-size:11px;font-weight:700;color:var(--g4);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--g2)">KT</div>
+              <div class="row4" style="margin-bottom:14px">
+                <div class="field"><label>로고 파일명</label><input id="f-tbl1-logo" type="text" value="KT_Logo.png"></div>
+                <div class="field"><label>상품명</label><input id="f-tbl1-product" type="text" value="인터넷 1G"></div>
+                <div class="field"><label>정가</label><input id="f-tbl1-orig" type="text" value="38,500원"></div>
+                <div class="field"><label>할인가</label><input id="f-tbl1-final" type="text" value="27,500원"></div>
+              </div>
+              <div class="field" style="max-width:120px;margin-bottom:20px"><label>지원금(만원)</label><input id="f-tbl1-support" type="text" value="28"></div>
+              <div style="font-size:11px;font-weight:700;color:var(--g4);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--g2)">LG U+</div>
+              <div class="row4" style="margin-bottom:14px">
+                <div class="field"><label>로고 파일명</label><input id="f-tbl2-logo" type="text" value="LGU_Logo.png"></div>
+                <div class="field"><label>상품명</label><input id="f-tbl2-product" type="text" value="인터넷 1G"></div>
+                <div class="field"><label>정가</label><input id="f-tbl2-orig" type="text" value="38,500원"></div>
+                <div class="field"><label>할인가</label><input id="f-tbl2-final" type="text" value="27,500원"></div>
+              </div>
+              <div class="field" style="max-width:120px;margin-bottom:8px"><label>지원금(만원)</label><input id="f-tbl2-support" type="text" value="26"></div>
+              <button class="btn btn-blue btn-sm" onclick="saveSection('table')">저장</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><div class="card-head-title">⭐ 후기 1줄 — 흰색</div></div>
+            <div class="card-body">
+              <div id="rw-wrap">
+                <div class="rv-item">
+                  <div class="row2" style="margin-bottom:8px"><div class="field"><label>이니셜</label><input type="text" value="K"></div><div class="field"><label>태그</label><input type="text" value="현금 30만"></div></div>
+                  <div class="field"><label>후기 내용</label><textarea rows="2">통신클럽 아니었으면 혜택금이 있는지도 몰랐을 거예요. 매니저분이 알아서 맞춤 요금 찾아주니 너무 간편했습니다!</textarea></div>
+                  <div class="row2"><div class="field"><label>닉네임</label><input type="text" value="@kim*****님"></div><div class="field"><label>날짜·가입정보</label><input type="text" value="2025.12.03 · SK 1G 가입"></div></div>
+                </div>
+                <div class="rv-item">
+                  <div class="row2" style="margin-bottom:8px"><div class="field"><label>이니셜</label><input type="text" value="L"></div><div class="field"><label>태그</label><input type="text" value="즉시입금"></div></div>
+                  <div class="field"><label>후기 내용</label><textarea rows="2">여기저기 비교해봤는데 여기가 제일 많이 챙겨주는 것 같아요. 설치 당일 입금 바로 확인했어요!</textarea></div>
+                  <div class="row2"><div class="field"><label>닉네임</label><input type="text" value="@lee*****님"></div><div class="field"><label>날짜·가입정보</label><input type="text" value="2025.10.29 · LG 1G 가입"></div></div>
+                </div>
+                <div class="rv-item">
+                  <div class="row2" style="margin-bottom:8px"><div class="field"><label>이니셜</label><input type="text" value="S"></div><div class="field"><label>태그</label><input type="text" value="인터넷+TV"></div></div>
+                  <div class="field"><label>후기 내용</label><textarea rows="2">이사하면서 새로 가입했는데 현금도 받고 TV도 같이 묶어서 더 저렴해졌어요. 결합 할인 감사해요.</textarea></div>
+                  <div class="row2"><div class="field"><label>닉네임</label><input type="text" value="@shin*****님"></div><div class="field"><label>날짜·가입정보</label><input type="text" value="2025.09.08 · KT 인터넷+TV"></div></div>
+                </div>
+              </div>
+              <button class="add-btn" onclick="addRW()">+ 흰색 후기 추가</button>
+              <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="saveSection('reviews_white')">저장</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><div class="card-head-title">🌟 후기 2줄 — 노란색</div></div>
+            <div class="card-body">
+              <div id="ry-wrap">
+                <div class="rv-item yc">
+                  <div class="field"><label>지역</label><input type="text" value="서울시 강*구"></div>
+                  <div class="field"><label>따옴표 제목</label><input type="text" value="&quot;정확한 날짜에 입금 해주셨어요&quot;"></div>
+                  <div class="field"><label>후기 내용</label><textarea rows="2">약정 끝나서 인터넷 알아보는데 통신클럽에서 한 번에 비교해서 딱 맞는 거 찾아주셨어요.</textarea></div>
+                  <div class="field"><label>후기 사진 <span style="color:var(--g4);font-weight:400">(선택 · 최대 2MB · 권장 300×300px · JPG/PNG/WEBP)</span></label>
+                    <div class="photo-upload-box" onclick="triggerPhotoUpload(this)">
+                      <div class="photo-preview" style="display:none"><img src="" alt="미리보기"><button class="photo-del" onclick="event.stopPropagation();delPhoto(this)">×</button></div>
+                      <div class="photo-placeholder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>클릭하여 사진 업로드</span></div>
+                      <input type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadPhoto(this)">
+                      <input type="hidden" class="photo-url-input" value="">
+                    </div>
+                  </div>
+                </div>
+                <div class="rv-item yc">
+                  <div class="field"><label>지역</label><input type="text" value="경기도 성*시"></div>
+                  <div class="field"><label>따옴표 제목</label><input type="text" value="&quot;설치 다음날 바로 입금됐어요&quot;"></div>
+                  <div class="field"><label>후기 내용</label><textarea rows="2">상담사분이 정말 친절하셨어요. 다른 곳보다 혜택도 훨씬 좋고 설치도 바로 다음날 와주셨네요!</textarea></div>
+                  <div class="field"><label>후기 사진 <span style="color:var(--g4);font-weight:400">(선택 · 최대 2MB · 권장 300×300px · JPG/PNG/WEBP)</span></label>
+                    <div class="photo-upload-box" onclick="triggerPhotoUpload(this)">
+                      <div class="photo-preview" style="display:none"><img src="" alt="미리보기"><button class="photo-del" onclick="event.stopPropagation();delPhoto(this)">×</button></div>
+                      <div class="photo-placeholder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>클릭하여 사진 업로드</span></div>
+                      <input type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadPhoto(this)">
+                      <input type="hidden" class="photo-url-input" value="">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="add-btn" onclick="addRY()">+ 노란색 후기 추가</button>
+              <button class="btn btn-blue btn-sm" style="margin-top:10px" onclick="saveSection('reviews_yellow')">저장</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><div class="card-head-title">📄 약관 3종</div></div>
+            <div class="card-body">
+              <div class="field"><label>개인정보 수집·이용 동의</label><textarea id="f-terms-privacy" rows="7">개인정보 수집·이용 동의
 
 1. 수집 항목
 이름, 휴대폰 번호, 희망 통신사, 상담 희망 시간
@@ -418,11 +490,8 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
 
 4. 동의 거부 시
 동의를 거부하실 수 있으나, 서비스 이용이 제한될 수 있습니다.</textarea>
-          <button class="btn btn-blue btn-sm" style="margin-top:8px" onclick="saveTerm('privacy')">저장</button>
-        </div>
-        <div class="field" style="margin-top:20px">
-          <label>광고성 정보 수신 동의</label>
-          <textarea id="f-terms-marketing" rows="7">광고성 정보 수신 동의
+              <button class="btn btn-blue btn-sm" style="margin-top:8px" onclick="saveTerm('privacy')">저장</button></div>
+              <div class="field" style="margin-top:20px"><label>광고성 정보 수신 동의</label><textarea id="f-terms-marketing" rows="7">광고성 정보 수신 동의
 
 1. 전송자: 통신클럽
 2. 전송 항목: 인터넷 요금제 혜택, 이벤트, 프로모션 정보
@@ -430,11 +499,8 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
 4. 수신 동의 철회: 고객센터를 통해 언제든지 철회 가능
 
 ※ 광고성 정보 수신 동의는 선택사항이며, 거부 시에도 기본 상담 서비스 이용이 가능합니다.</textarea>
-          <button class="btn btn-blue btn-sm" style="margin-top:8px" onclick="saveTerm('marketing')">저장</button>
-        </div>
-        <div class="field" style="margin-top:20px">
-          <label>개인정보 제3자 제공 동의</label>
-          <textarea id="f-terms-thirdparty" rows="7">개인정보 제3자 제공 동의
+              <button class="btn btn-blue btn-sm" style="margin-top:8px" onclick="saveTerm('marketing')">저장</button></div>
+              <div class="field" style="margin-top:20px"><label>개인정보 제3자 제공 동의</label><textarea id="f-terms-thirdparty" rows="7">개인정보 제3자 제공 동의
 
 1. 제공받는 자: SK브로드밴드, KT, LG U+ 등 통신사 및 협력사
 2. 제공 목적: 인터넷 가입 신청 및 서비스 처리
@@ -442,41 +508,48 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
 4. 보유 기간: 제공 목적 달성 후 즉시 파기
 
 ※ 동의를 거부하실 수 있으나, 서비스 이용이 제한될 수 있습니다.</textarea>
-          <button class="btn btn-blue btn-sm" style="margin-top:8px" onclick="saveTerm('thirdparty')">저장</button>
+              <button class="btn btn-blue btn-sm" style="margin-top:8px" onclick="saveTerm('thirdparty')">저장</button></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><div class="card-head-title">🏢 푸터 정보</div></div>
+            <div class="card-body">
+              <div class="row2">
+                <div class="field"><label>상호</label><input id="f-company" type="text" value="통신클럽"></div>
+                <div class="field"><label>대표자</label><input id="f-ceo" type="text" value="홍길동"></div>
+              </div>
+              <div class="row2">
+                <div class="field"><label>사업자등록번호</label><input id="f-biz" type="text" value="000-00-00000"></div>
+                <div class="field"><label>통신판매업신고번호</label><input id="f-sales" type="text" value="제0000-서울-00000호"></div>
+              </div>
+              <div class="row2">
+                <div class="field"><label>주소</label><input id="f-addr" type="text" value="서울특별시 OO구 OO로 00 OO빌딩 0층"></div>
+                <div class="field"><label>이메일</label><input id="f-email" type="text" value="contact@tongsinclub.com"></div>
+              </div>
+              <div class="field" style="max-width:120px"><label>저작권 연도</label><input id="f-copy" type="text" value="2025"></div>
+              <button class="btn btn-blue btn-sm" style="margin-top:4px" onclick="saveSection('footer')">저장</button>
+            </div>
+          </div>
+
         </div>
       </div>
-    </div>
 
-    <!-- 푸터 정보 -->
-    <div class="card">
-      <div class="card-head"><div class="card-head-title">🏢 푸터 정보</div></div>
-      <div class="card-body">
-        <div class="row2">
-          <div class="field"><label>상호</label><input id="f-company" type="text" value="통신클럽"></div>
-          <div class="field"><label>대표자</label><input id="f-ceo" type="text" value="홍길동"></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label>사업자등록번호</label><input id="f-biz" type="text" value="000-00-00000"></div>
-          <div class="field"><label>통신판매업신고번호</label><input id="f-sales" type="text" value="제0000-서울-00000호"></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label>주소</label><input id="f-addr" type="text" value="서울특별시 OO구 OO로 00 OO빌딩 0층"></div>
-          <div class="field"><label>이메일</label><input id="f-email" type="text" value="contact@tongsinclub.com"></div>
-        </div>
-        <div class="field" style="max-width:120px"><label>저작권 연도</label><input id="f-copy" type="text" value="2025"></div>
-        <button class="btn btn-blue btn-sm" style="margin-top:4px" onclick="saveSection('footer')">저장</button>
-      </div>
-    </div>
-
+    </main>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-/* ─────────── 로그인 ─────────── */
-var K_ID='tc_aid', K_PW='tc_apw', K_SS='tc_sess';
-var DI='admin', DP='1234';
+/* ─── Supabase ─── */
+var _SB = supabase.createClient(
+  'https://dnyaeqexbuxdllxsxpmu.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRueWFlcWV4YnV4ZGxseHN4cG11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTAyNzIsImV4cCI6MjA5MTEyNjI3Mn0.F-pmYxKxu4PhmXiKfigsXIhCtYUQ3T75gGvHghfCLy8'
+);
+
+/* ─── 로그인 ─── */
+var K_ID='tc_aid',K_PW='tc_apw',K_SS='tc_sess',DI='admin',DP='1234';
 var getAId=function(){return localStorage.getItem(K_ID)||DI;};
 var getAPw=function(){return localStorage.getItem(K_PW)||DP;};
 
@@ -488,54 +561,47 @@ function doLogin(){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='block';
     bootApp();
-  } else {
-    document.getElementById('login-err').textContent='아이디 또는 비밀번호가 올바르지 않습니다.';
-  }
+  } else { document.getElementById('login-err').textContent='아이디 또는 비밀번호가 올바르지 않습니다.'; }
 }
 function doLogout(){sessionStorage.removeItem(K_SS);location.reload();}
-['l-pw','l-id'].forEach(function(id){
-  document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
-});
+['l-pw','l-id'].forEach(function(id){document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});});
 if(sessionStorage.getItem(K_SS)==='1'){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='block';
 }
 
-/* ─────────── 탭 ─────────── */
+/* ─── 탭 ─── */
+var tabs=['db','trash','cfg'];
 function showTab(name){
-  document.getElementById('pane-db').style.display  = name==='db'  ? '' : 'none';
-  document.getElementById('pane-cfg').style.display = name==='cfg' ? '' : 'none';
-  document.getElementById('tab-btn-db').classList.toggle('on', name==='db');
-  document.getElementById('tab-btn-cfg').classList.toggle('on', name==='cfg');
+  tabs.forEach(function(t){
+    document.getElementById('pane-'+t).style.display=t===name?'':'none';
+    var nav=document.getElementById('nav-'+t);
+    if(nav)nav.classList.toggle('on',t===name);
+  });
+  if(name==='db') applyFilter();
+  if(name==='trash') loadTrash();
   if(name==='cfg') initCfgForm();
-  if(name==='db')  applyFilter();
 }
 
 function bootApp(){
-  setPreset('today', document.querySelector('.date-btn.on'));
+  setPreset('today',document.querySelector('.date-btn.on'));
   applyFilter();
 }
 
-/* ─────────── Supabase ─────────── */
-var _SB = supabase.createClient(
-  'https://dnyaeqexbuxdllxsxpmu.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRueWFlcWV4YnV4ZGxseHN4cG11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTAyNzIsImV4cCI6MjA5MTEyNjI3Mn0.F-pmYxKxu4PhmXiKfigsXIhCtYUQ3T75gGvHghfCLy8'
-);
-
-/* ─────────── DB ─────────── */
-var allRows=[], filtered=[], PAGE=20, cur=1;
+/* ─── DB 조회 ─── */
+var allRows=[],filtered=[],PAGE=20,cur=1;
 var SL=['상담','부재','문자발송','청약','필수항목 안내','설치 완료','송금 완료'];
 var SC=['s0','s1','s2','s3','s4','s5','s6'];
 var SC_COLOR=['#3b82f6','#f59e0b','#8b5cf6','#10b981','#f97316','#06b6d4','#16a34a'];
 
 async function applyFilter(){
-  var from = document.getElementById('f-from').value;
-  var to   = document.getElementById('f-to').value;
-  var q    = document.getElementById('f-search').value.trim().toLowerCase();
-  var st   = document.getElementById('f-status').value;
-  document.getElementById('db-tbody').innerHTML='<tr class="empty-row"><td colspan="9">조회 중...</td></tr>';
+  var from=document.getElementById('f-from').value;
+  var to=document.getElementById('f-to').value;
+  var q=document.getElementById('f-search').value.trim().toLowerCase();
+  var st=document.getElementById('f-status').value;
+  document.getElementById('db-tbody').innerHTML='<tr class="empty-row"><td colspan="10">조회 중...</td></tr>';
   try{
-    var query=_SB.from('submissions').select('*').order('created_at',{ascending:false});
+    var query=_SB.from('submissions').select('*').is('deleted_at',null).order('created_at',{ascending:false});
     if(from) query=query.gte('created_at',from+'T00:00:00');
     if(to)   query=query.lte('created_at',to+'T23:59:59');
     if(st)   query=query.eq('status',st);
@@ -543,7 +609,7 @@ async function applyFilter(){
     allRows=res.data||[];
   }catch(e){allRows=[];showToast('DB 조회 오류');}
   filtered=q?allRows.filter(function(r){return((r.name||'')+(r.phone||'')).toLowerCase().indexOf(q)>=0;}):allRows.slice();
-  cur=1; renderSum(); renderTbl();
+  cur=1; clearChecks(); renderSum(); renderTbl();
 }
 
 function renderSum(){
@@ -556,23 +622,24 @@ function renderSum(){
 
 function renderTbl(){
   var tbody=document.getElementById('db-tbody');
-  var s=(cur-1)*PAGE, pg=filtered.slice(s,s+PAGE);
-  if(!pg.length){tbody.innerHTML='<tr class="empty-row"><td colspan="9">조회된 접수 건이 없습니다.</td></tr>';document.getElementById('pager').innerHTML='';return;}
+  var s=(cur-1)*PAGE,pg=filtered.slice(s,s+PAGE);
+  if(!pg.length){tbody.innerHTML='<tr class="empty-row"><td colspan="10">조회된 접수 건이 없습니다.</td></tr>';document.getElementById('pager').innerHTML='';return;}
   tbody.innerHTML=pg.map(function(r,i){
     var no=filtered.length-s-i;
     var dt=r.created_at?r.created_at.replace('T',' ').slice(0,16):'-';
     var si=SL.indexOf(r.status);if(si<0)si=0;
     var opts=SL.map(function(s){return '<option'+(s===r.status?' selected':'')+'>'+s+'</option>';}).join('');
-    return '<tr>'
+    return '<tr data-id="'+r.id+'">'
+      +'<td><input type="checkbox" class="row-chk" onchange="onChkChange()" value="'+r.id+'"></td>'
       +'<td style="color:var(--g4);font-size:11px">'+no+'</td>'
       +'<td style="white-space:nowrap;font-size:12px;color:var(--g6)">'+dt+'</td>'
       +'<td style="font-weight:700">'+esc(r.name||'-')+'</td>'
       +'<td style="font-family:monospace;font-size:12px">'+esc(r.phone||'-')+'</td>'
       +'<td style="font-weight:700;color:var(--pr)">'+esc(r.carrier||'-')+'</td>'
       +'<td style="font-size:12px;color:var(--g6)">'+esc(r.call_time||'-')+'</td>'
-      +'<td><select class="status-sel '+SC[si]+'" onchange="updStatus('+r.id+',this)">'+opts+'</select></td>'
-      +'<td><input class="memo-inp" value="'+esc(r.memo||'')+'" placeholder="메모..." onblur="updMemo('+r.id+',this)"></td>'
-      +'<td><button class="btn btn-red btn-sm" onclick="delRow('+r.id+')">삭제</button></td>'
+      +'<td><select class="status-sel '+SC[si]+'" onchange="this.className=\'status-sel \'+[\'s0\',\'s1\',\'s2\',\'s3\',\'s4\',\'s5\',\'s6\']['+JSON.stringify(SL)+'.indexOf(this.value)]">'+opts+'</select></td>'
+      +'<td><input class="memo-inp" value="'+esc(r.memo||'')+'" placeholder="메모..."></td>'
+      +'<td><button class="btn btn-blue btn-sm" onclick="saveRow('+r.id+',this)">저장</button></td>'
       +'</tr>';
   }).join('');
   renderPager();
@@ -589,27 +656,150 @@ function renderPager(){
   h+='<span class="pg-info">총 '+filtered.length+'건 / '+tot+'페이지</span>';
   document.getElementById('pager').innerHTML=h;
 }
-function goPg(p){cur=p;renderTbl();window.scrollTo(0,200);}
+function goPg(p){cur=p;clearChecks();renderTbl();window.scrollTo(0,0);}
 
-async function updStatus(id,sel){
-  var si=SL.indexOf(sel.value);if(si<0)si=0;
-  sel.className='status-sel '+SC[si];
-  await _SB.from('submissions').update({status:sel.value}).eq('id',id);
-  var row=allRows.find(function(r){return r.id===id;});if(row)row.status=sel.value;
-  renderSum();
-}
-async function updMemo(id,inp){
-  await _SB.from('submissions').update({memo:inp.value}).eq('id',id);
-  var row=allRows.find(function(r){return r.id===id;});if(row)row.memo=inp.value;
-}
-async function delRow(id){
-  if(!confirm('이 접수 건을 삭제하시겠습니까?'))return;
-  await _SB.from('submissions').delete().eq('id',id);
-  allRows=allRows.filter(function(r){return r.id!==id;});
-  filtered=filtered.filter(function(r){return r.id!==id;});
-  renderSum();renderTbl();showToast('삭제되었습니다.');
+/* 행 저장 */
+async function saveRow(id,btn){
+  var tr=btn.closest('tr');
+  var status=tr.querySelector('.status-sel').value;
+  var memo=tr.querySelector('.memo-inp').value;
+  btn.textContent='저장 중...';btn.disabled=true;
+  try{
+    await _SB.from('submissions').update({status:status,memo:memo}).eq('id',id);
+    var row=allRows.find(function(r){return r.id===id;});
+    if(row){row.status=status;row.memo=memo;}
+    btn.textContent='저장';btn.disabled=false;
+    renderSum();
+    showToast('저장되었습니다.');
+  }catch(e){btn.textContent='저장';btn.disabled=false;showToast('저장 실패');}
 }
 
+/* 체크박스 */
+function toggleAll(cb){
+  document.querySelectorAll('.row-chk').forEach(function(c){c.checked=cb.checked;c.closest('tr').classList.toggle('checked-row',cb.checked);});
+  onChkChange();
+}
+function onChkChange(){
+  var checked=document.querySelectorAll('.row-chk:checked');
+  var bar=document.getElementById('bulk-bar');
+  var cnt=document.getElementById('bulk-count');
+  if(checked.length>0){bar.classList.add('show');cnt.textContent=checked.length+'건 선택됨';}
+  else{bar.classList.remove('show');}
+  document.getElementById('chk-all').indeterminate=checked.length>0&&checked.length<document.querySelectorAll('.row-chk').length;
+}
+function clearChecks(){
+  document.querySelectorAll('.row-chk').forEach(function(c){c.checked=false;c.closest('tr').classList.remove('checked-row');});
+  var chkAll=document.getElementById('chk-all');
+  if(chkAll){chkAll.checked=false;chkAll.indeterminate=false;}
+  document.getElementById('bulk-bar').classList.remove('show');
+}
+
+/* 선택 삭제 → 휴지통 */
+async function deleteSelected(){
+  var ids=Array.from(document.querySelectorAll('.row-chk:checked')).map(function(c){return +c.value;});
+  if(!ids.length)return;
+  if(!confirm(ids.length+'건을 휴지통으로 이동하시겠습니까?'))return;
+  var now=new Date().toISOString();
+  await _SB.from('submissions').update({deleted_at:now}).in('id',ids);
+  allRows=allRows.filter(function(r){return ids.indexOf(r.id)<0;});
+  filtered=filtered.filter(function(r){return ids.indexOf(r.id)<0;});
+  clearChecks();renderSum();renderTbl();
+  showToast(ids.length+'건이 휴지통으로 이동되었습니다.');
+}
+
+/* ─── 휴지통 ─── */
+var trashRows=[],trashFiltered=[],TPAGE=20,tCur=1;
+
+async function loadTrash(){
+  document.getElementById('trash-tbody').innerHTML='<tr class="empty-row"><td colspan="9">조회 중...</td></tr>';
+  try{
+    var res=await _SB.from('submissions').select('*').not('deleted_at','is',null).order('deleted_at',{ascending:false});
+    trashRows=res.data||[];
+  }catch(e){trashRows=[];}
+  trashFiltered=trashRows.slice();
+  tCur=1;clearTrashChecks();renderTrash();
+}
+
+function renderTrash(){
+  var tbody=document.getElementById('trash-tbody');
+  var s=(tCur-1)*TPAGE,pg=trashFiltered.slice(s,s+TPAGE);
+  if(!pg.length){tbody.innerHTML='<tr class="empty-row"><td colspan="9">휴지통이 비어있습니다.</td></tr>';document.getElementById('trash-pager').innerHTML='';return;}
+  tbody.innerHTML=pg.map(function(r,i){
+    var no=trashFiltered.length-s-i;
+    var dt=r.created_at?r.created_at.replace('T',' ').slice(0,16):'-';
+    var del=r.deleted_at?r.deleted_at.replace('T',' ').slice(0,16):'-';
+    return '<tr data-id="'+r.id+'">'
+      +'<td><input type="checkbox" class="trash-chk" onchange="onTrashChkChange()" value="'+r.id+'"></td>'
+      +'<td style="color:var(--g4);font-size:11px">'+no+'</td>'
+      +'<td style="font-size:12px;color:var(--g6)">'+dt+'</td>'
+      +'<td style="font-size:12px;color:var(--rd)">'+del+'</td>'
+      +'<td style="font-weight:700">'+esc(r.name||'-')+'</td>'
+      +'<td style="font-family:monospace;font-size:12px">'+esc(r.phone||'-')+'</td>'
+      +'<td style="color:var(--pr);font-weight:700">'+esc(r.carrier||'-')+'</td>'
+      +'<td style="font-size:12px">'+esc(r.status||'-')+'</td>'
+      +'<td><button class="btn btn-orange btn-sm" onclick="restoreOne('+r.id+')">복원</button></td>'
+      +'</tr>';
+  }).join('');
+  renderTrashPager();
+}
+
+function renderTrashPager(){
+  var tot=Math.ceil(trashFiltered.length/TPAGE);
+  if(tot<=1){document.getElementById('trash-pager').innerHTML='<span class="pg-info">총 '+trashFiltered.length+'건</span>';return;}
+  var h='';
+  if(tCur>1)h+='<button class="pg-btn" onclick="goPgT('+(tCur-1)+')">‹</button>';
+  var s2=Math.max(1,tCur-2),e=Math.min(tot,tCur+2);
+  for(var p=s2;p<=e;p++)h+='<button class="pg-btn'+(p===tCur?' on':'')+'" onclick="goPgT('+p+')">'+p+'</button>';
+  if(tCur<tot)h+='<button class="pg-btn" onclick="goPgT('+(tCur+1)+')">›</button>';
+  h+='<span class="pg-info">총 '+trashFiltered.length+'건</span>';
+  document.getElementById('trash-pager').innerHTML=h;
+}
+function goPgT(p){tCur=p;clearTrashChecks();renderTrash();}
+
+function toggleTrashAll(cb){
+  document.querySelectorAll('.trash-chk').forEach(function(c){c.checked=cb.checked;});
+  onTrashChkChange();
+}
+function onTrashChkChange(){
+  var checked=document.querySelectorAll('.trash-chk:checked');
+  var bar=document.getElementById('trash-bulk-bar');
+  var cnt=document.getElementById('trash-bulk-count');
+  if(checked.length>0){bar.classList.add('show');cnt.textContent=checked.length+'건 선택됨';}
+  else{bar.classList.remove('show');}
+}
+function clearTrashChecks(){
+  document.querySelectorAll('.trash-chk').forEach(function(c){c.checked=false;});
+  var ca=document.getElementById('trash-chk-all');if(ca)ca.checked=false;
+  document.getElementById('trash-bulk-bar').classList.remove('show');
+}
+
+async function restoreOne(id){
+  await _SB.from('submissions').update({deleted_at:null}).eq('id',id);
+  trashRows=trashRows.filter(function(r){return r.id!==id;});
+  trashFiltered=trashFiltered.filter(function(r){return r.id!==id;});
+  renderTrash();showToast('복원되었습니다.');
+}
+
+async function restoreSelected(){
+  var ids=Array.from(document.querySelectorAll('.trash-chk:checked')).map(function(c){return +c.value;});
+  if(!ids.length)return;
+  await _SB.from('submissions').update({deleted_at:null}).in('id',ids);
+  trashRows=trashRows.filter(function(r){return ids.indexOf(r.id)<0;});
+  trashFiltered=trashFiltered.filter(function(r){return ids.indexOf(r.id)<0;});
+  clearTrashChecks();renderTrash();showToast(ids.length+'건이 복원되었습니다.');
+}
+
+async function permanentDeleteSelected(){
+  var ids=Array.from(document.querySelectorAll('.trash-chk:checked')).map(function(c){return +c.value;});
+  if(!ids.length){showToast('항목을 선택해주세요.');return;}
+  if(!confirm(ids.length+'건을 영구 삭제하시겠습니까? 복원이 불가능합니다.'))return;
+  await _SB.from('submissions').delete().in('id',ids);
+  trashRows=trashRows.filter(function(r){return ids.indexOf(r.id)<0;});
+  trashFiltered=trashFiltered.filter(function(r){return ids.indexOf(r.id)<0;});
+  clearTrashChecks();renderTrash();showToast(ids.length+'건이 영구 삭제되었습니다.');
+}
+
+/* 날짜 프리셋 */
 function setPreset(preset,btn){
   document.querySelectorAll('.date-btn').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
@@ -621,6 +811,7 @@ function setPreset(preset,btn){
   document.getElementById('f-from').value=from;document.getElementById('f-to').value=to;
 }
 
+/* 엑셀 */
 function exportExcel(){
   if(!filtered.length){showToast('조회된 데이터가 없습니다.');return;}
   var rows=[['No','접수일시','성함','연락처','희망통신사','연락시간','처리상태','메모']];
@@ -632,170 +823,70 @@ function exportExcel(){
   showToast('엑셀 저장 완료!');
 }
 
-/* ─────────── 설정 ─────────── */
-var cfg=(typeof SITE_CONFIG!=='undefined')?JSON.parse(JSON.stringify(SITE_CONFIG)):{hero:{},stats:[],table:[],reviews_white:[],reviews_yellow:[],rtDB:[],footer:{}};
+/* ─── 사이트 설정 ─── */
+var cfg=(typeof SITE_CONFIG!=='undefined')?JSON.parse(JSON.stringify(SITE_CONFIG)):{hero:{},stats:[{value:'98,000+',label:'누적 가입자'},{value:'4.9점',label:'평균 만족도'},{value:'48만원+α',label:'최대 현금'},{value:'당일',label:'현금 지급'}],table:[{logo:'SK-나비.png',product:'인터넷 1G',orig:'38,500원',final:'27,500원',support:'30'},{logo:'KT_Logo.png',product:'인터넷 1G',orig:'38,500원',final:'27,500원',support:'28'},{logo:'LGU_Logo.png',product:'인터넷 1G',orig:'38,500원',final:'27,500원',support:'26'}],reviews_white:[],reviews_yellow:[],footer:{},terms:{}};
 
 async function initCfgForm(){
   document.getElementById('c-lid').value=localStorage.getItem(K_ID)||DI;
-  document.getElementById('c-lpw').value='';
-  document.getElementById('c-lpw2').value='';
-  /* Supabase에서 최신 config 로드 */
+  document.getElementById('c-lpw').value='';document.getElementById('c-lpw2').value='';
   try{
-    var res = await _SB.from('site_config').select('data').eq('id',1).single();
-    if(res.data && res.data.data && Object.keys(res.data.data).length > 0){
-      cfg = Object.assign({}, cfg, res.data.data);
-    }
+    var res=await _SB.from('site_config').select('data').eq('id',1).single();
+    if(res.data&&res.data.data&&Object.keys(res.data.data).length>0) cfg=Object.assign({},cfg,res.data.data);
   }catch(e){}
   var c=cfg;
-  sv('f-phone',c.phone);
-  sv('f-kakao-url',c.kakao_url);
-  sv('f-h1-em',c.hero&&c.hero.headline_em);
-  sv('f-h1-mid',c.hero&&c.hero.headline_mid);
-  sv('f-h1-strong',c.hero&&c.hero.headline_strong);
-  sv('f-h1-end',c.hero&&c.hero.headline_end);
+  sv('f-phone',c.phone);sv('f-kakao-url',c.kakao_url);
+  sv('f-h1-em',c.hero&&c.hero.headline_em);sv('f-h1-mid',c.hero&&c.hero.headline_mid);
+  sv('f-h1-strong',c.hero&&c.hero.headline_strong);sv('f-h1-end',c.hero&&c.hero.headline_end);
   sv('f-hero-sub',(c.hero&&c.hero.sub||'').replace(/<br>/g,'\n'));
-  if(c.stats&&c.stats.length){
-    c.stats.forEach(function(st,i){
-      sv('f-stat'+i+'v', st.value);
-      sv('f-stat'+i+'l', st.label);
-    });
-  }
-  if(c.table&&c.table.length){
-    c.table.forEach(function(row,i){
-      sv('f-tbl'+i+'-logo',    row.logo);
-      sv('f-tbl'+i+'-product', row.product);
-      sv('f-tbl'+i+'-orig',    row.orig);
-      sv('f-tbl'+i+'-final',   row.final);
-      sv('f-tbl'+i+'-support', row.support);
-    });
-  }
+  if(c.stats&&c.stats.length) c.stats.forEach(function(st,i){sv('f-stat'+i+'v',st.value);sv('f-stat'+i+'l',st.label);});
+  if(c.table&&c.table.length) c.table.forEach(function(row,i){sv('f-tbl'+i+'-logo',row.logo);sv('f-tbl'+i+'-product',row.product);sv('f-tbl'+i+'-orig',row.orig);sv('f-tbl'+i+'-final',row.final);sv('f-tbl'+i+'-support',row.support);});
   if(c.reviews_white&&c.reviews_white.length){
     var rwItems=document.querySelectorAll('#rw-wrap .rv-item');
-    c.reviews_white.forEach(function(r,i){
-      if(i>=rwItems.length) return;
-      var ins=rwItems[i].querySelectorAll('input'),ta=rwItems[i].querySelector('textarea');
-      if(ins[0])ins[0].value=r.initial||'';
-      if(ins[1])ins[1].value=r.tag||'';
-      if(ta)ta.value=r.text||'';
-      if(ins[2])ins[2].value=r.name||'';
-      if(ins[3])ins[3].value=r.date||'';
-    });
+    c.reviews_white.forEach(function(r,i){if(i>=rwItems.length)return;var ins=Array.from(rwItems[i].querySelectorAll('input[type=text]')),ta=rwItems[i].querySelector('textarea');if(ins[0])ins[0].value=r.initial||'';if(ins[1])ins[1].value=r.tag||'';if(ta)ta.value=r.text||'';if(ins[2])ins[2].value=r.name||'';if(ins[3])ins[3].value=r.date||'';});
   }
   if(c.reviews_yellow&&c.reviews_yellow.length){
     var ryItems=document.querySelectorAll('#ry-wrap .rv-item');
-    c.reviews_yellow.forEach(function(r,i){
-      if(i>=ryItems.length) return;
-      var allInputs=Array.from(ryItems[i].querySelectorAll('input[type=text]'));
-      var ta=ryItems[i].querySelector('textarea');
-      if(allInputs[0])allInputs[0].value=r.loc||'';
-      if(allInputs[1])allInputs[1].value=r.quote||'';
-      if(ta)ta.value=r.text||'';
-      if(r.photo){
-        var box=ryItems[i].querySelector('.photo-upload-box');
-        if(box){
-          box.querySelector('.photo-url-input').value=r.photo;
-          var prev=box.querySelector('.photo-preview');
-          prev.querySelector('img').src=r.photo;
-          prev.style.display='inline-block';
-          box.querySelector('.photo-placeholder').style.display='none';
-        }
-      }
-    });
+    c.reviews_yellow.forEach(function(r,i){if(i>=ryItems.length)return;var ins=Array.from(ryItems[i].querySelectorAll('input[type=text]')),ta=ryItems[i].querySelector('textarea');if(ins[0])ins[0].value=r.loc||'';if(ins[1])ins[1].value=r.quote||'';if(ta)ta.value=r.text||'';if(r.photo){var box=ryItems[i].querySelector('.photo-upload-box');if(box){box.querySelector('.photo-url-input').value=r.photo;var prev=box.querySelector('.photo-preview');prev.querySelector('img').src=r.photo;prev.style.display='inline-block';box.querySelector('.photo-placeholder').style.display='none';}}});
   }
-  sv('f-company',c.footer&&c.footer.company);
-  sv('f-ceo',c.footer&&c.footer.ceo);
-  sv('f-biz',c.footer&&c.footer.biz_no);
-  sv('f-sales',c.footer&&c.footer.sales_no);
-  sv('f-addr',c.footer&&c.footer.address);
-  sv('f-email',c.footer&&c.footer.email);
-  sv('f-copy',c.footer&&c.footer.copyright);
-  if(c.terms){
-    sv('f-terms-privacy',   c.terms.privacy);
-    sv('f-terms-marketing', c.terms.marketing);
-    sv('f-terms-thirdparty',c.terms.thirdparty);
-  }
+  sv('f-company',c.footer&&c.footer.company);sv('f-ceo',c.footer&&c.footer.ceo);
+  sv('f-biz',c.footer&&c.footer.biz_no);sv('f-sales',c.footer&&c.footer.sales_no);
+  sv('f-addr',c.footer&&c.footer.address);sv('f-email',c.footer&&c.footer.email);sv('f-copy',c.footer&&c.footer.copyright);
+  if(c.terms){sv('f-terms-privacy',c.terms.privacy);sv('f-terms-marketing',c.terms.marketing);sv('f-terms-thirdparty',c.terms.thirdparty);}
   rRt();
 }
 function sv(id,v){var el=document.getElementById(id);if(el&&v!=null)el.value=v;}
 
-/* ─────────── Supabase config 저장 ─────────── */
-async function sbSaveConfig(patch){
-  try{
-    /* 현재 Supabase config 읽기 */
-    var res = await _SB.from('site_config').select('data').eq('id',1).single();
-    var current = (res.data && res.data.data) ? res.data.data : {};
-    /* 패치 병합 */
-    var merged = Object.assign({}, current, patch);
-    /* upsert */
-    await _SB.from('site_config').upsert({id:1, data:merged, updated_at:new Date().toISOString()});
-    return true;
-  }catch(e){ console.error('config 저장 오류',e); return false; }
+function saveLogin(){
+  var id=document.getElementById('c-lid').value.trim();
+  var pw=document.getElementById('c-lpw').value,pw2=document.getElementById('c-lpw2').value;
+  if(!id){showToast('아이디를 입력해주세요.');return;}
+  if(pw&&pw!==pw2){showToast('비밀번호가 일치하지 않습니다.');return;}
+  localStorage.setItem(K_ID,id);if(pw)localStorage.setItem(K_PW,pw);
+  showToast('계정 정보가 저장되었습니다.');
 }
 
-function getSaved(){try{return JSON.parse(localStorage.getItem('tc_site_config')||'{}');}catch(e){return {};}}
-function putSaved(obj){localStorage.setItem('tc_site_config',JSON.stringify(obj));}
+async function sbSaveConfig(patch){
+  try{
+    var res=await _SB.from('site_config').select('data').eq('id',1).single();
+    var current=(res.data&&res.data.data)?res.data.data:{};
+    var merged=Object.assign({},current,patch);
+    await _SB.from('site_config').upsert({id:1,data:merged,updated_at:new Date().toISOString()});
+    return true;
+  }catch(e){console.error(e);return false;}
+}
 
 async function saveSection(key){
   var patch={};
-  if(key==='phone'){
-    patch.phone=document.getElementById('f-phone').value;
-    patch.kakao_url=document.getElementById('f-kakao-url').value;
-  } else if(key==='hero'){
-    patch.hero={
-      headline_em:    document.getElementById('f-h1-em').value,
-      headline_mid:   document.getElementById('f-h1-mid').value,
-      headline_strong:document.getElementById('f-h1-strong').value,
-      headline_end:   document.getElementById('f-h1-end').value,
-      sub:            document.getElementById('f-hero-sub').value
-    };
-  } else if(key==='stats'){
-    patch.stats=[
-      {value:document.getElementById('f-stat0v').value, label:document.getElementById('f-stat0l').value},
-      {value:document.getElementById('f-stat1v').value, label:document.getElementById('f-stat1l').value},
-      {value:document.getElementById('f-stat2v').value, label:document.getElementById('f-stat2l').value},
-      {value:document.getElementById('f-stat3v').value, label:document.getElementById('f-stat3l').value}
-    ];
-  } else if(key==='table'){
-    patch.table=[0,1,2].map(function(i){
-      return {
-        logo:    document.getElementById('f-tbl'+i+'-logo').value,
-        product: document.getElementById('f-tbl'+i+'-product').value,
-        orig:    document.getElementById('f-tbl'+i+'-orig').value,
-        final:   document.getElementById('f-tbl'+i+'-final').value,
-        support: document.getElementById('f-tbl'+i+'-support').value
-      };
-    });
-  } else if(key==='reviews_white'){
-    patch.reviews_white = Array.from(document.querySelectorAll('#rw-wrap .rv-item')).map(function(el){
-      var ins=el.querySelectorAll('input'),ta=el.querySelector('textarea');
-      return {initial:ins[0].value, tag:ins[1].value, text:ta?ta.value:'', name:ins[2].value, date:ins[3].value};
-    });
-  } else if(key==='reviews_yellow'){
-    patch.reviews_yellow = Array.from(document.querySelectorAll('#ry-wrap .rv-item')).map(function(el){
-      var allInputs=Array.from(el.querySelectorAll('input[type=text]'));
-      var ta=el.querySelector('textarea');
-      var photoUrl=el.querySelector('.photo-url-input');
-      return {
-        loc:   allInputs[0]?allInputs[0].value:'',
-        quote: allInputs[1]?allInputs[1].value:'',
-        text:  ta?ta.value:'',
-        photo: photoUrl?photoUrl.value:''
-      };
-    });
-  } else if(key==='footer'){
-    patch.footer={
-      company:  document.getElementById('f-company').value,
-      ceo:      document.getElementById('f-ceo').value,
-      biz_no:   document.getElementById('f-biz').value,
-      sales_no: document.getElementById('f-sales').value,
-      address:  document.getElementById('f-addr').value,
-      email:    document.getElementById('f-email').value,
-      copyright:document.getElementById('f-copy').value
-    };
-  }
-  var ok = await sbSaveConfig(patch);
-  var labels={phone:'전화번호',hero:'히어로 섹션',stats:'통계 수치',table:'요금 테이블',reviews_white:'흰색 후기',reviews_yellow:'노란색 후기',footer:'푸터 정보'};
-  showToast(ok ? (labels[key]||key)+' 저장 완료!' : '저장 실패. 다시 시도해주세요.');
+  if(key==='phone'){patch.phone=document.getElementById('f-phone').value;patch.kakao_url=document.getElementById('f-kakao-url').value;}
+  else if(key==='hero'){patch.hero={headline_em:document.getElementById('f-h1-em').value,headline_mid:document.getElementById('f-h1-mid').value,headline_strong:document.getElementById('f-h1-strong').value,headline_end:document.getElementById('f-h1-end').value,sub:document.getElementById('f-hero-sub').value};}
+  else if(key==='stats'){patch.stats=[0,1,2,3].map(function(i){return{value:document.getElementById('f-stat'+i+'v').value,label:document.getElementById('f-stat'+i+'l').value};});}
+  else if(key==='table'){patch.table=[0,1,2].map(function(i){return{logo:document.getElementById('f-tbl'+i+'-logo').value,product:document.getElementById('f-tbl'+i+'-product').value,orig:document.getElementById('f-tbl'+i+'-orig').value,final:document.getElementById('f-tbl'+i+'-final').value,support:document.getElementById('f-tbl'+i+'-support').value};});}
+  else if(key==='reviews_white'){patch.reviews_white=Array.from(document.querySelectorAll('#rw-wrap .rv-item')).map(function(el){var ins=Array.from(el.querySelectorAll('input[type=text]')),ta=el.querySelector('textarea');return{initial:ins[0]?ins[0].value:'',tag:ins[1]?ins[1].value:'',text:ta?ta.value:'',name:ins[2]?ins[2].value:'',date:ins[3]?ins[3].value:''};});}
+  else if(key==='reviews_yellow'){patch.reviews_yellow=Array.from(document.querySelectorAll('#ry-wrap .rv-item')).map(function(el){var ins=Array.from(el.querySelectorAll('input[type=text]')),ta=el.querySelector('textarea'),pu=el.querySelector('.photo-url-input');return{loc:ins[0]?ins[0].value:'',quote:ins[1]?ins[1].value:'',text:ta?ta.value:'',photo:pu?pu.value:''};});}
+  else if(key==='footer'){patch.footer={company:document.getElementById('f-company').value,ceo:document.getElementById('f-ceo').value,biz_no:document.getElementById('f-biz').value,sales_no:document.getElementById('f-sales').value,address:document.getElementById('f-addr').value,email:document.getElementById('f-email').value,copyright:document.getElementById('f-copy').value};}
+  var ok=await sbSaveConfig(patch);
+  var labels={phone:'기본 설정',hero:'히어로 섹션',stats:'통계 수치',table:'요금 테이블',reviews_white:'흰색 후기',reviews_yellow:'노란색 후기',footer:'푸터 정보'};
+  showToast(ok?(labels[key]||key)+' 저장 완료!':'저장 실패. 다시 시도해주세요.');
 }
 
 async function saveTerm(key){
@@ -803,65 +894,22 @@ async function saveTerm(key){
   var val=document.getElementById(map[key]).value;
   if(!cfg.terms)cfg.terms={};
   cfg.terms[key]=val;
-  var termPatch={terms:Object.assign({},cfg.terms)};
-  var ok = await sbSaveConfig(termPatch);
+  var ok=await sbSaveConfig({terms:Object.assign({},cfg.terms)});
   var label={privacy:'개인정보 수집·이용',marketing:'광고성 정보 수신',thirdparty:'개인정보 제3자 제공'};
-  showToast(ok ? label[key]+' 약관 저장 완료!' : '저장 실패. 다시 시도해주세요.');
+  showToast(ok?label[key]+' 약관 저장 완료!':'저장 실패.');
 }
 
-function saveLogin(){
-  var id=document.getElementById('c-lid').value.trim();
-  var pw=document.getElementById('c-lpw').value;
-  var pw2=document.getElementById('c-lpw2').value;
-  if(!id){showToast('아이디를 입력해주세요.');return;}
-  if(pw&&pw!==pw2){showToast('비밀번호가 일치하지 않습니다.');return;}
-  localStorage.setItem(K_ID,id);
-  if(pw)localStorage.setItem(K_PW,pw);
-  showToast('계정 정보가 저장되었습니다.');
-}
-
-function rStats(){
-  var w=document.getElementById('stats-wrap');if(!w)return;w.innerHTML='';
-  (cfg.stats||[]).forEach(function(st,i){
-    var d=document.createElement('div');
-    d.innerHTML='<div class="field"><label>값 '+(i+1)+'</label><input data-si="'+i+'" data-sk="value" value="'+esc(st.value||'')+'"></div>'
-               +'<div class="field"><label>레이블 '+(i+1)+'</label><input data-si="'+i+'" data-sk="label" value="'+esc(st.label||'')+'"></div>';
-    d.querySelectorAll('input').forEach(function(el){el.addEventListener('input',function(){cfg.stats[+this.dataset.si][this.dataset.sk]=this.value;});});
-    w.appendChild(d);
-  });
-}
-function rTbl(){
-  var w=document.getElementById('tbl-wrap');if(!w)return;w.innerHTML='';
-  var lbs=['SK브로드밴드','KT','LG U+'];
-  (cfg.table||[]).forEach(function(row,i){
-    var d=document.createElement('div');d.style.marginBottom='14px';
-    d.innerHTML='<div style="font-size:11px;font-weight:700;color:var(--g4);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--g2)">'+lbs[i]+'</div>'
-      +'<div class="row4">'
-      +'<div class="field"><label>로고 파일명</label><input data-ti="'+i+'" data-tk="logo" value="'+esc(row.logo||'')+'"></div>'
-      +'<div class="field"><label>상품명</label><input data-ti="'+i+'" data-tk="product" value="'+esc(row.product||'')+'"></div>'
-      +'<div class="field"><label>정가</label><input data-ti="'+i+'" data-tk="orig" value="'+esc(row.orig||'')+'"></div>'
-      +'<div class="field"><label>할인가</label><input data-ti="'+i+'" data-tk="final" value="'+esc(row.final||'')+'"></div>'
-      +'</div>'
-      +'<div class="field" style="max-width:100px"><label>지원금(만원)</label><input data-ti="'+i+'" data-tk="support" value="'+esc(row.support||'')+'"></div>';
-    d.querySelectorAll('input').forEach(function(el){el.addEventListener('input',function(){cfg.table[+this.dataset.ti][this.dataset.tk]=this.value;});});
-    w.appendChild(d);
-  });
-}
+/* 후기 추가 */
 function addRW(){
-  var w=document.getElementById('rw-wrap');
-  var d=document.createElement('div');d.className='rv-item';
+  var w=document.getElementById('rw-wrap'),d=document.createElement('div');d.className='rv-item';
   d.innerHTML='<button class="rv-del" onclick="this.closest(\'.rv-item\').remove()">×</button>'
-    +'<div class="row2" style="margin-bottom:8px"><div class="field"><label>이니셜</label><input type="text" placeholder="K"></div>'
-    +'<div class="field"><label>태그</label><input type="text" placeholder="현금 30만"></div></div>'
+    +'<div class="row2" style="margin-bottom:8px"><div class="field"><label>이니셜</label><input type="text" placeholder="K"></div><div class="field"><label>태그</label><input type="text" placeholder="현금 30만"></div></div>'
     +'<div class="field"><label>후기 내용</label><textarea rows="2" placeholder="후기 내용"></textarea></div>'
-    +'<div class="row2"><div class="field"><label>닉네임</label><input type="text" placeholder="@kim*****님"></div>'
-    +'<div class="field"><label>날짜·가입정보</label><input type="text" placeholder="2025.12.03 · SK 1G 가입"></div></div>';
+    +'<div class="row2"><div class="field"><label>닉네임</label><input type="text" placeholder="@kim*****님"></div><div class="field"><label>날짜·가입정보</label><input type="text" placeholder="2025.12.03 · SK 1G 가입"></div></div>';
   w.appendChild(d);
 }
-
 function addRY(){
-  var w=document.getElementById('ry-wrap');
-  var d=document.createElement('div');d.className='rv-item yc';
+  var w=document.getElementById('ry-wrap'),d=document.createElement('div');d.className='rv-item yc';
   d.innerHTML='<button class="rv-del" onclick="this.closest(\'.rv-item\').remove()">×</button>'
     +'<div class="field"><label>지역</label><input type="text" placeholder="서울시 강*구"></div>'
     +'<div class="field"><label>따옴표 제목</label><input type="text" placeholder="&quot;입금 해주셨어요&quot;"></div>'
@@ -871,95 +919,55 @@ function addRY(){
     +'<div class="photo-preview" style="display:none"><img src="" alt="미리보기"><button class="photo-del" onclick="event.stopPropagation();delPhoto(this)">×</button></div>'
     +'<div class="photo-placeholder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>클릭하여 사진 업로드</span></div>'
     +'<input type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadPhoto(this)">'
-    +'<input type="hidden" class="photo-url-input" value="">'
-    +'</div></div>';
+    +'<input type="hidden" class="photo-url-input" value=""></div></div>';
   w.appendChild(d);
 }
 
-/* 기존 하드코딩 카드에도 삭제 버튼 추가 */
-document.addEventListener('DOMContentLoaded', function(){
-  document.querySelectorAll('#rw-wrap .rv-item, #ry-wrap .rv-item').forEach(function(el){
-    if(!el.querySelector('.rv-del')){
-      var btn=document.createElement('button');
-      btn.className='rv-del';btn.textContent='×';
-      btn.onclick=function(){el.remove();};
-      el.appendChild(btn);
-    }
-  });
-});
-
+/* 실시간 데이터 */
 function rRt(){
   var w=document.getElementById('rt-wrap');if(!w)return;w.innerHTML='';
-  (cfg.rtDB||[]).forEach(function(row,i){w.appendChild(mkRt(row,i));});
-}
-function mkRt(row,i){
-  var d=document.createElement('div');d.className='rt-item';
-  d.innerHTML='<input data-rti="'+i+'" data-rtk="name" value="'+esc(row.name||'')+'" placeholder="이름">'
-    +'<input data-rti="'+i+'" data-rtk="phone" value="'+esc(row.phone||'')+'" placeholder="010-0***-****">'
-    +'<input data-rti="'+i+'" data-rtk="carrier" value="'+esc(row.carrier||'')+'" placeholder="S*">'
-    +'<button class="rt-del" onclick="dRt('+i+')">×</button>';
-  d.querySelectorAll('input').forEach(function(el){el.addEventListener('input',function(){cfg.rtDB[+this.dataset.rti][this.dataset.rtk]=this.value;});});
-  return d;
+  (cfg.rtDB||[]).forEach(function(row,i){
+    var d=document.createElement('div');d.className='rt-item';
+    d.innerHTML='<input data-rti="'+i+'" data-rtk="name" value="'+esc(row.name||'')+'" placeholder="이름">'
+      +'<input data-rti="'+i+'" data-rtk="phone" value="'+esc(row.phone||'')+'" placeholder="010-0***-****">'
+      +'<input data-rti="'+i+'" data-rtk="carrier" value="'+esc(row.carrier||'')+'" placeholder="S*">'
+      +'<button class="rt-del" onclick="this.closest(\'.rt-item\').remove()">×</button>';
+    w.appendChild(d);
+  });
 }
 function addRt(){cfg.rtDB=cfg.rtDB||[];cfg.rtDB.push({name:'',phone:'',carrier:''});rRt();}
-function dRt(i){cfg.rtDB.splice(i,1);rRt();}
 
-
-/* ─────────── 사진 업로드 ─────────── */
-function triggerPhotoUpload(box){
-  box.querySelector('input[type=file]').click();
-}
-
+/* 사진 업로드 */
+function triggerPhotoUpload(box){box.querySelector('input[type=file]').click();}
 async function uploadPhoto(input){
-  var file = input.files[0];
-  if(!file) return;
-  if(file.size > 2*1024*1024){ showToast('파일 크기가 2MB를 초과합니다.'); return; }
-  var box = input.closest('.photo-upload-box');
-  var ph = box.querySelector('.photo-placeholder');
+  var file=input.files[0];if(!file)return;
+  if(file.size>2*1024*1024){showToast('파일 크기가 2MB를 초과합니다.');return;}
+  var box=input.closest('.photo-upload-box'),ph=box.querySelector('.photo-placeholder');
   ph.innerHTML='<span style="color:var(--pr)">업로드 중...</span>';
   try{
     var mimeMap={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
-    var ext = mimeMap[file.type] || file.name.split('.').pop().toLowerCase();
-    var path = 'review-' + Date.now() + '.' + ext;
-    var res = await _SB.storage.from('review-photos').upload(path, file, {
-      contentType: file.type, cacheControl: '3600', upsert: true
-    });
-    if(res.error) throw res.error;
-    var url = _SB.storage.from('review-photos').getPublicUrl(res.data.path).data.publicUrl;
-    /* hidden input에 URL 저장 */
-    box.querySelector('.photo-url-input').value = url;
-    /* 미리보기 */
-    var prev = box.querySelector('.photo-preview');
-    prev.querySelector('img').src = url;
-    prev.style.display = 'inline-block';
-    ph.style.display = 'none';
+    var ext=mimeMap[file.type]||file.name.split('.').pop().toLowerCase();
+    var path='review-'+Date.now()+'.'+ext;
+    var res=await _SB.storage.from('review-photos').upload(path,file,{contentType:file.type,cacheControl:'3600',upsert:true});
+    if(res.error)throw res.error;
+    var url=_SB.storage.from('review-photos').getPublicUrl(res.data.path).data.publicUrl;
+    box.querySelector('.photo-url-input').value=url;
+    var prev=box.querySelector('.photo-preview');prev.querySelector('img').src=url;prev.style.display='inline-block';ph.style.display='none';
     showToast('사진 업로드 완료!');
-  }catch(e){
-    ph.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>클릭하여 사진 업로드</span>';
-    console.error('업로드 오류:', e);
-    showToast('업로드 실패: ' + (e.message||'Storage 정책을 확인해주세요.'));
-  }
+  }catch(e){ph.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>클릭하여 사진 업로드</span>';showToast('업로드 실패');}
 }
-
 function delPhoto(btn){
-  var box = btn.closest('.photo-upload-box');
-  box.querySelector('.photo-url-input').value = '';
-  var prev = box.querySelector('.photo-preview');
-  prev.querySelector('img').src='';
-  prev.style.display='none';
+  var box=btn.closest('.photo-upload-box');
+  box.querySelector('.photo-url-input').value='';
+  var prev=box.querySelector('.photo-preview');prev.querySelector('img').src='';prev.style.display='none';
   box.querySelector('input[type=file]').value='';
   box.querySelector('.photo-placeholder').style.display='flex';
 }
 
-/* ─────────── 유틸 ─────────── */
+/* 유틸 */
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
-function showToast(msg){
-  var t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(function(){t.classList.remove('show');},2200);
-}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);}
 
-/* 세션 유지 후 초기 로드 */
 if(sessionStorage.getItem(K_SS)==='1'){bootApp();}
 </script>
 </body>
