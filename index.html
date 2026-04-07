@@ -8,13 +8,9 @@
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-/* localStorage 저장 설정이 있으면 SITE_CONFIG 덮어쓰기 */
-(function(){
-  try{
-    var saved = localStorage.getItem('tc_site_config');
-    if(saved) window.SITE_CONFIG = JSON.parse(saved);
-  }catch(e){}
-})();
+/* Supabase config 로드 — DOMContentLoaded 후 applyConfig 호출 */
+window._cfgReady = false;
+window._cfgData  = (typeof SITE_CONFIG !== 'undefined') ? SITE_CONFIG : {};
 </script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -796,14 +792,11 @@ function closeM(){document.getElementById('modal').classList.remove('show');}
 
 
 /* ── config 적용 ── */
-(function(){
-  if(typeof SITE_CONFIG === 'undefined') return;
-  var c = SITE_CONFIG;
+function applyConfig(c){
+  if(!c) return;
   function s(id,v){var el=document.getElementById(id);if(el&&v!==undefined)el.textContent=v;}
   function h(id,v){var el=document.getElementById(id);if(el&&v!==undefined)el.innerHTML=v;}
-  /* 전화번호 */
   s('cfg-phone-header', c.phone); s('cfg-phone-footer', c.phone);
-  /* 히어로 */
   if(c.hero){
     s('cfg-h1-em', c.hero.headline_em);
     s('cfg-h1-mid', c.hero.headline_mid);
@@ -811,9 +804,7 @@ function closeM(){document.getElementById('modal').classList.remove('show');}
     s('cfg-h1-end', c.hero.headline_end);
     h('cfg-hero-sub', (c.hero.sub||'').replace(/\n/g,'<br>'));
   }
-  /* 통계 */
   if(c.stats) c.stats.forEach(function(st,i){s('cfg-stat'+i+'v',st.value);s('cfg-stat'+i+'l',st.label);});
-  /* 테이블 */
   if(c.table) c.table.forEach(function(row,i){
     var img=document.getElementById('carrierImg'+(i+1));
     if(img){img.src=row.logo;img.alt=row.logo;}
@@ -821,7 +812,6 @@ function closeM(){document.getElementById('modal').classList.remove('show');}
     h('cfg-td-price'+(i+1), '<span class="price-orig">'+row.orig+'</span><span class="price-final">'+row.final+'</span>');
     h('cfg-td-support'+(i+1), '<span class="ca">'+row.support+'</span><span class="ca-unit">만원</span>');
   });
-  /* 후기 슬라이드 생성 */
   var STARS='<svg class="star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'.repeat(5);
   var PIN='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
   if(c.reviews_white){
@@ -836,7 +826,6 @@ function closeM(){document.getElementById('modal').classList.remove('show');}
       return '<div class="rv-card yellow"><div class="rstars">'+STARS+'</div><div class="rq">'+r.quote+'</div><div class="rloc">'+PIN+r.loc+'</div><p class="rtxt">'+r.text+'</p><div class="rmeta"><div class="rav">'+r.initial+'</div><div><div class="rname">'+r.name+'</div><div class="rdate">'+r.date+'</div></div></div></div>';
     }).join('');rvInit(2);}
   }
-  /* 푸터 */
   if(c.footer){
     var f=c.footer;
     var lines=[];
@@ -849,6 +838,22 @@ function closeM(){document.getElementById('modal').classList.remove('show');}
     lines.push('© '+(f.copyright||'2025')+' '+(f.company||'통신클럽')+'. All rights reserved.');
     h('cfg-footer-info', lines.join('<br>'));
   }
+  if(c.terms) window._TERMS = c.terms;
+}
+
+/* 1단계: config.js 기본값 즉시 적용 */
+applyConfig(window._cfgData);
+
+/* 2단계: Supabase에서 최신 config 로드 후 덮어쓰기 */
+(async function(){
+  try{
+    var res = await _SB.from('site_config').select('data').eq('id',1).single();
+    if(res.data && res.data.data && Object.keys(res.data.data).length > 0){
+      var merged = Object.assign({}, window._cfgData, res.data.data);
+      window._cfgData = merged;
+      applyConfig(merged);
+    }
+  }catch(e){ console.log('config 로드 실패, 기본값 유지'); }
 })();
 
 /* ── 실시간 접수 롤링 ── */
