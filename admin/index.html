@@ -788,6 +788,7 @@ async function saveSection(key){
       var allInputs=Array.from(el.querySelectorAll('input[type=text]'));
       var ta=el.querySelector('textarea');
       var photoUrl=el.querySelector('.photo-url-input');
+      var photo = photoUrl ? photoUrl.value : '';
       return {
         initial: allInputs[0]?allInputs[0].value:'',
         loc:     allInputs[1]?allInputs[1].value:'',
@@ -795,7 +796,7 @@ async function saveSection(key){
         text:    ta?ta.value:'',
         name:    allInputs[3]?allInputs[3].value:'',
         date:    allInputs[4]?allInputs[4].value:'',
-        photo:   photoUrl?photoUrl.value:''
+        photo:   photo
       };
     });
   } else if(key==='footer'){
