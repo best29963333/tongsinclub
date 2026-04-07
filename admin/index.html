@@ -203,6 +203,10 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           <span>사이트 설정</span>
         </button>
+        <button class="sb-item" id="nav-accounts" onclick="showTab('accounts')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>계정 관리</span>
+        </button>
       </nav>
       <div class="sb-bottom">
         <button class="sb-btn" onclick="window.open('../index.html','_blank')">
@@ -323,20 +327,17 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
         </div>
       </div>
 
-      <!-- ══ 사이트 설정 ══ -->
-      <div id="pane-cfg" style="display:none">
-        <div class="main-header"><span class="main-title">⚙️ 사이트 설정</span></div>
+      <!-- ══ 계정 관리 ══ -->
+      <div id="pane-accounts" style="display:none">
+        <div class="main-header"><span class="main-title">👥 계정 관리</span></div>
         <div class="wrap">
-
           <div class="card">
             <div class="card-head">
-              <div class="card-head-title">👥 계정 관리</div>
-              <button class="btn btn-blue btn-sm" onclick="loadAccounts()">새로고침</button>
+              <div class="card-head-title">계정 목록</div>
+              <button class="btn btn-gray btn-sm" onclick="loadAccounts()">새로고침</button>
             </div>
             <div class="card-body">
-              <!-- 계정 목록 -->
               <div id="accounts-list" style="margin-bottom:16px"></div>
-              <!-- 계정 추가 -->
               <div style="border:1.5px solid var(--g3);border-radius:8px;padding:14px;background:var(--g1)">
                 <div style="font-size:12px;font-weight:700;color:var(--g6);margin-bottom:10px">새 계정 추가</div>
                 <div class="row3">
@@ -348,8 +349,13 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div class="card">
+      <!-- ══ 사이트 설정 ══ -->
+      <div id="pane-cfg" style="display:none">
+        <div class="main-header"><span class="main-title">⚙️ 사이트 설정</span></div>
+        <div class="wrap">
             <div class="card-head"><div class="card-head-title">📞 기본 설정</div></div>
             <div class="card-body">
               <div class="row2">
@@ -590,7 +596,7 @@ if(sessionStorage.getItem(K_SS)==='1'){
 }
 
 /* ─── 탭 ─── */
-var tabs=['db','trash','cfg'];
+var tabs=['db','trash','cfg','accounts'];
 function showTab(name){
   tabs.forEach(function(t){
     document.getElementById('pane-'+t).style.display=t===name?'':'none';
@@ -600,6 +606,7 @@ function showTab(name){
   if(name==='db') applyFilter();
   if(name==='trash') loadTrash();
   if(name==='cfg') initCfgForm();
+  if(name==='accounts') loadAccounts();
 }
 
 function bootApp(){
@@ -846,8 +853,6 @@ function exportExcel(){
 var cfg=(typeof SITE_CONFIG!=='undefined')?JSON.parse(JSON.stringify(SITE_CONFIG)):{hero:{},stats:[{value:'98,000+',label:'누적 가입자'},{value:'4.9점',label:'평균 만족도'},{value:'48만원+α',label:'최대 현금'},{value:'당일',label:'현금 지급'}],table:[{logo:'SK-나비.png',product:'인터넷 1G',orig:'38,500원',final:'27,500원',support:'30'},{logo:'KT_Logo.png',product:'인터넷 1G',orig:'38,500원',final:'27,500원',support:'28'},{logo:'LGU_Logo.png',product:'인터넷 1G',orig:'38,500원',final:'27,500원',support:'26'}],reviews_white:[],reviews_yellow:[],footer:{},terms:{}};
 
 async function initCfgForm(){
-  document.getElementById('c-lid').value=localStorage.getItem(K_ID)||DI;
-  document.getElementById('c-lpw').value='';document.getElementById('c-lpw2').value='';
   try{
     var res=await _SB.from('site_config').select('data').eq('id',1).single();
     if(res.data&&res.data.data&&Object.keys(res.data.data).length>0) cfg=Object.assign({},cfg,res.data.data);
@@ -872,7 +877,6 @@ async function initCfgForm(){
   sv('f-addr',c.footer&&c.footer.address);sv('f-email',c.footer&&c.footer.email);sv('f-copy',c.footer&&c.footer.copyright);
   if(c.terms){sv('f-terms-privacy',c.terms.privacy);sv('f-terms-marketing',c.terms.marketing);sv('f-terms-thirdparty',c.terms.thirdparty);}
   rRt();
-  loadAccounts();
 }
 function sv(id,v){var el=document.getElementById(id);if(el&&v!=null)el.value=v;}
 
