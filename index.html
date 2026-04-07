@@ -838,7 +838,16 @@ function closeM(){document.getElementById('modal').classList.remove('show');}
   }
   /* 푸터 */
   if(c.footer){
-    h('cfg-footer-info','사업자등록번호: '+c.footer.biz_no+' · 통신판매업신고: '+c.footer.sales_no+'<br>주소: '+c.footer.address+'<br>© '+c.footer.copyright+' 통신클럽. All rights reserved.');
+    var f=c.footer;
+    var lines=[];
+    if(f.company) lines.push('상호: '+f.company);
+    if(f.ceo)     lines.push('대표자: '+f.ceo);
+    if(f.biz_no)  lines.push('사업자등록번호: '+f.biz_no);
+    if(f.address) lines.push('주소: '+f.address);
+    if(f.sales_no)lines.push('통신판매업신고: '+f.sales_no);
+    if(f.email)   lines.push('이메일: '+f.email);
+    lines.push('© '+(f.copyright||'2025')+' '+(f.company||'통신클럽')+'. All rights reserved.');
+    h('cfg-footer-info', lines.join('<br>'));
   }
 })();
 
