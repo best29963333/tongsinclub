@@ -2,6 +2,7 @@ var SITE_CONFIG = {
 
   /* ── 기본 ── */
   phone: '0000-0000',
+  kakao_url: '',
 
   /* ── 히어로 ── */
   hero: {
