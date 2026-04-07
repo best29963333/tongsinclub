@@ -241,7 +241,10 @@ table.dtbl td{padding:9px 12px;vertical-align:middle}
     <div class="card">
       <div class="card-head"><div class="card-head-title">📞 기본 설정</div></div>
       <div class="card-body">
-        <div class="field" style="max-width:240px"><label>대표 전화번호</label><input id="f-phone" type="text" value="0000-0000"></div>
+        <div class="row2">
+          <div class="field"><label>대표 전화번호</label><input id="f-phone" type="text" value="0000-0000"></div>
+          <div class="field"><label>카카오 채널 URL</label><input id="f-kakao-url" type="text" placeholder="https://pf.kakao.com/_xxxxx"></div>
+        </div>
         <button class="btn btn-blue btn-sm" style="margin-top:4px" onclick="saveSection('phone')">저장</button>
       </div>
     </div>
@@ -645,6 +648,7 @@ async function initCfgForm(){
   }catch(e){}
   var c=cfg;
   sv('f-phone',c.phone);
+  sv('f-kakao-url',c.kakao_url);
   sv('f-h1-em',c.hero&&c.hero.headline_em);
   sv('f-h1-mid',c.hero&&c.hero.headline_mid);
   sv('f-h1-strong',c.hero&&c.hero.headline_strong);
@@ -735,6 +739,7 @@ async function saveSection(key){
   var patch={};
   if(key==='phone'){
     patch.phone=document.getElementById('f-phone').value;
+    patch.kakao_url=document.getElementById('f-kakao-url').value;
   } else if(key==='hero'){
     patch.hero={
       headline_em:    document.getElementById('f-h1-em').value,
