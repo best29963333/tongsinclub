@@ -727,7 +727,7 @@ async function initCfgForm(){
     sv('f-terms-marketing', c.terms.marketing);
     sv('f-terms-thirdparty',c.terms.thirdparty);
   }
-  rTbl();rRW();rRY();
+  rRt();
 }
 function sv(id,v){var el=document.getElementById(id);if(el&&v!=null)el.value=v;}
 
@@ -924,11 +924,19 @@ async function uploadPhoto(input){
   if(!file) return;
   if(file.size > 2*1024*1024){ showToast('파일 크기가 2MB를 초과합니다.'); return; }
   var box = input.closest('.photo-upload-box');
-  box.querySelector('.photo-placeholder').innerHTML='<span style="color:var(--pr)">업로드 중...</span>';
+  var ph = box.querySelector('.photo-placeholder');
+  ph.innerHTML='<span style="color:var(--pr)">업로드 중...</span>';
   try{
-    var ext = file.name.split('.').pop();
+    /* 확장자를 MIME 타입에서 정확히 추출 */
+    var mimeMap={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
+    var ext = mimeMap[file.type] || file.name.split('.').pop().toLowerCase();
     var path = 'review-' + Date.now() + '.' + ext;
-    var res = await _SB.storage.from('review-photos').upload(path, file, {cacheControl:'3600', upsert:false});
+    /* 기존 파일 있으면 upsert */
+    var res = await _SB.storage.from('review-photos').upload(path, file, {
+      contentType: file.type,
+      cacheControl: '3600',
+      upsert: true
+    });
     if(res.error) throw res.error;
     var urlRes = _SB.storage.from('review-photos').getPublicUrl(res.data.path);
     var url = urlRes.data.publicUrl;
@@ -936,13 +944,13 @@ async function uploadPhoto(input){
     var prev = box.querySelector('.photo-preview');
     prev.querySelector('img').src = url;
     prev.style.display = 'inline-block';
-    box.querySelector('.photo-placeholder').style.display = 'none';
-    /* URL을 input에 저장 */
+    ph.style.display = 'none';
     input.dataset.url = url;
     showToast('사진 업로드 완료!');
   }catch(e){
-    box.querySelector('.photo-placeholder').innerHTML='<span style="color:var(--rd)">업로드 실패</span>';
-    showToast('업로드 실패: ' + (e.message||'다시 시도해주세요.'));
+    ph.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>클릭하여 사진 업로드</span>';
+    console.error('업로드 오류:', e);
+    showToast('업로드 실패: Storage 정책을 확인해주세요.');
   }
 }
 
