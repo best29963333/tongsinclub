@@ -148,6 +148,40 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;z-index:99999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1}
 
+/* ── 역할 배지 ── */
+.role-super{display:inline-block;background:#fef3c7;color:#92400e;border:1px solid #fde68a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;vertical-align:middle}
+.role-admin{display:inline-block;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;vertical-align:middle}
+
+/* ── 사이드바 유저 정보 ── */
+.sb-user-box{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.04)}
+.sb-user-name{font-size:12px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-user-role{font-size:10px;margin-top:3px}
+
+/* ── 로그 ── */
+.log-filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.log-filter-bar select,.log-filter-bar input{border:1.5px solid var(--g3);border-radius:7px;padding:5px 9px;font-size:12px;font-family:inherit;outline:none;color:var(--g8);background:#fff}
+.log-filter-bar select:focus,.log-filter-bar input:focus{border-color:var(--pr)}
+#log-list{max-height:600px;overflow-y:auto}
+.log-row{display:grid;grid-template-columns:140px 90px 90px 1fr;gap:8px;padding:9px 12px;border-bottom:1px solid var(--g2);align-items:center;font-size:12px;transition:background .1s}
+.log-row:hover{background:var(--g1)}
+.log-row:last-child{border-bottom:none}
+.log-time{color:var(--g4);font-size:11px;white-space:nowrap}
+.log-user{font-weight:700;color:var(--pr)}
+.log-badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap}
+.lb-login{background:#dcfce7;color:#166534}
+.lb-logout{background:#f1f5f9;color:#64748b}
+.lb-edit{background:#eff6ff;color:#1d4ed8}
+.lb-delete{background:#fee2e2;color:#991b1b}
+.lb-restore{background:#fef3c7;color:#92400e}
+.lb-setting{background:#f5f3ff;color:#5b21b6}
+.lb-account{background:#ecfdf5;color:#065f46}
+.log-detail{color:var(--g6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log-empty{text-align:center;color:var(--g4);padding:36px;font-size:13px}
+@media(max-width:900px){
+  .log-row{grid-template-columns:1fr 1fr;gap:4px}
+  .log-time,.log-detail{grid-column:1/-1}
+}
+
 @media(max-width:900px){
   .sidebar{width:56px}
   .sb-logo,.sb-logo-sub,.sb-item span,.sb-btn span{display:none}
@@ -189,6 +223,11 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
         </div>
         <div class="sb-logo-sub">어드민 패널</div>
       </div>
+      <!-- 로그인 사용자 정보 -->
+      <div class="sb-user-box" id="sb-user-box">
+        <div class="sb-user-name" id="sb-user-name">-</div>
+        <div class="sb-user-role" id="sb-user-role"></div>
+      </div>
       <nav class="sb-nav">
         <button class="sb-item on" id="nav-db" onclick="showTab('db')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
@@ -206,6 +245,10 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
         <button class="sb-item" id="nav-accounts" onclick="showTab('accounts')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span>계정 관리</span>
+        </button>
+        <button class="sb-item" id="nav-log" onclick="showTab('log')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>활동 로그</span>
         </button>
       </nav>
       <div class="sb-bottom">
@@ -331,23 +374,87 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
       <div id="pane-accounts" style="display:none">
         <div class="main-header"><span class="main-title">👥 계정 관리</span></div>
         <div class="wrap">
-          <div class="card">
-            <div class="card-head">
-              <div class="card-head-title">계정 목록</div>
-              <button class="btn btn-gray btn-sm" onclick="loadAccounts()">새로고침</button>
+
+          <!-- 최고관리자 전용 안내 -->
+          <div id="accounts-super-only" style="display:none;background:#fef3c7;border:1.5px solid #fde68a;border-radius:10px;padding:16px 20px;margin-bottom:16px;font-size:13px;color:#92400e;font-weight:600">
+            ⚠️ 계정 관리는 최고관리자만 접근할 수 있습니다.
+          </div>
+
+          <div id="accounts-super-content">
+            <div class="card">
+              <div class="card-head">
+                <div class="card-head-title">계정 목록</div>
+                <button class="btn btn-gray btn-sm" onclick="loadAccounts()">새로고침</button>
+              </div>
+              <div class="card-body">
+                <div id="accounts-list" style="margin-bottom:16px"></div>
+              </div>
             </div>
-            <div class="card-body">
-              <div id="accounts-list" style="margin-bottom:16px"></div>
-              <div style="border:1.5px solid var(--g3);border-radius:8px;padding:14px;background:var(--g1)">
-                <div style="font-size:12px;font-weight:700;color:var(--g6);margin-bottom:10px">새 계정 추가</div>
-                <div class="row3">
-                  <div class="field"><label>아이디</label><input id="new-uid" type="text" placeholder="아이디"></div>
+
+            <div class="card">
+              <div class="card-head"><div class="card-head-title">새 계정 추가</div></div>
+              <div class="card-body">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+                  <div class="field"><label>아이디</label><input id="new-uid" type="text" placeholder="아이디 (영문/숫자)"></div>
+                  <div class="field"><label>표시 이름</label><input id="new-name" type="text" placeholder="예) 홍길동 매니저"></div>
                   <div class="field"><label>비밀번호</label><input id="new-upw" type="password" placeholder="비밀번호"></div>
                   <div class="field"><label>비밀번호 확인</label><input id="new-upw2" type="password" placeholder="비밀번호 확인"></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+                  <div class="field" style="margin-bottom:0">
+                    <label>역할</label>
+                    <select id="new-role" style="border:1.5px solid var(--g3);border-radius:7px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;color:var(--g8)">
+                      <option value="admin">일반 관리자</option>
+                      <option value="super">최고관리자</option>
+                    </select>
+                  </div>
                 </div>
                 <button class="btn btn-blue btn-sm" onclick="addAccount()">계정 추가</button>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ 활동 로그 ══ -->
+      <div id="pane-log" style="display:none">
+        <div class="main-header">
+          <span class="main-title">🕐 활동 로그</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-gray btn-sm" onclick="loadLogs()">새로고침</button>
+            <button class="btn btn-red btn-sm" id="log-clear-btn" style="display:none" onclick="clearLogs()">로그 비우기</button>
+          </div>
+        </div>
+        <div class="wrap">
+          <div class="card">
+            <div class="card-head" style="flex-wrap:wrap;gap:10px">
+              <div class="card-head-title">전체 활동 기록</div>
+              <div class="log-filter-bar">
+                <select id="log-f-user" onchange="renderLogs()">
+                  <option value="">전체 계정</option>
+                </select>
+                <select id="log-f-action" onchange="renderLogs()">
+                  <option value="">전체 액션</option>
+                  <option>로그인</option>
+                  <option>로그아웃</option>
+                  <option>상태변경</option>
+                  <option>메모저장</option>
+                  <option>삭제이동</option>
+                  <option>복원</option>
+                  <option>영구삭제</option>
+                  <option>설정저장</option>
+                  <option>계정추가</option>
+                  <option>계정삭제</option>
+                  <option>비밀번호변경</option>
+                </select>
+                <input type="date" id="log-f-date" onchange="renderLogs()" style="font-size:12px">
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:140px 90px 90px 1fr;gap:8px;padding:8px 12px;background:var(--g1);border-bottom:1px solid var(--g2);font-size:11px;font-weight:700;color:var(--g6)">
+              <span>일시</span><span>계정</span><span>액션</span><span>상세</span>
+            </div>
+            <div id="log-list"><div class="log-empty">로그를 불러오는 중...</div></div>
+            <div class="pager" id="log-pager" style="padding:10px"></div>
           </div>
         </div>
       </div>
@@ -592,8 +699,11 @@ async function doLogin(){
     if(res.data){
       sessionStorage.setItem(K_SS,'1');
       sessionStorage.setItem('tc_admin_me',id);
+      sessionStorage.setItem('tc_admin_role',res.data.role||'admin');
+      sessionStorage.setItem('tc_admin_display',res.data.display_name||id);
       document.getElementById('login-screen').style.display='none';
       document.getElementById('app').style.display='block';
+      await writeLog(id,'로그인','로그인 성공');
       bootApp();
     } else {
       errEl.textContent='아이디 또는 비밀번호가 올바르지 않습니다.';
@@ -601,30 +711,74 @@ async function doLogin(){
   }catch(e){errEl.textContent='아이디 또는 비밀번호가 올바르지 않습니다.';}
   btn.textContent='로그인';btn.disabled=false;
 }
-function doLogout(){sessionStorage.removeItem(K_SS);sessionStorage.removeItem('tc_admin_me');location.reload();}
+async function doLogout(){
+  var me=sessionStorage.getItem('tc_admin_me')||'';
+  await writeLog(me,'로그아웃','로그아웃');
+  sessionStorage.removeItem(K_SS);
+  sessionStorage.removeItem('tc_admin_me');
+  sessionStorage.removeItem('tc_admin_role');
+  sessionStorage.removeItem('tc_admin_display');
+  location.reload();
+}
 ['l-pw','l-id'].forEach(function(id){document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});});
 if(sessionStorage.getItem(K_SS)==='1'){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='block';
+  bootApp();
 }
 
 /* ─── 탭 ─── */
-var tabs=['db','trash','cfg','accounts'];
+var tabs=['db','trash','cfg','accounts','log'];
 function showTab(name){
+  /* 계정관리: 최고관리자만 */
+  if(name==='accounts'){
+    var role=sessionStorage.getItem('tc_admin_role')||'admin';
+    var superOnly=document.getElementById('accounts-super-only');
+    var superContent=document.getElementById('accounts-super-content');
+    if(role!=='super'){
+      if(superOnly) superOnly.style.display='';
+      if(superContent) superContent.style.display='none';
+    } else {
+      if(superOnly) superOnly.style.display='none';
+      if(superContent) superContent.style.display='';
+    }
+  }
   tabs.forEach(function(t){
-    document.getElementById('pane-'+t).style.display=t===name?'':'none';
+    var pane=document.getElementById('pane-'+t);
+    if(pane) pane.style.display=t===name?'':'none';
     var nav=document.getElementById('nav-'+t);
-    if(nav)nav.classList.toggle('on',t===name);
+    if(nav) nav.classList.toggle('on',t===name);
   });
   if(name==='db') applyFilter();
   if(name==='trash') loadTrash();
   if(name==='cfg') initCfgForm();
   if(name==='accounts') loadAccounts();
+  if(name==='log') loadLogs();
 }
 
 function bootApp(){
   setPreset('today',document.querySelector('.date-btn.on'));
   applyFilter();
+  renderSidebarUser();
+}
+
+function renderSidebarUser(){
+  var me=sessionStorage.getItem('tc_admin_me')||'';
+  var role=sessionStorage.getItem('tc_admin_role')||'admin';
+  var displayName=sessionStorage.getItem('tc_admin_display')||me;
+  var nameEl=document.getElementById('sb-user-name');
+  var roleEl=document.getElementById('sb-user-role');
+  if(nameEl) nameEl.textContent=displayName||me;
+  if(roleEl){
+    if(role==='super'){
+      roleEl.innerHTML='<span class="role-super">최고관리자</span>';
+    } else {
+      roleEl.innerHTML='<span class="role-admin">일반 관리자</span>';
+    }
+  }
+  /* 최고관리자만 계정관리·로그 클리어 버튼 표시 */
+  var clearBtn=document.getElementById('log-clear-btn');
+  if(clearBtn&&role==='super') clearBtn.style.display='';
 }
 
 /* ─── DB 조회 ─── */
@@ -709,6 +863,8 @@ async function saveRow(id,btn){
     if(row){row.status=status;row.memo=memo;}
     btn.textContent='저장';btn.disabled=false;
     renderSum();
+    var me=sessionStorage.getItem('tc_admin_me')||'';
+    await writeLog(me,'상태변경','접수 #'+id+' → '+status+(memo?' / 메모: '+memo.slice(0,20):''));
     showToast('저장되었습니다.');
   }catch(e){btn.textContent='저장';btn.disabled=false;showToast('저장 실패');}
 }
@@ -740,6 +896,8 @@ async function deleteSelected(){
   if(!confirm(ids.length+'건을 휴지통으로 이동하시겠습니까?'))return;
   var now=new Date().toISOString();
   await _SB.from('submissions').update({deleted_at:now}).in('id',ids);
+  var me=sessionStorage.getItem('tc_admin_me')||'';
+  await writeLog(me,'삭제이동',ids.length+'건 휴지통으로 이동 (ID: '+ids.slice(0,5).join(',')+(ids.length>5?'...':'')+')');
   allRows=allRows.filter(function(r){return ids.indexOf(r.id)<0;});
   filtered=filtered.filter(function(r){return ids.indexOf(r.id)<0;});
   clearChecks();renderSum();renderTbl();
@@ -814,6 +972,8 @@ function clearTrashChecks(){
 
 async function restoreOne(id){
   await _SB.from('submissions').update({deleted_at:null}).eq('id',id);
+  var me=sessionStorage.getItem('tc_admin_me')||'';
+  await writeLog(me,'복원','접수 #'+id+' 복원');
   trashRows=trashRows.filter(function(r){return r.id!==id;});
   trashFiltered=trashFiltered.filter(function(r){return r.id!==id;});
   renderTrash();showToast('복원되었습니다.');
@@ -823,6 +983,8 @@ async function restoreSelected(){
   var ids=Array.from(document.querySelectorAll('.trash-chk:checked')).map(function(c){return +c.value;});
   if(!ids.length)return;
   await _SB.from('submissions').update({deleted_at:null}).in('id',ids);
+  var me=sessionStorage.getItem('tc_admin_me')||'';
+  await writeLog(me,'복원',ids.length+'건 복원 (ID: '+ids.slice(0,5).join(',')+(ids.length>5?'...':'')+')');
   trashRows=trashRows.filter(function(r){return ids.indexOf(r.id)<0;});
   trashFiltered=trashFiltered.filter(function(r){return ids.indexOf(r.id)<0;});
   clearTrashChecks();renderTrash();showToast(ids.length+'건이 복원되었습니다.');
@@ -833,6 +995,8 @@ async function permanentDeleteSelected(){
   if(!ids.length){showToast('항목을 선택해주세요.');return;}
   if(!confirm(ids.length+'건을 영구 삭제하시겠습니까? 복원이 불가능합니다.'))return;
   await _SB.from('submissions').delete().in('id',ids);
+  var me=sessionStorage.getItem('tc_admin_me')||'';
+  await writeLog(me,'영구삭제',ids.length+'건 영구 삭제 (ID: '+ids.slice(0,5).join(',')+')');
   trashRows=trashRows.filter(function(r){return ids.indexOf(r.id)<0;});
   trashFiltered=trashFiltered.filter(function(r){return ids.indexOf(r.id)<0;});
   clearTrashChecks();renderTrash();showToast(ids.length+'건이 영구 삭제되었습니다.');
@@ -917,52 +1081,79 @@ function sv(id,v){var el=document.getElementById(id);if(el&&v!=null)el.value=v;}
 async function loadAccounts(){
   var list=document.getElementById('accounts-list');
   if(!list)return;
+  var myRole=sessionStorage.getItem('tc_admin_role')||'admin';
+  if(myRole!=='super') return;
   list.innerHTML='<div style="font-size:12px;color:var(--g4);padding:8px 0">로딩 중...</div>';
   try{
-    var res=await _SB.from('admin_accounts').select('id,username,created_at').order('created_at',{ascending:true});
+    var res=await _SB.from('admin_accounts').select('id,username,display_name,role,created_at').order('created_at',{ascending:true});
     var me=sessionStorage.getItem('tc_admin_me')||'';
     var rows=res.data||[];
     if(!rows.length){list.innerHTML='<div style="font-size:12px;color:var(--g4)">등록된 계정이 없습니다.</div>';return;}
     list.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:13px">'
-      +'<thead><tr style="background:var(--g2)"><th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--g6)">아이디</th><th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--g6)">생성일</th><th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--g6)">비밀번호 변경</th><th style="padding:8px 12px"></th></tr></thead>'
+      +'<thead><tr style="background:var(--g2)">'
+      +'<th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--g6)">아이디</th>'
+      +'<th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--g6)">표시 이름</th>'
+      +'<th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--g6)">역할</th>'
+      +'<th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--g6)">생성일</th>'
+      +'<th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--g6)">비밀번호 변경</th>'
+      +'<th style="padding:8px 12px"></th>'
+      +'</tr></thead>'
       +'<tbody>'+rows.map(function(r){
         var isMe=r.username===me;
         var dt=r.created_at?r.created_at.slice(0,10):'-';
+        var roleLabel=(r.role==='super')
+          ?'<span class="role-super">최고관리자</span>'
+          :'<span class="role-admin">일반 관리자</span>';
+        var dname=esc(r.display_name||r.username);
         return '<tr style="border-bottom:1px solid var(--g2)">'
-          +'<td style="padding:10px 12px;font-weight:700">'+esc(r.username)+(isMe?' <span style="font-size:10px;background:#EFF6FF;color:var(--pr);padding:2px 6px;border-radius:4px;font-weight:600">현재 계정</span>':'')+'</td>'
+          +'<td style="padding:10px 12px;font-weight:700">'+esc(r.username)
+            +(isMe?' <span style="font-size:10px;background:#EFF6FF;color:var(--pr);padding:2px 6px;border-radius:4px;font-weight:600">나</span>':'')+'</td>'
+          +'<td style="padding:10px 12px;color:var(--g6)">'+dname+'</td>'
+          +'<td style="padding:10px 12px">'+roleLabel+'</td>'
           +'<td style="padding:10px 12px;font-size:12px;color:var(--g4)">'+dt+'</td>'
           +'<td style="padding:10px 12px"><div style="display:flex;gap:6px;align-items:center">'
           +'<input type="password" id="pw-'+r.id+'" placeholder="새 비밀번호" style="border:1.5px solid var(--g3);border-radius:6px;padding:5px 8px;font-size:12px;font-family:inherit;outline:none;width:130px">'
-          +'<button class="btn btn-gray btn-sm" onclick="changePw('+r.id+')">변경</button>'
+          +'<button class="btn btn-gray btn-sm" onclick="changePw('+r.id+',''+esc(r.username)+'')">변경</button>'
           +'</div></td>'
-          +'<td style="padding:10px 12px">'+(rows.length>1?'<button class="btn btn-red btn-sm" onclick="deleteAccount('+r.id+',\''+esc(r.username)+'\')">삭제</button>':'')+'</td>'
+          +'<td style="padding:10px 12px">'
+          +(isMe?'':'<button class="btn btn-red btn-sm" onclick="deleteAccount('+r.id+',''+esc(r.username)+'')">삭제</button>')
+          +'</td>'
           +'</tr>';
       }).join('')+'</tbody></table>';
   }catch(e){list.innerHTML='<div style="font-size:12px;color:var(--rd)">계정 목록을 불러오지 못했습니다.</div>';}
 }
 
 async function addAccount(){
+  var myRole=sessionStorage.getItem('tc_admin_role')||'admin';
+  if(myRole!=='super'){showToast('최고관리자만 계정을 추가할 수 있습니다.');return;}
   var uid=document.getElementById('new-uid').value.trim();
+  var dname=document.getElementById('new-name').value.trim();
   var pw=document.getElementById('new-upw').value;
   var pw2=document.getElementById('new-upw2').value;
+  var role=document.getElementById('new-role').value;
   if(!uid){showToast('아이디를 입력해주세요.');return;}
   if(!pw){showToast('비밀번호를 입력해주세요.');return;}
   if(pw!==pw2){showToast('비밀번호가 일치하지 않습니다.');return;}
-  var res=await _SB.from('admin_accounts').insert({username:uid,password:pw});
-  if(res.error){showToast('이미 존재하는 아이디입니다.');return;}
+  var res=await _SB.from('admin_accounts').insert({username:uid,password:pw,display_name:dname||uid,role:role});
+  if(res.error){showToast('이미 존재하는 아이디이거나 오류가 발생했습니다.');return;}
   document.getElementById('new-uid').value='';
+  document.getElementById('new-name').value='';
   document.getElementById('new-upw').value='';
   document.getElementById('new-upw2').value='';
+  var me=sessionStorage.getItem('tc_admin_me')||'';
+  await writeLog(me,'계정추가','계정 추가: '+uid+' / 이름: '+(dname||uid)+' / 역할: '+(role==='super'?'최고관리자':'일반 관리자'));
   showToast('계정이 추가되었습니다.');
   loadAccounts();
 }
 
-async function changePw(id){
+async function changePw(id,username){
   var inp=document.getElementById('pw-'+id);
   var pw=inp?inp.value:'';
   if(!pw){showToast('새 비밀번호를 입력해주세요.');return;}
   await _SB.from('admin_accounts').update({password:pw}).eq('id',id);
   inp.value='';
+  var me=sessionStorage.getItem('tc_admin_me')||'';
+  await writeLog(me,'비밀번호변경','계정 ['+username+'] 비밀번호 변경');
   showToast('비밀번호가 변경되었습니다.');
 }
 
@@ -971,10 +1162,10 @@ async function deleteAccount(id,username){
   var me=sessionStorage.getItem('tc_admin_me')||'';
   if(username===me){showToast('현재 로그인 중인 계정은 삭제할 수 없습니다.');return;}
   await _SB.from('admin_accounts').delete().eq('id',id);
+  await writeLog(me,'계정삭제','계정 ['+username+'] 삭제');
   showToast('계정이 삭제되었습니다.');
   loadAccounts();
 }
-
 async function sbSaveConfig(patch){
   try{
     var res=await _SB.from('site_config').select('data').eq('id',1).single();
@@ -996,6 +1187,10 @@ async function saveSection(key){
   else if(key==='footer'){patch.footer={company:document.getElementById('f-company').value,ceo:document.getElementById('f-ceo').value,biz_no:document.getElementById('f-biz').value,sales_no:document.getElementById('f-sales').value,address:document.getElementById('f-addr').value,email:document.getElementById('f-email').value,copyright:document.getElementById('f-copy').value};}
   var ok=await sbSaveConfig(patch);
   var labels={phone:'기본 설정',hero:'히어로 섹션',stats:'통계 수치',table:'요금 테이블',reviews_white:'흰색 후기',reviews_yellow:'노란색 후기',footer:'푸터 정보'};
+  if(ok){
+    var me=sessionStorage.getItem('tc_admin_me')||'';
+    await writeLog(me,'설정저장',(labels[key]||key)+' 저장');
+  }
   showToast(ok?(labels[key]||key)+' 저장 완료!':'저장 실패. 다시 시도해주세요.');
 }
 
@@ -1072,6 +1267,92 @@ function delPhoto(btn){
   var prev=box.querySelector('.photo-preview');prev.querySelector('img').src='';prev.style.display='none';
   box.querySelector('input[type=file]').value='';
   box.querySelector('.photo-placeholder').style.display='flex';
+}
+
+/* ─── 활동 로그 ─── */
+async function writeLog(username,action,detail){
+  try{
+    await _SB.from('admin_logs').insert({username:username||'unknown',action:action,detail:detail||''});
+  }catch(e){/* 로그 실패는 무시 */}
+}
+
+var allLogs=[],LOG_PAGE=50,logCur=1;
+async function loadLogs(){
+  var list=document.getElementById('log-list');
+  if(!list)return;
+  list.innerHTML='<div class="log-empty">로딩 중...</div>';
+  try{
+    var res=await _SB.from('admin_logs').select('*').order('created_at',{ascending:false}).limit(1000);
+    allLogs=res.data||[];
+    /* 계정 필터 셀렉트 채우기 */
+    var users=[...new Set(allLogs.map(function(l){return l.username;}))];
+    var sel=document.getElementById('log-f-user');
+    if(sel){
+      var cur=sel.value;
+      sel.innerHTML='<option value="">전체 계정</option>';
+      users.forEach(function(u){var o=document.createElement('option');o.value=u;o.textContent=u;sel.appendChild(o);});
+      sel.value=cur;
+    }
+    logCur=1;
+    renderLogs();
+  }catch(e){list.innerHTML='<div class="log-empty" style="color:var(--rd)">로그를 불러오지 못했습니다.</div>';}
+}
+
+var LOG_ACTION_CLASS={
+  '로그인':'lb-login','로그아웃':'lb-logout',
+  '상태변경':'lb-edit','메모저장':'lb-edit',
+  '삭제이동':'lb-delete','영구삭제':'lb-delete',
+  '복원':'lb-restore',
+  '설정저장':'lb-setting',
+  '계정추가':'lb-account','계정삭제':'lb-delete','비밀번호변경':'lb-account'
+};
+
+function renderLogs(){
+  var list=document.getElementById('log-list');
+  if(!list)return;
+  var fUser=document.getElementById('log-f-user').value;
+  var fAction=document.getElementById('log-f-action').value;
+  var fDate=document.getElementById('log-f-date').value;
+  var filtered=allLogs.filter(function(l){
+    if(fUser&&l.username!==fUser)return false;
+    if(fAction&&l.action!==fAction)return false;
+    if(fDate&&(!l.created_at||!l.created_at.startsWith(fDate)))return false;
+    return true;
+  });
+  if(!filtered.length){list.innerHTML='<div class="log-empty">조회된 로그가 없습니다.</div>';document.getElementById('log-pager').innerHTML='';return;}
+  var s=(logCur-1)*LOG_PAGE,pg=filtered.slice(s,s+LOG_PAGE);
+  list.innerHTML=pg.map(function(l){
+    var dt=l.created_at?l.created_at.replace('T',' ').slice(0,19):'-';
+    var cls=LOG_ACTION_CLASS[l.action]||'lb-edit';
+    return '<div class="log-row">'
+      +'<span class="log-time">'+dt+'</span>'
+      +'<span class="log-user">'+esc(l.username)+'</span>'
+      +'<span><span class="log-badge '+cls+'">'+esc(l.action)+'</span></span>'
+      +'<span class="log-detail" title="'+esc(l.detail||'')+'">'+esc(l.detail||'-')+'</span>'
+      +'</div>';
+  }).join('');
+  /* 페이저 */
+  var tot=Math.ceil(filtered.length/LOG_PAGE);
+  var pager=document.getElementById('log-pager');
+  if(tot<=1){pager.innerHTML='<span class="pg-info">총 '+filtered.length+'건</span>';return;}
+  var h='';
+  if(logCur>1)h+='<button class="pg-btn" onclick="logCur--; renderLogs()">‹</button>';
+  var s2=Math.max(1,logCur-2),e=Math.min(tot,logCur+2);
+  for(var p=s2;p<=e;p++)h+='<button class="pg-btn'+(p===logCur?' on':'')+'" onclick="logCur='+p+'; renderLogs()">'+p+'</button>';
+  if(logCur<tot)h+='<button class="pg-btn" onclick="logCur++; renderLogs()">›</button>';
+  h+='<span class="pg-info" style="margin-left:8px">총 '+filtered.length+'건</span>';
+  pager.innerHTML=h;
+}
+
+async function clearLogs(){
+  var myRole=sessionStorage.getItem('tc_admin_role')||'admin';
+  if(myRole!=='super'){showToast('최고관리자만 로그를 삭제할 수 있습니다.');return;}
+  if(!confirm('모든 활동 로그를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.'))return;
+  await _SB.from('admin_logs').delete().neq('id',0);
+  allLogs=[];
+  document.getElementById('log-list').innerHTML='<div class="log-empty">로그가 없습니다.</div>';
+  document.getElementById('log-pager').innerHTML='';
+  showToast('로그가 삭제되었습니다.');
 }
 
 /* 유틸 */
