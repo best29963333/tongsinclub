@@ -825,8 +825,9 @@ async function applyFilter(){
   document.getElementById('db-tbody').innerHTML='<tr class="empty-row"><td colspan="10">조회 중...</td></tr>';
   try{
     var query=_SB.from('submissions').select('*').is('deleted_at',null).order('created_at',{ascending:false});
-    if(from) query=query.gte('created_at',from+'T00:00:00');
-    if(to)   query=query.lte('created_at',to+'T23:59:59');
+    /* KST 날짜를 UTC로 변환해서 쿼리 (KST = UTC+9이므로 -9시간) */
+    if(from) query=query.gte('created_at',from+'T00:00:00+09:00');
+    if(to)   query=query.lte('created_at',to+'T23:59:59+09:00');
     if(st)   query=query.eq('status',st);
     var res=await query;
     allRows=res.data||[];
@@ -849,7 +850,7 @@ function renderTbl(){
   if(!pg.length){tbody.innerHTML='<tr class="empty-row"><td colspan="10">조회된 접수 건이 없습니다.</td></tr>';document.getElementById('pager').innerHTML='';return;}
   tbody.innerHTML=pg.map(function(r,i){
     var no=filtered.length-s-i;
-    var dt=r.created_at?r.created_at.replace('T',' ').slice(0,16):'-';
+    var dt=toKST(r.created_at);
     var si=SL.indexOf(r.status);if(si<0)si=0;
     var opts=SL.map(function(s){return '<option'+(s===r.status?' selected':'')+'>'+s+'</option>';}).join('');
     return '<tr data-id="'+r.id+'">'
@@ -953,8 +954,8 @@ function renderTrash(){
   if(!pg.length){tbody.innerHTML='<tr class="empty-row"><td colspan="9">휴지통이 비어있습니다.</td></tr>';document.getElementById('trash-pager').innerHTML='';return;}
   tbody.innerHTML=pg.map(function(r,i){
     var no=trashFiltered.length-s-i;
-    var dt=r.created_at?r.created_at.replace('T',' ').slice(0,16):'-';
-    var del=r.deleted_at?r.deleted_at.replace('T',' ').slice(0,16):'-';
+    var dt=toKST(r.created_at);
+    var del=toKST(r.deleted_at);
     return '<tr data-id="'+r.id+'">'
       +'<td><input type="checkbox" class="trash-chk" onchange="onTrashChkChange()" value="'+r.id+'"></td>'
       +'<td style="color:var(--g4);font-size:11px">'+no+'</td>'
@@ -1036,11 +1037,14 @@ async function permanentDeleteSelected(){
 function setPreset(preset,btn){
   document.querySelectorAll('.date-btn').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
-  var now=new Date(),fmt=function(d){return d.toISOString().slice(0,10);},from='',to='';
-  if(preset==='today'){from=to=fmt(now);}
-  else if(preset==='yesterday'){var y=new Date(now);y.setDate(y.getDate()-1);from=to=fmt(y);}
-  else if(preset==='month'){from=fmt(new Date(now.getFullYear(),now.getMonth(),1));to=fmt(now);}
-  else if(preset==='lastmonth'){from=fmt(new Date(now.getFullYear(),now.getMonth()-1,1));to=fmt(new Date(now.getFullYear(),now.getMonth(),0));}
+  /* KST 기준 날짜 계산 */
+  var now=new Date(new Date().getTime()+9*60*60*1000);
+  var fmt=function(d){return new Date(d.getTime()+9*60*60*1000).toISOString().slice(0,10);};
+  var from='',to='';
+  if(preset==='today'){var t=todayKST();from=to=t;}
+  else if(preset==='yesterday'){var y=new Date(now);y.setUTCDate(y.getUTCDate()-1);from=to=y.toISOString().slice(0,10);}
+  else if(preset==='month'){from=now.toISOString().slice(0,7)+'-01';to=todayKST();}
+  else if(preset==='lastmonth'){var lm=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()-1,1));from=lm.toISOString().slice(0,10);to=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),0)).toISOString().slice(0,10);}
   document.getElementById('f-from').value=from;document.getElementById('f-to').value=to;
 }
 
@@ -1048,11 +1052,11 @@ function setPreset(preset,btn){
 function exportExcel(){
   if(!filtered.length){showToast('조회된 데이터가 없습니다.');return;}
   var rows=[['No','접수일시','성함','연락처','희망통신사','연락시간','처리상태','메모']];
-  filtered.forEach(function(r,i){rows.push([filtered.length-i,(r.created_at||'').replace('T',' ').slice(0,16),r.name||'',r.phone||'',r.carrier||'',r.call_time||'',r.status||'',r.memo||'']);});
+  filtered.forEach(function(r,i){rows.push([filtered.length-i,toKST(r.created_at),r.name||'',r.phone||'',r.carrier||'',r.call_time||'',r.status||'',r.memo||'']);});
   var wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(rows);
   ws['!cols']=[{wch:5},{wch:18},{wch:10},{wch:16},{wch:12},{wch:16},{wch:14},{wch:24}];
   XLSX.utils.book_append_sheet(wb,ws,'접수현황');
-  XLSX.writeFile(wb,'통신클럽_접수현황_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  XLSX.writeFile(wb,'통신클럽_접수현황_'+todayKST()+'.xlsx');
   showToast('엑셀 저장 완료!');
 }
 
@@ -1360,13 +1364,13 @@ function renderLogs(){
   var filtered=allLogs.filter(function(l){
     if(fUser&&l.username!==fUser)return false;
     if(fAction&&l.action!==fAction)return false;
-    if(fDate&&(!l.created_at||!l.created_at.startsWith(fDate)))return false;
+    if(fDate&&toKST(l.created_at).slice(0,10)!==fDate)return false;
     return true;
   });
   if(!filtered.length){list.innerHTML='<div class="log-empty">조회된 로그가 없습니다.</div>';document.getElementById('log-pager').innerHTML='';return;}
   var s=(logCur-1)*LOG_PAGE,pg=filtered.slice(s,s+LOG_PAGE);
   list.innerHTML=pg.map(function(l){
-    var dt=l.created_at?l.created_at.replace('T',' ').slice(0,19):'-';
+    var dt=toKST(l.created_at,true);
     var cls=LOG_ACTION_CLASS[l.action]||'lb-edit';
     return '<div class="log-row">'
       +'<span class="log-time">'+dt+'</span>'
@@ -1401,6 +1405,24 @@ async function clearLogs(){
 
 /* 유틸 */
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+
+/* UTC → KST(+9) 변환 표시 */
+function toKST(utcStr,withSec){
+  if(!utcStr)return'-';
+  var d=new Date(utcStr);
+  if(isNaN(d))return'-';
+  d=new Date(d.getTime()+9*60*60*1000);
+  var pad=function(n){return String(n).padStart(2,'0');};
+  var base=d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate())
+    +' '+pad(d.getUTCHours())+':'+pad(d.getUTCMinutes());
+  return withSec?base+':'+pad(d.getUTCSeconds()):base;
+}
+
+/* KST 기준 오늘 날짜 (YYYY-MM-DD) */
+function todayKST(){
+  var d=new Date(new Date().getTime()+9*60*60*1000);
+  return d.toISOString().slice(0,10);
+}
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);}
 
 if(sessionStorage.getItem(K_SS)==='1'){bootApp();}
