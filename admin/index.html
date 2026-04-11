@@ -303,6 +303,18 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
                     <option>청약</option><option>필수항목 안내</option><option>설치 완료</option><option>송금 완료</option>
                   </select>
                 </div>
+                <div class="fg">
+                  <label>유입 경로</label>
+                  <select id="f-source">
+                    <option value="">전체</option>
+                    <option value="당근마켓">당근마켓</option>
+                    <option value="메타광고">메타광고</option>
+                    <option value="네이버">네이버</option>
+                    <option value="카카오">카카오</option>
+                    <option value="문자">문자</option>
+                    <option value="직접">직접</option>
+                  </select>
+                </div>
                 <button class="btn btn-blue" onclick="applyFilter()" style="align-self:flex-end">조회</button>
               </div>
 
@@ -321,7 +333,7 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--pr);cursor:pointe
                     <tr>
                       <th><input type="checkbox" id="chk-all" onchange="toggleAll(this)"></th>
                       <th>No</th><th>접수일시</th><th>성함</th><th>연락처</th>
-                      <th>희망통신사</th><th>연락시간</th><th>처리상태</th><th>메모</th><th>저장</th>
+                      <th>희망통신사</th><th>연락시간</th><th>유입경로</th><th>처리상태</th><th>메모</th><th>저장</th>
                     </tr>
                   </thead>
                   <tbody id="db-tbody"></tbody>
@@ -824,7 +836,8 @@ async function applyFilter(){
   var to=document.getElementById('f-to').value;
   var q=document.getElementById('f-search').value.trim().toLowerCase();
   var st=document.getElementById('f-status').value;
-  document.getElementById('db-tbody').innerHTML='<tr class="empty-row"><td colspan="10">조회 중...</td></tr>';
+  var src=document.getElementById('f-source').value;
+  document.getElementById('db-tbody').innerHTML='<tr class="empty-row"><td colspan="11">조회 중...</td></tr>';
   try{
     var query=_SB.from('submissions').select('*').is('deleted_at',null).order('created_at',{ascending:false});
     /* KST 날짜를 UTC로 변환해서 쿼리 (KST = UTC+9이므로 -9시간) */
@@ -834,7 +847,11 @@ async function applyFilter(){
     var res=await query;
     allRows=res.data||[];
   }catch(e){allRows=[];showToast('DB 조회 오류');}
-  filtered=q?allRows.filter(function(r){return((r.name||'')+(r.phone||'')).toLowerCase().indexOf(q)>=0;}):allRows.slice();
+  filtered=allRows.filter(function(r){
+    if(q&&((r.name||'')+(r.phone||'')).toLowerCase().indexOf(q)<0)return false;
+    if(src&&(r.source||'직접')!==src)return false;
+    return true;
+  });
   cur=1; clearChecks(); renderSum(); renderTbl();
 }
 
@@ -849,7 +866,7 @@ function renderSum(){
 function renderTbl(){
   var tbody=document.getElementById('db-tbody');
   var s=(cur-1)*PAGE,pg=filtered.slice(s,s+PAGE);
-  if(!pg.length){tbody.innerHTML='<tr class="empty-row"><td colspan="10">조회된 접수 건이 없습니다.</td></tr>';document.getElementById('pager').innerHTML='';return;}
+  if(!pg.length){tbody.innerHTML='<tr class="empty-row"><td colspan="11">조회된 접수 건이 없습니다.</td></tr>';document.getElementById('pager').innerHTML='';return;}
   tbody.innerHTML=pg.map(function(r,i){
     var no=filtered.length-s-i;
     var dt=toKST(r.created_at);
@@ -863,6 +880,7 @@ function renderTbl(){
       +'<td style="font-family:monospace;font-size:12px">'+esc(r.phone||'-')+'</td>'
       +'<td style="font-weight:700;color:var(--pr)">'+esc(r.carrier||'-')+'</td>'
       +'<td style="font-size:12px;color:var(--g6)">'+esc(r.call_time||'-')+'</td>'
+      +'<td style="font-size:12px;font-weight:600;color:var(--gn)">'+esc(r.source||'직접')+'</td>'
       +'<td><select class="status-sel '+SC[si]+'" onchange="this.className=\'status-sel \'+[\'s0\',\'s1\',\'s2\',\'s3\',\'s4\',\'s5\',\'s6\']['+JSON.stringify(SL)+'.indexOf(this.value)]">'+opts+'</select></td>'
       +'<td><input class="memo-inp" value="'+esc(r.memo||'')+'" placeholder="메모..."></td>'
       +'<td><button class="btn btn-blue btn-sm" onclick="saveRow('+r.id+',this)">저장</button></td>'
@@ -1053,10 +1071,10 @@ function setPreset(preset,btn){
 /* 엑셀 */
 function exportExcel(){
   if(!filtered.length){showToast('조회된 데이터가 없습니다.');return;}
-  var rows=[['No','접수일시','성함','연락처','희망통신사','연락시간','처리상태','메모']];
-  filtered.forEach(function(r,i){rows.push([filtered.length-i,toKST(r.created_at),r.name||'',r.phone||'',r.carrier||'',r.call_time||'',r.status||'',r.memo||'']);});
+  var rows=[['No','접수일시','성함','연락처','희망통신사','연락시간','유입경로','처리상태','메모']];
+  filtered.forEach(function(r,i){rows.push([filtered.length-i,toKST(r.created_at),r.name||'',r.phone||'',r.carrier||'',r.call_time||'',r.source||'직접',r.status||'',r.memo||'']);});
   var wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=[{wch:5},{wch:18},{wch:10},{wch:16},{wch:12},{wch:16},{wch:14},{wch:24}];
+  ws['!cols']=[{wch:5},{wch:18},{wch:10},{wch:16},{wch:12},{wch:16},{wch:12},{wch:14},{wch:24}];
   XLSX.utils.book_append_sheet(wb,ws,'접수현황');
   XLSX.writeFile(wb,'통신클럽_접수현황_'+todayKST()+'.xlsx');
   showToast('엑셀 저장 완료!');
