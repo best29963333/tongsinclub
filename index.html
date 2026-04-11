@@ -787,6 +787,14 @@ const _SB = supabase.createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRueWFlcWV4YnV4ZGxseHN4cG11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTAyNzIsImV4cCI6MjA5MTEyNjI3Mn0.F-pmYxKxu4PhmXiKfigsXIhCtYUQ3T75gGvHghfCLy8'
 );
 
+/* 유입 경로 감지 */
+var _source=(function(){
+  var p=new URLSearchParams(window.location.search);
+  var s=p.get('src')||p.get('source')||'직접';
+  var map={daangn:'당근마켓',meta:'메타광고',naver:'네이버',kakao:'카카오',sms:'문자',insta:'인스타그램'};
+  return map[s]||s;
+})();
+
 async function saveSubmission(nm, phone, carrier, callTime){
   try{
     await _SB.from('submissions').insert({
@@ -795,7 +803,8 @@ async function saveSubmission(nm, phone, carrier, callTime){
       carrier: carrier||'미선택',
       call_time: callTime||'',
       status: '상담',
-      memo: ''
+      memo: '',
+      source: _source
     });
   }catch(e){ console.error('DB 저장 오류:', e); }
 }
