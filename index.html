@@ -791,7 +791,7 @@ const _SB = supabase.createClient(
 var _source=(function(){
   var p=new URLSearchParams(window.location.search);
   var s=p.get('src')||p.get('source')||'직접';
-  var map={daangn:'당근마켓',meta:'메타광고',naver:'네이버',kakao:'카카오',sms:'문자',insta:'인스타그램'};
+  var map={daangn:'당근마켓',meta:'메타광고',threads:'스레드',naver:'네이버',youtube:'유튜브',kakao:'카카오',sms:'문자',insta:'인스타그램'};
   return map[s]||s;
 })();
 
